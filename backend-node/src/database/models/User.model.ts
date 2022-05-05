@@ -65,7 +65,6 @@ export class User extends Model {
     //     defaultValue: () => moment.utc().valueOf()
     // })
     // created_at;
-
     @HasMany(() => Recovery)
     recovery: Recovery[];
 

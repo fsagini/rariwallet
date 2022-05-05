@@ -25,7 +25,7 @@ module.exports = function(router) {
         const user = await User.findOne({ where: { email: req.body.email }, raw: true });
         if (user) {
             await user.destroy();
-            return successResponse(res, { message: 'User delete successfully' });
+            return successResponse(res, { message: 'User deleted successfully' });
         } else return errorResponse(res, 'User not found');
     });
 
