@@ -16,9 +16,8 @@
 <script lang="ts">
 import Component, { mixins } from 'vue-class-component';
 import { Global, Authenticated } from '../mixins/mixins';
-
-//   import { getPrice } from '../utils/fetchCoins';
-//   let value
+import { getPrice } from '../utils/fetchCoins';
+let value;
 
 @Component
 export default class TradeCrypto extends mixins(Global, Authenticated) {
