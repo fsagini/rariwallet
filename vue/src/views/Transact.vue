@@ -73,7 +73,7 @@ export default class Transact extends mixins(Authenticated) {
     walletPassword = '';
     amountToReceive = 0
     amountToPay = 0
-    coinType = 'BTC'
+    coinType = this.$route.params.id
 	logonError = '';
 
 	@Prop()

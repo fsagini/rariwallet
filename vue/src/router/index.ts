@@ -139,7 +139,7 @@ const routes: Array<RouteConfig> = [
 		}
 	},
 	{
-		path: '/trade/buy',
+		path: '/trade/buy/:addr/:id/',
 		name: 'Transact',
 		component: Transact,
 		meta: {
