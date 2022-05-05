@@ -3,7 +3,7 @@
 		<h2 class="title">Buy Crypto With MPesa</h2>
 		<p data-cy="buyCryptoTitle" class="subtitle">List of supported crypto coins</p>
 		<div class="list-view" v-for="coin in coins" :key="coin.symbol">
-			<router-link  :to="{ name: 'Transact', params: { id: coin.symbol, addr: coin.addr} }">
+			<router-link :to="{ name: 'Transact', params: { id: coin.symbol, addr: coin.addr } }">
 				<div data-cy="coinsData" key="coinsData" class="coins-data is-flex">
 					<div class="text link">{{ coin.symbol }}</div>
 					<div class="text link">{{ coin.price }}</div>
@@ -14,11 +14,10 @@
 </template>
 
 <script lang="ts">
+import { get } from 'js-cookie';
 import Component, { mixins } from 'vue-class-component';
 import { Global, Authenticated } from '../mixins/mixins';
-
-//   import { getPrice } from '../utils/fetchCoins';
-//   let value
+import { getPrice } from '../utils/fetchCoins';
 
 @Component
 export default class TradeCrypto extends mixins(Global, Authenticated) {
@@ -28,7 +27,7 @@ export default class TradeCrypto extends mixins(Global, Authenticated) {
 			symbol: 'BTC',
 			name: 'BITCOIN',
 			img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/BTC_Logo.svg/2000px-BTC_Logo.svg.png',
-			addr: '0xECe365B379E1dD183B20fc5f022230C044d51404'
+			addr: '0x8b935052f7C2Ef9D91840b1902B66610466B0a80'
 		},
 		{
 			symbol: 'ETH',
@@ -61,18 +60,20 @@ export default class TradeCrypto extends mixins(Global, Authenticated) {
 			//value = await getPrice(addresses[i].addr);
 			this.coins.push({
 				symbol: this.addresses[i].symbol,
-        addr:this.addresses[i].addr,
-			 	price: 100,
+				addr: this.addresses[i].addr,
+				price: 100,
 				imgURL: this.addresses[i].img,
 				title: this.addresses[i].name
 			});
 		}
 		console.log('coins : ', this.coins);
+		console.log('price', getPrice(this.coins.addr));
 	}
 	viewCoin() {
 		console.log('coin-symbol', this.coins.symbol);
 		this.router.push(`/trade/buy/${this.coins.symbol}`).catch(() => undefined);
 	}
+
 	// fetchCoins().then(() => this.loading = false);
 }
 </script>
@@ -86,11 +87,11 @@ export default class TradeCrypto extends mixins(Global, Authenticated) {
 	padding: 15px;
 }
 
-.link{
-  color: #000;
+.link {
+	color: #000;
 }
-.image_coin{
-  height: 50px;
-  width:50px;
+.image_coin {
+	height: 50px;
+	width: 50px;
 }
 </style>

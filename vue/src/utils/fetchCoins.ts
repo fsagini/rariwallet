@@ -1,6 +1,6 @@
 import { ethers } from 'ethers';
 
-export async function getPrice(address) {
+export async function getPrice(address:any) {
 {/*
 I have created a node at infura, this function is fetching latest round data for each coin from chainlink.
 import it and parse the coin address to it.
@@ -57,7 +57,7 @@ import it and parse the coin address to it.
     ];
     const addr = address;
     const priceFeed = new ethers.Contract(addr, aggregatorV3InterfaceABI, provider);
-    let roundData = await priceFeed.latestRoundData();
-    let decimals = await priceFeed.decimals();
+    const roundData = await priceFeed.latestRoundData();
+    const decimals = await priceFeed.decimals();
     return Number((roundData.answer.toString() / Math.pow(10, decimals)).toFixed(2));
 }
