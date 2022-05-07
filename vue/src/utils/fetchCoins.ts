@@ -1,4 +1,4 @@
-mport { ethers } from 'ethers';
+import { ethers } from 'ethers';
 
 export async function getPrice(address:any) {
 {/*
