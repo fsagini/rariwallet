@@ -1,27 +1,14 @@
 <template>
 	<div class="container">
-		<h2 class="title">BUY CRYPTO WITH M-PESA</h2>
-		<p data-cy="buyCryptoTitle" class="subtitle">Supported crypto coins</p>
-		<button class="back__button" @click="NavigateBack">BACK</button>
-		<div >
-			<div class="list-view" v-for="coin in coins" :key="coin.symbol">
-				<router-link :to="{ name: 'Transact', params: { id: coin.symbol, addr: coin.imgURL } }">
-					<div data-cy="coinsData" key="coinsData" class="coins-data">
-						<div class="text link">
-							<span class="title">{{ coin.symbol }}</span>
-							<div class="coin__img">
-								<img :src="coin.imgURL" :alt="coin.symbol" />
-							</div>
-						</div>
-						<div class="price">
-							<span
-								>Market Price:
-								<p>${{ coin.price }}</p></span
-							>
-						</div>
-					</div>
-				</router-link>
-			</div>
+		<h2 class="title">Buy Crypto With MPesa</h2>
+		<p data-cy="buyCryptoTitle" class="subtitle">List of supported crypto coins</p>
+		<div class="list-view" v-for="coin in coins" :key="coin.symbol">
+			<router-link :to="{ name: 'Transact', params: { id: coin.symbol, addr: coin.addr } }">
+				<div data-cy="coinsData" key="coinsData" class="coins-data is-flex">
+					<div class="text link">{{ coin.symbol }}</div>
+					<div class="text link">{{ coin.price }}</div>
+				</div>
+			</router-link>
 		</div>
 	</div>
 </template>
@@ -38,10 +25,8 @@ export default class TradeCrypto extends mixins(Global, Authenticated) {
 		{
 			symbol: 'BTC',
 			name: 'BITCOIN',
-			img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Bitcoin.svg/1200px-Bitcoin.svg.png',
-
+			img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/BTC_Logo.svg/2000px-BTC_Logo.svg.png',
 			addr: '0x8b935052f7C2Ef9D91840b1902B66610466B0a80'
-
 		},
 		{
 			symbol: 'ETH',
@@ -71,22 +56,23 @@ export default class TradeCrypto extends mixins(Global, Authenticated) {
 
 	async mounted() {
 		for (let i = 0; i < this.addresses.length; i++) {
+			//value = await getPrice(addresses[i].addr);
 			this.coins.push({
 				symbol: this.addresses[i].symbol,
 				addr: this.addresses[i].addr,
-				price: 0,
+				price: 100,
 				imgURL: this.addresses[i].img,
 				title: this.addresses[i].name
 			});
 		}
-    
 		console.log('coins : ', this.coins);
+		console.log('price', getPrice(this.coins.addr));
+	}
+	viewCoin() {
+		console.log('coin-symbol', this.coins.symbol);
+		this.router.push(`/trade/buy/${this.coins.symbol}`).catch(() => undefined);
 	}
 
-
-	NavigateBack() {
-		this.$router.push('/').catch(() => undefined);
-	}
 	// fetchCoins().then(() => this.loading = false);
 }
 </script>
@@ -99,102 +85,12 @@ export default class TradeCrypto extends mixins(Global, Authenticated) {
 	cursor: pointer;
 	padding: 15px;
 }
+
 .link {
 	color: #000;
 }
 .image_coin {
 	height: 50px;
 	width: 50px;
-}
-.title {
-	font-family: sans-serif;
-	font-weight: 800;
-	font-size: 20px;
-}
-
-.link {
-	color: #000;
-	display: flex;
-	justify-content: space-between;
-}
-
-
-.title{
-  font-family: sans-serif;
-  font-weight: 800;
-  font-size: 20px;
-
-}
-
-.link {
-	color: #000;
-	display: flex;
-  justify-content: space-between;
-}
-
-
-.coin__img {
-	padding: 10px 20px;
-	display: flex;
-}
-.coin__img img {
-	width: 70px;
-	height: 70px;
-	margin-right: 20px;
-	border-radius: 50%;
-
-	margin-left: 30px;
-}
-.subtitle {
-	padding: 5px 5px 5px 5px;
-	font-size: 18px;
-	border-radius: 20px;
-}
-
-.price > span {
-	display: flex;
-	color: #000;
-	font-weight: 600;
-}
-.back__button {
-	padding: 10px 40px;
-	color: #fff;
-	background: #000;
-	border: none;
-	border-radius: 24px;
-	cursor: pointer;
-}
-.price p {
-	padding: 0 10px;
-	font-size: 19px;
-	font-weight: bold;
-	color: #67cb8a;
-
-  margin-left: 30px;
-}
-.subtitle{
-  padding:5px 5px 5px 5px;
-  font-size: 18px;
-  border-radius: 20px;
-}
-
-.price > span{
-  display:flex;
-  color: #000;
-  font-weight: 600;
-}
-.back__button{
-   padding: 10px 40px;
-   color:#fff;
-   background: #000;
-   border:none;
-   border-radius: 24px;
-   cursor: pointer;
-}
-.price p{
-  padding:0 10px;
-  font-size: 19px;
-  font-weight: bold;
-  color: #67CB8A;
 }
 </style>
