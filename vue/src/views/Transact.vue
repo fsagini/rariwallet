@@ -1,10 +1,12 @@
 <template>
 	<div class="container">
+
 		<h2 class="title">BUY CRYPTO CURRENCY</h2>
 		<p data-cy="buyCryptoTitle" class="sub__title">Purchase crypto via mpesa</p>
 		<div class="coinImage">
 			<img :src="coinImage" alt="coinType" />
 		</div>
+
 		<div class="field">
 			<div class="control">
 				<input disabled type="text" class="input" name="coinType" v-model="coinType" @keypress="handleKeyPress" />
@@ -15,6 +17,7 @@
 			<label class="label">Amount To Pay (Ksh)</label>
 			<div class="control">
 				<input data-cy="amountToPay" type="text" class="input" name="amountToPay" v-model="amountToPay" @keypress="handleKeyPress" />
+
 			</div>
 			<p v-if="amountError" class="value__error">Amount cannot be less than 500</p>
 		</div>
@@ -38,6 +41,7 @@
 			<div class="control">
 				<input
 					data-cy="transactionFee"
+
 					disabled
 					type="text"
 					class="input"

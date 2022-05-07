@@ -39,7 +39,9 @@ export default class TradeCrypto extends mixins(Global, Authenticated) {
 			symbol: 'BTC',
 			name: 'BITCOIN',
 			img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Bitcoin.svg/1200px-Bitcoin.svg.png',
+
 			addr: '0x8b935052f7C2Ef9D91840b1902B66610466B0a80'
+
 		},
 		{
 			symbol: 'ETH',
@@ -81,6 +83,7 @@ export default class TradeCrypto extends mixins(Global, Authenticated) {
 		console.log('coins : ', this.coins);
 	}
 
+
 	NavigateBack() {
 		this.$router.push('/').catch(() => undefined);
 	}
@@ -115,6 +118,21 @@ export default class TradeCrypto extends mixins(Global, Authenticated) {
 	justify-content: space-between;
 }
 
+
+.title{
+  font-family: sans-serif;
+  font-weight: 800;
+  font-size: 20px;
+
+}
+
+.link {
+	color: #000;
+	display: flex;
+  justify-content: space-between;
+}
+
+
 .coin__img {
 	padding: 10px 20px;
 	display: flex;
@@ -124,6 +142,7 @@ export default class TradeCrypto extends mixins(Global, Authenticated) {
 	height: 70px;
 	margin-right: 20px;
 	border-radius: 50%;
+
 	margin-left: 30px;
 }
 .subtitle {
@@ -150,5 +169,32 @@ export default class TradeCrypto extends mixins(Global, Authenticated) {
 	font-size: 19px;
 	font-weight: bold;
 	color: #67cb8a;
+
+  margin-left: 30px;
+}
+.subtitle{
+  padding:5px 5px 5px 5px;
+  font-size: 18px;
+  border-radius: 20px;
+}
+
+.price > span{
+  display:flex;
+  color: #000;
+  font-weight: 600;
+}
+.back__button{
+   padding: 10px 40px;
+   color:#fff;
+   background: #000;
+   border:none;
+   border-radius: 24px;
+   cursor: pointer;
+}
+.price p{
+  padding:0 10px;
+  font-size: 19px;
+  font-weight: bold;
+  color: #67CB8A;
 }
 </style>
