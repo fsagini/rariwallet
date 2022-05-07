@@ -28,7 +28,7 @@
 				<div class="buttons horizontal-buttons mt-3">
 					<button
 						tag="button"
-						@click="sendInApp"
+						@click="sendRoute"
 						class="button is-black is-small-button has-text-weight-bold transition-faster"
 					>
 						<span data-cy="sendButton" class="text">{{ $t('common.SEND') }}</span>
@@ -174,15 +174,12 @@ export default class Wallet extends mixins(Global, Authenticated) {
 		const image = jazzicon(32, seed);
 		ref.append(image);
 	}
-
-	async sendInApp() {
-		if (this.isIframe()) {
-			if (this.store.connection && this.store.connection !== null) {
-				const promise = this.store.connection.promise;
-				(await promise).openSendInApp();
-			}
-		}
+    
+    sendRoute(){
+		this.router.push('/send/crypto/coin').catch(() => undefined);
 	}
+
+	
 
 	copyETHAddress(ethAddress: string): void {
 		copyToClipboard(ethAddress);
