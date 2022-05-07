@@ -14,7 +14,6 @@
 </template>
 
 <script lang="ts">
-import { get } from 'js-cookie';
 import Component, { mixins } from 'vue-class-component';
 import { Global, Authenticated } from '../mixins/mixins';
 import { getPrice } from '../utils/fetchCoins';
