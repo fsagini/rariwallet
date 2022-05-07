@@ -1,41 +1,27 @@
 <template>
 	<div class="container">
-		<h2 class="title"> Buy Crypto</h2>
+		<h2 class="title">Buy Crypto</h2>
 		<p data-cy="buyCryptoTitle" class="subtitle">Purchase crypto via mpesa</p>
 
 		<div class="field">
 			<div class="control">
-				<input
-                    disabled
-					type="text"
-					class="input"
-					name="coinType"
-					v-model="coinType"
-					@keypress="handleKeyPress"
-				/>
+				<input disabled type="text" class="input" name="coinType" v-model="coinType" @keypress="handleKeyPress" />
 			</div>
 		</div>
 
-        <div class="field">
+		<div class="field">
 			<label class="label">Amount To Pay (Ksh)</label>
 			<div class="control">
-				<input
-					data-cy="amountToPay"
-					type="text"
-					class="input"
-					name="amountToPay"
-					v-model="amountToPay"
-					@keypress="handleKeyPress"
-				/>
+				<input data-cy="amountToPay" type="text" class="input" name="amountToPay" v-model="amountToPay" @keypress="handleKeyPress" />
 			</div>
 		</div>
 
-        <div class="field">
-			<label class="label">Amount To Receive</label>
+		<div class="field">
+			<label class="label">Total amount of {{ coinType }} you will Recieve</label>
 			<div class="control">
 				<input
 					data-cy="amountToReceive"
-                    disabled
+					disabled
 					type="text"
 					class="input"
 					name="amountToReceive"
@@ -70,10 +56,10 @@ import { Authenticated } from '../mixins/mixins';
 
 @Component({})
 export default class Transact extends mixins(Authenticated) {
-    walletPassword = '';
-    amountToReceive = 0
-    amountToPay = 0
-    coinType = this.$route.params.id
+	walletPassword = '';
+	amountToReceive = 0;
+	amountToPay = 0;
+	coinType = this.$route.params.id;
 	logonError = '';
 
 	@Prop()
@@ -84,12 +70,12 @@ export default class Transact extends mixins(Authenticated) {
 		if (newValue) this.logonError = newValue;
 	}
 
-    purchaseCrypto(){
-        // add logic to buy via mpesa
-    }
+	purchaseCrypto() {
+		// add logic to buy via mpesa
+	}
 
 	pageBack() {
-		this.$router.push('/').catch(() => undefined);;
+		this.$router.push('/trade').catch(() => undefined);
 	}
 
 	handleKeyPress(e: any) {
