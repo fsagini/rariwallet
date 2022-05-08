@@ -1,45 +1,52 @@
 <template>
 	<div class="container">
-		<h2 class="title"> Buy Crypto</h2>
-		<p data-cy="buyCryptoTitle" class="subtitle">Purchase crypto via mpesa</p>
+
+		<h2 class="title">BUY CRYPTO CURRENCY</h2>
+		<p data-cy="buyCryptoTitle" class="sub__title">Purchase crypto via mpesa</p>
+		<div class="coinImage">
+			<img :src="coinImage" alt="coinType" />
+		</div>
 
 		<div class="field">
 			<div class="control">
-				<input
-                    disabled
-					type="text"
-					class="input"
-					name="coinType"
-					v-model="coinType"
-					@keypress="handleKeyPress"
-				/>
+				<input disabled type="text" class="input" name="coinType" v-model="coinType" @keypress="handleKeyPress" />
 			</div>
 		</div>
 
-        <div class="field">
+		<div class="field">
 			<label class="label">Amount To Pay (Ksh)</label>
 			<div class="control">
-				<input
-					data-cy="amountToPay"
-					type="text"
-					class="input"
-					name="amountToPay"
-					v-model="amountToPay"
-					@keypress="handleKeyPress"
-				/>
+				<input data-cy="amountToPay" type="text" class="input" name="amountToPay" v-model="amountToPay" @keypress="handleKeyPress" />
+
 			</div>
+			<p v-if="amountError" class="value__error">Amount cannot be less than 500</p>
 		</div>
 
-        <div class="field">
-			<label class="label">Amount To Receive</label>
+		<div class="field">
+			<label class="label">Total amount of {{ coinType }} you will Recieve</label>
 			<div class="control">
 				<input
 					data-cy="amountToReceive"
-                    disabled
+					disabled
 					type="text"
 					class="input"
 					name="amountToReceive"
 					v-model="amountToReceive"
+					@keypress="handleKeyPress"
+				/>
+			</div>
+		</div>
+		<div class="field">
+			<label class="label">Tranasaction Fee</label>
+			<div class="control">
+				<input
+					data-cy="transactionFee"
+
+					disabled
+					type="text"
+					class="input"
+					name="transactionFee"
+					v-model="transactionFee"
 					@keypress="handleKeyPress"
 				/>
 			</div>
@@ -70,11 +77,14 @@ import { Authenticated } from '../mixins/mixins';
 
 @Component({})
 export default class Transact extends mixins(Authenticated) {
-    walletPassword = '';
-    amountToReceive = 0
-    amountToPay = 0
-    coinType = this.$route.params.id
+	walletPassword = '';
+	amountToReceive = 0;
+	amountToPay = 0;
+	coinType = this.$route.params.id;
+	coinImage = this.$route.params.addr;
 	logonError = '';
+	transactionFee = 50;
+	amountError = true;
 
 	@Prop()
 	error!: string;
@@ -84,12 +94,12 @@ export default class Transact extends mixins(Authenticated) {
 		if (newValue) this.logonError = newValue;
 	}
 
-    purchaseCrypto(){
-        // add logic to buy via mpesa
-    }
+	purchaseCrypto() {
+		// add logic to buy via mpesa
+	}
 
 	pageBack() {
-		this.$router.push('/').catch(() => undefined);;
+		this.$router.push('/trade').catch(() => undefined);
 	}
 
 	handleKeyPress(e: any) {
@@ -100,3 +110,29 @@ export default class Transact extends mixins(Authenticated) {
 	}
 }
 </script>
+
+<style scoped>
+.title {
+	font-weight: bold;
+	margin-bottom: 0;
+}
+.sub__title {
+	padding: 10px 5px 5px 10px;
+	font-weight: bold;
+	font-size: 17px;
+}
+.value__error {
+	padding: 10px 10px;
+	background: rgb(248, 246, 246);
+	border-radius: 14px;
+	color: #f00;
+	font-size: 17px;
+	margin-top: 5px;
+}
+.coinImage img {
+	width: 100px;
+	height: 100px;
+	object-fit: cover;
+	background-size: contain;
+}
+</style>

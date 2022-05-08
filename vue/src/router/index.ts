@@ -18,6 +18,7 @@ import TwoFactorSettings from '../views/TwoFactorSettings.vue';
 import KeysSettings from '../views/KeysSettings.vue';
 import RecoverySettings from '../views/RecoverySettings.vue';
 import DeleteSettings from '../views/DeleteSettings.vue';
+import SendCrypto from '../views/SendCrypto.vue';
 
 Vue.use(VueRouter);
 
@@ -142,6 +143,14 @@ const routes: Array<RouteConfig> = [
 		path: '/trade/buy/:addr/:id/',
 		name: 'Transact',
 		component: Transact,
+		meta: {
+			requiresAuth: true
+		}
+	},
+	{
+		path: '/send/crypto/coin',
+		name: 'SendCrypto',
+		component: SendCrypto,
 		meta: {
 			requiresAuth: true
 		}
