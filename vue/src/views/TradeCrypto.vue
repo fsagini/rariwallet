@@ -57,10 +57,10 @@ export default class TradeCrypto extends mixins(Global, Authenticated) {
 
 	async mounted() {
 		for (let i = 0; i < this.addresses.length; i++) {
-			value = await getPrice(addresses[i].addr);
+			value = await getPrice(this.addresses[i].addr);
 			this.coins.push({
 				symbol: this.addresses[i].symbol,
-        			addr:this.addresses[i].addr,
+        		addr:this.addresses[i].addr,
 			 	price: value,
 				imgURL: this.addresses[i].img,
 				title: this.addresses[i].name,
