@@ -58,6 +58,4 @@ export async function getPrice(address: string) {
     const roundData = await priceFeed.latestRoundData();
     const decimals = await priceFeed.decimals();
     return Number((roundData.answer.toString() / Math.pow(10, decimals)).toFixed(2));
-
 }
-
