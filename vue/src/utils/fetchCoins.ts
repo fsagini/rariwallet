@@ -1,10 +1,8 @@
 import { ethers } from 'ethers';
 
-export async function getPrice(address:any) {
-{/*
-I have created a node at infura, this function is fetching latest round data for each coin from chainlink.
-import it and parse the coin address to it.
-*/}
+
+export async function getPrice(address: string) {
+
     const provider = new ethers.providers.JsonRpcProvider("https://rinkeby.infura.io/v3/bdd9a9d596d0418e8df81be7136dfc4d");
     const aggregatorV3InterfaceABI = [
         {
