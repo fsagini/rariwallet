@@ -2,21 +2,29 @@
 	<div class="container">
 		<h2 class="title">BUY CRYPTO WITH M-PESA</h2>
 		<p data-cy="buyCryptoTitle" class="subtitle">Supported Crypto Coins with Real-Time Market Price</p>
-    <button class="back__button" @click="NavigateBack">BACK</button>
-		<div class="list-view" v-for="coin in coins" :key="coin.symbol">
-			<router-link :to="{ name: 'Transact', params: { id: coin.symbol, addr: coin.addr } }">
-				<div data-cy="coinsData" key="coinsData" class="coins-data ">
-					<div class="text link">
-						<span class="title">{{ coin.symbol }}</span>
-						<div class="coin__img">
-							<img :src="coin.imgURL" :alt="coin.symbol" />
+		<button class="back__button" @click="NavigateBack">BACK</button>
+		<div v-if="coins.length !== 0">
+			<div class="list-view" v-for="coin in coins" :key="coin.symbol">
+				<router-link :to="{ name: 'Transact', params: { id: coin.symbol, addr: coin.addr } }">
+					<div data-cy="coinsData" key="coinsData" class="coins-data">
+						<div class="text link">
+							<span class="title">{{ coin.symbol }}</span>
+							<div class="coin__img">
+								<img :src="coin.imgURL" :alt="coin.symbol" />
+							</div>
+						</div>
+						<div class="price">
+							<span
+								>Market Price:
+								<p>${{ coin.price }}</p></span
+							>
 						</div>
 					</div>
-					<div class="price">
-            <span>Market Price: <p> ${{coin.price}}</p></span> 
-          </div>
-				</div>
-			</router-link>
+				</router-link>
+			</div>
+		</div>
+		<div v-else class="coins__loading">
+			<p>Coins Loading....</p>
 		</div>
 	</div>
 </template>
@@ -26,7 +34,7 @@ import Component, { mixins } from 'vue-class-component';
 import { Global, Authenticated } from '../mixins/mixins';
 
 import { getPrice } from '../utils/fetchCoins';
-let value: number
+let value: number;
 
 @Component
 export default class TradeCrypto extends mixins(Global, Authenticated) {
@@ -71,19 +79,19 @@ export default class TradeCrypto extends mixins(Global, Authenticated) {
 				symbol: this.addresses[i].symbol,
 				addr: this.addresses[i].addr,
 				imgURL: this.addresses[i].img,
-				price:value,
+				price: value,
 				title: this.addresses[i].name
 			});
 		}
 		console.log('coins : ', this.coins);
-		 //var myHeaders = new Headers(); myHeaders.append("apikey", "xXHV07ckmqDKWbX2rbe3B42hZIerttDS"); 
+		//var myHeaders = new Headers(); myHeaders.append("apikey", "xXHV07ckmqDKWbX2rbe3B42hZIerttDS");
 		//var requestOptions: RequestInit = { method: 'GET', redirect: 'follow', headers: myHeaders };
 		// fetch("https://api.apilayer.com/fixer/latest?symbols=KES&base=USD",requestOptions) .then(response => response.text()) .then(result => console.log(result)) .catch(error => console.log('error', error));
 	}
 
-  NavigateBack(){
-    this.$router.push('/').catch(() => undefined);
-  }
+	NavigateBack() {
+		this.$router.push('/').catch(() => undefined);
+	}
 	// fetchCoins().then(() => this.loading = false);
 }
 </script>
@@ -97,17 +105,16 @@ export default class TradeCrypto extends mixins(Global, Authenticated) {
 	padding: 15px;
 }
 
-.title{
-  font-family: sans-serif;
-  font-weight: 800;
-  font-size: 20px;
-
+.title {
+	font-family: sans-serif;
+	font-weight: 800;
+	font-size: 20px;
 }
 
 .link {
 	color: #000;
 	display: flex;
-  justify-content: space-between;
+	justify-content: space-between;
 }
 
 .coin__img {
@@ -119,31 +126,38 @@ export default class TradeCrypto extends mixins(Global, Authenticated) {
 	height: 70px;
 	margin-right: 20px;
 	border-radius: 50%;
-  margin-left: 30px;
+	margin-left: 30px;
 }
-.subtitle{
-  padding:5px 5px 5px 5px;
-  font-size: 18px;
-  border-radius: 20px;
+.subtitle {
+	padding: 5px 5px 5px 5px;
+	font-size: 18px;
+	border-radius: 20px;
 }
 
-.price > span{
-  display:flex;
-  color: #000;
-  font-weight: 600;
+.coins__loading {
+	display: flex;
+	justify-content: center;
+	align-content: center;
+	margin-top: 50px;
 }
-.back__button{
-   padding: 10px 40px;
-   color:#fff;
-   background: #000;
-   border:none;
-   border-radius: 24px;
-   cursor: pointer;
+
+.price > span {
+	display: flex;
+	color: #000;
+	font-weight: 600;
 }
-.price p{
-  padding:0 10px;
-  font-size: 19px;
-  font-weight: bold;
-  color: #67CB8A;
+.back__button {
+	padding: 10px 40px;
+	color: #fff;
+	background: #000;
+	border: none;
+	border-radius: 24px;
+	cursor: pointer;
+}
+.price p {
+	padding: 0 10px;
+	font-size: 19px;
+	font-weight: bold;
+	color: #67cb8a;
 }
 </style>
