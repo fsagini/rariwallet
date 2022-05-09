@@ -26,7 +26,7 @@ import Component, { mixins } from 'vue-class-component';
 import { Global, Authenticated } from '../mixins/mixins';
 
 import { getPrice } from '../utils/fetchCoins';
-let value
+let value: number
 
 @Component
 export default class TradeCrypto extends mixins(Global, Authenticated) {
@@ -70,8 +70,8 @@ export default class TradeCrypto extends mixins(Global, Authenticated) {
 			this.coins.push({
 				symbol: this.addresses[i].symbol,
 				addr: this.addresses[i].addr,
-				price: value,
 				imgURL: this.addresses[i].img,
+				price:value,
 				title: this.addresses[i].name
 			});
 		}
