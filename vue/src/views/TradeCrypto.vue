@@ -8,7 +8,7 @@
 		<div></div>
 		<div class="list-view" v-for="coin in coins" :key="coin.symbol">
 			<router-link :to="{ name: 'Transact', params: { id: coin.symbol, addr: coin.imgURL } }">
-				<div data-cy="coinsData" key="coinsData" class="coins-data">
+				<div  class="coins-data">
 					<div class="text coin__data">
 						<span>{{ coin.symbol }}</span>
 						<p>Market Price: ${{ coin.price }}</p>
@@ -67,6 +67,7 @@ export default class TradeCrypto extends mixins(Global, Authenticated) {
 	async mounted() {
 		for (let i = 0; i < this.addresses.length; i++) {
 			value = await getPrice(this.addresses[i].addr);
+			console.log("Done")
 			this.coins.push({
 				symbol: this.addresses[i].symbol,
 			 	price: value,
@@ -76,7 +77,7 @@ export default class TradeCrypto extends mixins(Global, Authenticated) {
 			});
 		}
 		console.log('coins : ', this.coins);
-		console.log('price', getPrice(this.coins.addr));
+		console.log('price:',this.coins.price);
 	}
   pageBack(){
     this.router.push('/').catch(() => undefined)
