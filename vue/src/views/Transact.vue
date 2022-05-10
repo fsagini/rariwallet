@@ -74,21 +74,20 @@
 import Component, { mixins } from 'vue-class-component';
 import { Emit, Prop, Watch } from 'vue-property-decorator';
 import { Authenticated } from '../mixins/mixins';
-
 @Component({})
 export default class Transact extends mixins(Authenticated) {
 	walletPassword = '';
 	amountToReceive = 0;
 	amountToPay = 0;
-	coinType = this.$route.params.id;
 	coinImage = this.$route.params.addr;
 	logonError = '';
 	transactionFee = 50;
 	amountError = true;
-
+	coinsData:any = [];
+    
 	@Prop()
 	error!: string;
-
+    
 	@Watch('error')
 	handleErorrChange(newValue: string) {
 		if (newValue) this.logonError = newValue;
@@ -97,7 +96,7 @@ export default class Transact extends mixins(Authenticated) {
 	purchaseCrypto() {
 		// add logic to buy via mpesa
 	}
-
+    
 	pageBack() {
 		this.$router.push('/trade').catch(() => undefined);
 	}
