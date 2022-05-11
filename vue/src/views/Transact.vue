@@ -23,6 +23,8 @@
 		</div>
 
 		<div class="field">
+			<label class="label">KES Rates: {{ kesRates }}</label>
+
 			<label class="label">Total amount of {{ coinType }} you will Recieve</label>
 			<div class="control">
 				<input
@@ -37,7 +39,7 @@
 			</div>
 		</div>
 		<div class="field">
-			<label class="label">Tranasaction Fee</label>
+			<label class="label">Transaction Fee</label>
 			<div class="control">
 				<input
 					data-cy="transactionFee"
@@ -79,7 +81,9 @@ export default class Transact extends mixins(Authenticated) {
 	walletPassword = '';
 	amountToReceive = 0;
 	amountToPay = 0;
-	coinImage = this.$route.params.addr;
+	coinImage = this.$route.params.img;
+	coinType = this.$route.params.id;
+	kesRates = this.$route.params.keRate;
 	logonError = '';
 	transactionFee = 50;
 	amountError = true;
@@ -131,6 +135,7 @@ export default class Transact extends mixins(Authenticated) {
 .coinImage img {
 	width: 100px;
 	height: 100px;
+	border-radius: 50%;
 	object-fit: cover;
 	background-size: contain;
 }
