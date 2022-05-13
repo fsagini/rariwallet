@@ -5,7 +5,7 @@
 		<button class="back__button" @click="NavigateBack">BACK</button>
 		<div v-if="coins.length !== 0">
 			<div class="list-view" v-for="coin in coins" :key="coin.symbol">
-				<router-link :to="{ name: 'Transact', params: { id: coin.symbol, addr: coin.addr } }">
+				<router-link :to="{ name: 'Transact', params: { id: coin.symbol, addr: coin.addr, img:coin.imgURL, keRate:coin.keRate } }">
 					<div data-cy="coinsData" key="coinsData" class="coins-data">
 						<div class="text link">
 							<span class="title">{{ coin.symbol }}</span>
@@ -38,6 +38,7 @@ let value: number;
 
 @Component
 export default class TradeCrypto extends mixins(Global, Authenticated) {
+	rate: any
 	coins: any = [];
 	addresses: any = [
 		{
@@ -73,6 +74,13 @@ export default class TradeCrypto extends mixins(Global, Authenticated) {
 	];
 
 	async mounted() {
+		var myHeaders = new Headers();
+	    myHeaders.append("apikey", "xXHV07ckmqDKWbX2rbe3B42hZIerttDS");
+		fetch("https://api.apilayer.com/fixer/latest?symbols=KES&base=USD",{ method: 'GET', redirect: 'follow', headers: myHeaders }) .then(response => response.text()) 
+		.then(result => {
+			var kerate:any =JSON.parse(result) 
+			this.rate=kerate.rates.KES}) 
+		.catch(error => console.log('error', error));
 		for (let i = 0; i < this.addresses.length; i++) {
 			value = await getPrice(this.addresses[i].addr);
 			this.coins.push({
@@ -80,13 +88,12 @@ export default class TradeCrypto extends mixins(Global, Authenticated) {
 				addr: this.addresses[i].addr,
 				imgURL: this.addresses[i].img,
 				price: value,
-				title: this.addresses[i].name
+				title: this.addresses[i].name,
+				keRate:this.rate,
 			});
 		}
 		console.log('coins : ', this.coins);
-		//var myHeaders = new Headers(); myHeaders.append("apikey", "xXHV07ckmqDKWbX2rbe3B42hZIerttDS");
-		//var requestOptions: RequestInit = { method: 'GET', redirect: 'follow', headers: myHeaders };
-		// fetch("https://api.apilayer.com/fixer/latest?symbols=KES&base=USD",requestOptions) .then(response => response.text()) .then(result => console.log(result)) .catch(error => console.log('error', error));
+
 	}
 
 	NavigateBack() {
