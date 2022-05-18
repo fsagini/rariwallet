@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div class="sign__up">
 		<vue-recaptcha
 			ref="recaptcha"
 			size="invisible"
@@ -11,19 +11,23 @@
 			@render="onCaptchaLoaded"
 			style="display: none"
 		/>
-		<div class="container">
+		<div>
 			<h2 data-cy="signUpTitle" class="title">{{ $t('auth.SIGNUP') }}</h2>
+			<div class="signup_image">
+				<img src="../assets/img/auth/signupbanner-removebg-preview.png" alt="">
+			</div>
+		</div>
+		<div class="container figma">
 			<form v-on:submit.prevent="signupExecute" novalidate>
-				<div class="field">
-					<label class="label">{{ $t('common.EMAIL') }}</label>
+				<div>
+					<div class="field title__mt">
+					<label class="label ">{{ $t('common.EMAIL') }}</label>
 					<div class="control">
 						<input type="email" class="input" name="walletEmail" data-cy="walletEmail" v-model="walletEmail" />
 					</div>
 				</div>
-
 				<div class="field">
 					<label class="label">{{ $t('common.PASSWORD') }}</label>
-
 					<div class="control">
 						<input type="password" class="input password-input" name="walletPassword" data-cy="walletPassword" v-model="walletPassword" />
 						<password v-model="walletPassword" :strength-meter-only="true" :secure-length="8" style="max-width: initial" />
@@ -91,7 +95,7 @@
 					<p>⚠️ <span v-html="logonError"></span></p>
 				</div>
 
-				<button type="submit" data-cy="createNewWallet" class="button is-green big-button is-login transition-faster">
+				<button type="submit" data-cy="createNewWallet" class="button  big-button is_login transition-faster">
 					<span class="text">{{ $t('auth.CREATE_WALLET') }}</span>
 				</button>
 
@@ -101,9 +105,10 @@
 					<span>{{ $t('auth.ALREADY_HAVE_WALLET') }}</span>
 					<router-link to="/login" class="login-router transition-faster">
 						<span data-cy="logInButton">
-							{{ $t('auth.LOGIN') }}
+							{{ $t('auth.ALREADY_HAVE_ACCOUNT') }}
 						</span>
 					</router-link>
+				</div>
 				</div>
 			</form>
 		</div>
@@ -187,7 +192,6 @@ export default class Signup extends mixins(Global, Recaptcha) {
 		}
 
 		const email = this.walletEmail;
-
 		const recaptchaToken = this.recaptchaToken;
 		this.showSpinner('Creating Wallet...');
 		this.createWallet({ email, password: this.walletPassword, recaptchaToken })
@@ -221,12 +225,33 @@ export default class Signup extends mixins(Global, Recaptcha) {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.signup_image img{
+	outline: none;
+	background: none;
+}
+.title__mt {
+	padding-top: 25px;
+}
+.figma{
+	background: #fff;
+	border-radius: 14px 14px 0 0;
+}
 h3 {
 	margin: 40px 0 0;
 }
 ul {
 	list-style-type: none;
 	padding: 0;
+}
+.create_account{
+	background: #99d7f1;
+	border: none;
+	color:#fff;
+	font-size: 25px;
+	padding: 15px 80px;
+	cursor: pointer; 
+	font-weight: 700;
+	border-radius: 10px;
 }
 li {
 	display: inline-block;

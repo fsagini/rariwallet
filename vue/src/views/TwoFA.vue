@@ -1,89 +1,94 @@
 <template>
-	<div class="container">
-		<vue-recaptcha
-			ref="recaptcha"
-			size="invisible"
-			:sitekey="recaptchaSiteKey"
-			:load-recaptcha-script="true"
-			@verify="onCaptchaVerified"
-			@error="onCaptchaError"
-			@expired="onCaptchaExpired"
-			@render="onCaptchaLoaded"
-			style="display: none"
-		/>
-		<img
-			v-if="(twoFaRequired.email || twoFaRequired.needConfirmation) && !twoFaRequired.authenticator"
-			src="@/assets/img/email_verification.svg"
-			alt="Email 2FA image"
-			class="mb-3"
-		/>
-		<img v-if="twoFaRequired.authenticator" src="@/assets/img/authenticator.svg" alt="Phone authenticator image" class="mb-3" />
-		<h2 data-cy="verificationTitle" class="title">{{ $t('settings.2_STEP_VERIFICATION') }}</h2>
-		<p v-if="(twoFaRequired.email || twoFaRequired.needConfirmation) && !twoFaRequired.authenticator" class="subtitle">
-			{{ $t('2fa.ENTER_EMAIL_CODE') }}
-		</p>
-		<p v-if="twoFaRequired.authenticator && !twoFaRequired.email && !twoFaRequired.needConfirmation" class="subtitle">
-			{{ $t('2fa.ENTER_AUTH_CODE') }}
-		</p>
-		<p v-if="twoFaRequired.email && twoFaRequired.authenticator" class="subtitle">
-			{{ $t('2fa.ENTER_BOTH_CODES') }}
-		</p>
-		<form v-on:submit.prevent="validateCode" novalidate>
-			<div class="field" v-if="twoFaRequired.email || twoFaRequired.needConfirmation">
-				<label class="label">{{ $t('2fa.EMAIL_CODE') }}</label>
-				<div class="control">
-					<input
-						type="number"
-						inputmode="numeric"
-						min="100000"
-						max="999999"
-						class="input"
-						name="emailCode"
-						id="emailCode"
-						data-cy="emailCode"
-						v-model="emailCode"
-						ref="email_code"
-					/>
+	<div>
+		<div class="banner__img">
+			<img
+				v-if="(twoFaRequired.email || twoFaRequired.needConfirmation) && !twoFaRequired.authenticator"
+				src="@/assets/img/auth/emailbanner-removebg-preview.png"
+				alt="Email 2FA image"
+				class="mb-3"
+			/>
+			<img v-if="twoFaRequired.authenticator" src="@/assets/img/authenticator.svg" alt="Phone authenticator image" class="mb-3" />
+		</div>
+		<div class="container figma">
+			<vue-recaptcha
+				ref="recaptcha"
+				size="invisible"
+				:sitekey="recaptchaSiteKey"
+				:load-recaptcha-script="true"
+				@verify="onCaptchaVerified"
+				@error="onCaptchaError"
+				@expired="onCaptchaExpired"
+				@render="onCaptchaLoaded"
+				style="display: none"
+			/>
+
+			<h2 data-cy="verificationTitle" class="title title__mt">{{ $t('settings.2_STEP_VERIFICATION') }}</h2>
+			<p v-if="(twoFaRequired.email || twoFaRequired.needConfirmation) && !twoFaRequired.authenticator" class="subtitle">
+				{{ $t('2fa.ENTER_EMAIL_CODE') }}
+			</p>
+			<p v-if="twoFaRequired.authenticator && !twoFaRequired.email && !twoFaRequired.needConfirmation" class="subtitle">
+				{{ $t('2fa.ENTER_AUTH_CODE') }}
+			</p>
+			<p v-if="twoFaRequired.email && twoFaRequired.authenticator" class="subtitle">
+				{{ $t('2fa.ENTER_BOTH_CODES') }}
+			</p>
+			<form v-on:submit.prevent="validateCode" novalidate>
+				<div class="field" v-if="twoFaRequired.email || twoFaRequired.needConfirmation">
+					<label class="label">{{ $t('2fa.EMAIL_CODE') }}</label>
+					<div class="control">
+						<input
+							type="number"
+							inputmode="numeric"
+							min="100000"
+							max="999999"
+							class="input"
+							name="emailCode"
+							id="emailCode"
+							data-cy="emailCode"
+							v-model="emailCode"
+							ref="email_code"
+						/>
+					</div>
 				</div>
-			</div>
-			<div class="field" v-if="twoFaRequired.authenticator">
-				<label class="label">{{ $t('2fa.AUTH_CODE') }}</label>
-				<div class="control">
-					<input
-						type="number"
-						inputmode="numeric"
-						class="input"
-						name="authenticatorCode"
-						id="authenticatorCode"
-						data-cy="authenticatorCode"
-						ref="auth_code"
-						v-model="authenticatorCode"
-					/>
+				<div class="field" v-if="twoFaRequired.authenticator">
+					<label class="label">{{ $t('2fa.AUTH_CODE') }}</label>
+					<div class="control">
+						<input
+							type="number"
+							inputmode="numeric"
+							class="input"
+							name="authenticatorCode"
+							id="authenticatorCode"
+							data-cy="authenticatorCode"
+							ref="auth_code"
+							v-model="authenticatorCode"
+						/>
+					</div>
 				</div>
-			</div>
 
-			<div class="error" v-if="logonError">
-				<p>⚠️ <span v-html="logonError"></span></p>
-			</div>
+				<div class="error" v-if="logonError">
+					<p>⚠️ <span v-html="logonError"></span></p>
+				</div>
 
-			<button class="button is-green big-button is-login transition-faster mt-5" type="submit" data-cy="unlock">
-				<span class="text">{{ $t('common.SUBMIT') }}</span>
-			</button>
+				<button class="button big-button is_login transition-faster mt-5" type="submit" data-cy="unlock">
+					<span class="text">{{ $t('common.SUBMIT') }}</span>
+				</button>
 
-			<button v-on:click="logout()" tag="button" class="button is-ghost is-blue big-button medium-text transition-faster">
-				<span class="text">{{ $t('common.CANCEL') }}</span>
-			</button>
-		</form>
+				<button v-on:click="logout()" tag="button" class="button is-ghost is-blue big-button medium-text transition-faster">
+					<span class="text">{{ $t('common.CANCEL') }}</span>
+				</button>
+			</form>
 
-		<p class="mt-5 transition-faster">
-			{{ $t('2fa.HAVING_PROBLEMS') }}
-			<a
-				href="https://support.morpher.com/en/article/2fa-2-step-verification-troubleshooting-ejmssf/"
-				target="__blank"
-				class="login-router"
-				>{{ $t('2fa.2_STEP_SUPPORT') }}</a
-			>
-		</p>
+			<p class="mt-5 transition-faster">
+				{{ $t('2fa.HAVING_PROBLEMS') }}
+				<a
+					href="https://support.morpher.com/en/article/2fa-2-step-verification-troubleshooting-ejmssf/"
+					target="__blank"
+					class="login-router"
+					>{{ $t('2fa.2_STEP_SUPPORT') }}</a
+				>
+			</p>
+		</div>
 	</div>
 </template>
 
@@ -158,3 +163,17 @@ export default class TwoFA extends mixins(Global, Recaptcha) {
 	}
 }
 </script>
+
+<style scoped>
+.title__mt {
+	padding-top: 25px;
+}
+.figma {
+	background: #fff;
+	border-radius: 14px 14px 0 0;
+}
+/* .banner__img img {
+	width: 300px;
+	height: 300px;
+} */
+</style>

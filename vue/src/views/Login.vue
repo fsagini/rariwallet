@@ -11,11 +11,13 @@
 			@render="onCaptchaLoaded"
 			style="display: none"
 		/>
-
-		<div class="container">
-			<h2 data-cy="logInTitle" class="title">{{ $t('auth.LOGIN') }}</h2>
+        <div class="auth__banner">
+			<h2 data-cy="logInTitle" class="title">{{ $t('auth.LOGIN__HEADER') }}</h2>
+			<img src="../assets/img/auth/signin.png" alt="">
+		</div>
+		<div class="container figma">
 			<form v-on:submit.prevent="login">
-				<div class="field">
+				<div class="field title__mt">
 					<label class="label">{{ $t('common.EMAIL') }}</label>
 					<div class="control">
 						<input type="email" class="input" data-cy="walletEmail" name="walletEmail" v-model="walletEmail" />
@@ -39,7 +41,7 @@
 					</p>
 				</div>
 
-				<button type="submit" data-cy="submit" class="button is-green big-button is-login transition-faster">
+				<button type="submit" data-cy="submit" class="button  big-button is_login transition-faster">
 					<span class="text">{{ $t('auth.LOGIN') }}</span>
 				</button>
 
@@ -110,11 +112,10 @@ export default class Login extends mixins(Global, Recaptcha) {
 			this.walletEmail = this.store.email;
 		}
 		if (!this.walletEmail) {
-			const email = localStorage.getItem('lastEmail')
-			if (email)
-				this.walletEmail = email;
+			const email = localStorage.getItem('lastEmail');
+			if (email) this.walletEmail = email;
 		}
-		
+
 		if (this.store.status !== 'invalid password' && this.store.email) {
 			// Check if the wallet can be unlocked using the local-storage stored password
 			this.unlock();
@@ -211,3 +212,18 @@ export default class Login extends mixins(Global, Recaptcha) {
 	}
 }
 </script>
+
+<style scoped>
+.figma{
+	background: #fff;
+	border-radius: 14px 14px 0 0;
+}
+.title__mt {
+	padding-top: 25px;
+}
+.auth__banner img{
+    width: 300px;
+	height:300px;
+	background-size: contain;
+}
+</style>

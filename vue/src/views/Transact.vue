@@ -1,12 +1,17 @@
 <template>
 	<div class="container">
-
 		<h2 class="title">BUY CRYPTO CURRENCY</h2>
-		<p data-cy="buyCryptoTitle" class="sub__title">Purchase crypto via mpesa</p>
+		<p data-cy="buyCryptoTitle" class="sub__title">Purchase Crypto Coins Through M-PESA</p>
 		<div class="coinImage">
 			<img :src="coinImage" alt="coinType" />
 		</div>
-
+		<div class="conversion">
+			<span>1 {{ coinType }} = ${{ coinPrice }}</span>
+			<span
+				><h1>CONVERSION RATES</h1>
+				<label class="label">$1 = KES {{ kesRates }}</label></span
+			>
+		</div>
 		<div class="field">
 			<div class="control">
 				<input disabled type="text" class="input" name="coinType" v-model="coinType" @keypress="handleKeyPress" />
@@ -17,15 +22,12 @@
 			<label class="label">Amount To Pay (Ksh)</label>
 			<div class="control">
 				<input data-cy="amountToPay" type="text" class="input" name="amountToPay" v-model="amountToPay" @keypress="handleKeyPress" />
-
 			</div>
 			<p v-if="amountError" class="value__error">Amount cannot be less than 500</p>
 		</div>
 
 		<div class="field">
-			<label class="label">KES Rates: {{ kesRates }}</label>
-
-			<label class="label">Total amount of {{ coinType }} you will Recieve</label>
+			<label class="label">Total {{ coinType }} Coins you will Recieve</label>
 			<div class="control">
 				<input
 					data-cy="amountToReceive"
@@ -43,7 +45,6 @@
 			<div class="control">
 				<input
 					data-cy="transactionFee"
-
 					disabled
 					type="text"
 					class="input"
@@ -61,7 +62,7 @@
 		<button
 			data-cy="confirmAccessButton"
 			@click="purchaseCrypto()"
-			class="button is-green big-button is-login transition-faster mt-5"
+			class="button  big-button is_login transition-faster"
 			:disabled="!amountToPay"
 		>
 			<span class="text">BUY</span>
@@ -85,13 +86,14 @@ export default class Transact extends mixins(Authenticated) {
 	coinType = this.$route.params.id;
 	kesRates = this.$route.params.keRate;
 	logonError = '';
+	coinPrice = this.$route.params.price;
 	transactionFee = 50;
-	amountError = true;
-	coinsData:any = [];
-    
+	amountError = false;
+	coinsData: any = [];
+
 	@Prop()
 	error!: string;
-    
+
 	@Watch('error')
 	handleErorrChange(newValue: string) {
 		if (newValue) this.logonError = newValue;
@@ -100,7 +102,7 @@ export default class Transact extends mixins(Authenticated) {
 	purchaseCrypto() {
 		// add logic to buy via mpesa
 	}
-    
+
 	pageBack() {
 		this.$router.push('/trade').catch(() => undefined);
 	}
@@ -131,6 +133,9 @@ export default class Transact extends mixins(Authenticated) {
 	color: #f00;
 	font-size: 17px;
 	margin-top: 5px;
+}
+.conversion span{
+	font-weight: 700;
 }
 .coinImage img {
 	width: 100px;

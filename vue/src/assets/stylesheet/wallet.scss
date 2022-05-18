@@ -115,25 +115,21 @@ body {
 	height: 100%;
 	border-radius: 0;
 	box-shadow: none;
-	background-color: #fff;
 }
 
 .main {
 	@extend %centered_block;
-
 	max-width: 414px;
 	width: 90%;
 	margin-top: 80px;
-
 	border: 1px solid $col_grey;
 	padding-bottom: $spacing_1;
-
 	height: 600px;
 	overflow: hidden;
 	overflow-y: auto;
 	display: flex;
 	flex-direction: column;
-
+	background-color: #67b7da;
 	&.dev-border {
 		border: 3px solid $col_green_light;
 	}
@@ -189,7 +185,7 @@ body {
 
 /* text elements */
 .title {
-	font-weight: 500;
+	font-weight: 700;
 	font-size: 32px;
 	margin-bottom: 0px;
 	font-family: $font1;
@@ -264,6 +260,12 @@ input[type="checkbox"]:checked {
 	border: 0;
 	border-radius: 8px;
 	cursor: pointer;
+
+	&.is_login{
+		background: #347AF0;
+		color: #000  !important;
+		font-weight: 600 !important;
+	}
 	&.is-black {
 		background-color: #000;
 		color: #fff;
@@ -419,7 +421,7 @@ input[type="checkbox"]:checked {
 .main {
 	padding-bottom: 0;
 	position: relative;
-	background-color: #fff;
+	background-color: #B4E1F5;
 	border-radius: 15px;
 	box-shadow: 0 8px 20px 0 rgb(0 0 0 / 15%);
 }
@@ -472,6 +474,14 @@ input[type="checkbox"]:checked {
 	border-radius: 7px;
 	transition: 200ms;
 
+    .back__button{
+		transition-delay: 0s;
+		transition-duration: 0.25s;
+		transition-property: all;
+		transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+		width: 150px;
+		
+	}
 	&.big-button {
 		color: white !important;
 		font-family: $font1;
@@ -897,12 +907,14 @@ input[type="checkbox"]:checked {
 	border: 1px solid #eae9ed;
 	box-shadow: 0px 2px 4px 0px rgba(0,0,0, 0.2);
 	margin: 10px;
+	background: #fff;
 }
 
 .settings-data {
 	border: 1px solid #eae9ed;
 	box-shadow: 0px 2px 4px 0px rgba(0,0,0, 0.2);
 	margin: 10px;
+	background: #fff;
 
 	.settings-link {
 		font-size: 1.1rem;
@@ -917,6 +929,7 @@ input[type="checkbox"]:checked {
 		.text {
 			margin-left: 10px;
 			text-align: left;
+			color: #fff !important;
 		}
 
 		.icon {

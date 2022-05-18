@@ -15,7 +15,7 @@
 				</div>
 				<div class="buttons horizontal-buttons mt-3">
 					<router-link to="/settings">
-						<button class="button is-black is-small-button has-text-weight-bold transition-faster">
+						<button class="button is_login is-small-button has-text-weight-bold transition-faster text_color">
 							<span data-cy="profileButton">{{ $t('common.PROFILE') }}</span>
 						</button>
 					</router-link>
@@ -25,10 +25,10 @@
 		<div class="user-details settings-data">
 			<div class="details">
 				<div class="buttons horizontal-buttons mt-3">
-					<button tag="button" @click="sendRoute" class="button is-black is-small-button has-text-weight-bold transition-faster">
+					<button tag="button" @click="sendRoute" class="button is_login is-small-button has-text-weight-bold transition-faster text_color">
 						<span data-cy="sendButton" class="text">{{ $t('common.SEND') }}</span>
 					</button>
-					<button class="button is-black is-small-button has-text-weight-bold transition-faster" @click="tradeInApp">
+					<button class="button is_login is-small-button has-text-weight-bold transition-faster text_color" @click="tradeInApp">
 						<span data-cy="tradeButton" class="text">{{ $t('common.TRADE') }}</span>
 					</button>
 				</div>
@@ -39,7 +39,7 @@
 			<div v-if="noRecoveryMethods" class="details has-text-left">
 				<p v-html="$t('recovery.ACCOUNT_AT_RISK')"></p>
 				<router-link to="/settings/recovery">
-					<button class="button is-black is-small-button has-text-weight-bold transition-faster mt-3">
+					<button class="button is_login is-small-button has-text-weight-bold transition-faster mt-3 text_color">
 						<span class="text smaller-font">{{ $t('recovery.ADD_ACCOUNT_RECOVERY') }}</span>
 					</button>
 				</router-link>
@@ -167,7 +167,7 @@ export default class Wallet extends mixins(Global, Authenticated) {
 		ref.append(image);
 	}
 	sendRoute() {
-		this.router.push('/send/crypto/coin').catch(() => undefined);
+		this.router.push('/welcome/raripay').catch(() => undefined);
 	}
 	copyETHAddress(ethAddress: string): void {
 		copyToClipboard(ethAddress);
@@ -205,5 +205,9 @@ a {
 }
 .smaller-font {
 	font-size: 14px;
+}
+.text_color{
+	color: #fff !important;
+	font-weight: 700;
 }
 </style>

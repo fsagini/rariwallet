@@ -2,10 +2,10 @@
 	<div class="container">
 		<h2 class="title">BUY CRYPTO WITH M-PESA</h2>
 		<p data-cy="buyCryptoTitle" class="subtitle">Supported Crypto Coins with Real-Time Market Price</p>
-		<button class="back__button" @click="NavigateBack">BACK</button>
+		<button class="back__button  transition-faster" @click="NavigateBack">BACK</button>
 		<div v-if="coins.length !== 0">
 			<div class="list-view" v-for="coin in coins" :key="coin.symbol">
-				<router-link :to="{ name: 'Transact', params: { id: coin.symbol, addr: coin.addr, img:coin.imgURL, keRate:coin.keRate } }">
+				<router-link :to="{ name: 'Transact', params: { id: coin.symbol, addr: coin.addr, img:coin.imgURL, keRate:coin.keRate, price:coin.price } }">
 					<div data-cy="coinsData" key="coinsData" class="coins-data">
 						<div class="text link">
 							<span class="title">{{ coin.symbol }}</span>
@@ -32,6 +32,7 @@
 <script lang="ts">
 import Component, { mixins } from 'vue-class-component';
 import { Global, Authenticated } from '../mixins/mixins';
+import {numberWithCommas} from '../utils/Commaseparator'
 
 import { getPrice } from '../utils/fetchCoins';
 let value: number;
@@ -72,7 +73,7 @@ export default class TradeCrypto extends mixins(Global, Authenticated) {
 			addr: '0x2bA49Aaa16E6afD2a993473cfB70Fa8559B523cF'
 		}
 	];
-
+    
 	async mounted() {
 		var myHeaders = new Headers();
 	    myHeaders.append("apikey", "xXHV07ckmqDKWbX2rbe3B42hZIerttDS");
@@ -87,7 +88,7 @@ export default class TradeCrypto extends mixins(Global, Authenticated) {
 				symbol: this.addresses[i].symbol,
 				addr: this.addresses[i].addr,
 				imgURL: this.addresses[i].img,
-				price: value,
+				price: numberWithCommas(value),
 				title: this.addresses[i].name,
 				keRate:this.rate,
 			});
