@@ -19,6 +19,7 @@ import KeysSettings from '../views/KeysSettings.vue';
 import RecoverySettings from '../views/RecoverySettings.vue';
 import DeleteSettings from '../views/DeleteSettings.vue';
 import SendCrypto from '../views/SendCrypto.vue';
+import  Welcome from '../views/Welcome.vue'
 
 Vue.use(VueRouter);
 
@@ -27,6 +28,11 @@ const routes: Array<RouteConfig> = [
 		path: '/login',
 		name: 'Login',
 		component: Login
+	},
+	{
+            path:'/welcome/raripay',
+			name:'Welcome',
+			component:Welcome
 	},
 	{
 		path: '/signup',
