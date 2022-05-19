@@ -172,8 +172,4 @@ export default class TwoFA extends mixins(Global, Recaptcha) {
 	background: #fff;
 	border-radius: 14px 14px 0 0;
 }
-/* .banner__img img {
-	width: 300px;
-	height: 300px;
-} */
 </style>
