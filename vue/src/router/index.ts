@@ -19,7 +19,7 @@ import KeysSettings from '../views/KeysSettings.vue';
 import RecoverySettings from '../views/RecoverySettings.vue';
 import DeleteSettings from '../views/DeleteSettings.vue';
 import SendCrypto from '../views/SendCrypto.vue';
-import  Welcome from '../views/Welcome.vue'
+import Onboarding from '../views/Onboarding.vue'
 
 Vue.use(VueRouter);
 
@@ -28,11 +28,6 @@ const routes: Array<RouteConfig> = [
 		path: '/login',
 		name: 'Login',
 		component: Login
-	},
-	{
-            path:'/welcome/raripay',
-			name:'Welcome',
-			component:Welcome
 	},
 	{
 		path: '/signup',
@@ -144,6 +139,11 @@ const routes: Array<RouteConfig> = [
 		meta: {
 			requiresAuth: true
 		}
+	},
+	{
+		path:'/rari/onboarding',
+		name:'Onboarding',
+		component:Onboarding
 	},
 	{
 		path: '/trade/buy/:addr/:id/',
