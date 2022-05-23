@@ -93,7 +93,7 @@ export default class Onboarding extends mixins(Global) {
 	flex-direction: row;
 	justify-items: center;
 	align-items: center;
-	padding-left: 30%;
+	padding-left: 42%;
 }
 .bottomborder {
 	display: flex;
