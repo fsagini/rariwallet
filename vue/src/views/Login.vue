@@ -11,27 +11,41 @@
 			@render="onCaptchaLoaded"
 			style="display: none"
 		/>
-        <div class="auth__banner">
+		<div class="auth__banner">
 			<h2 data-cy="logInTitle" class="title">{{ $t('auth.LOGIN__HEADER') }}</h2>
-			<img src="../assets/img/auth/signin.png" alt="">
+			<img src="../assets/img/auth/login.svg" alt="" />
 		</div>
 		<div class="container figma">
 			<form v-on:submit.prevent="login">
 				<div class="field title__mt">
-					<label class="label">{{ $t('common.EMAIL') }}</label>
-					<div class="control">
-						<input type="email" class="input" data-cy="walletEmail" name="walletEmail" v-model="walletEmail" />
+					<div class="textbox">
+						<input
+							type="email"
+							:placeholder="$t('common.EMAIL')"
+							data-cy="walletEmail"
+							name="walletEmail"
+							v-model="walletEmail"
+							autocomplete="off"
+						/>
 					</div>
 				</div>
-
 				<div class="field">
-					<label class="label">{{ $t('common.PASSWORD') }}</label>
-
-					<div class="control">
-						<input type="password" class="input" data-cy="walletPassword" name="walletPassword" v-model="walletPassword" />
+					<div class="textbox">
+						<div>
+							<span @click="viewPassword">
+								<i :class="{ 'fa-solid fa-eye-slash': showPassword, 'fas fa-eye': !showPassword }"></i>
+							</span>
+						</div>
+						<input
+							:type="seePassword ? 'text' : 'password'"
+							:placeholder="$t('common.PASSWORD')"
+							data-cy="walletPassword"
+							name="walletPassword"
+							v-model="walletPassword"
+							autocomplete="off"
+						/>
 					</div>
 				</div>
-
 				<div class="error" v-if="logonError">
 					<p data-cy="loginError">
 						⚠️ <span v-html="logonError"></span>
@@ -41,7 +55,7 @@
 					</p>
 				</div>
 
-				<button type="submit" data-cy="submit" class="button  big-button is_login transition-faster">
+				<button type="submit" data-cy="submit" class="signin__button">
 					<span class="text">{{ $t('auth.LOGIN') }}</span>
 				</button>
 
@@ -85,7 +99,11 @@ export default class Login extends mixins(Global, Recaptcha) {
 	walletPassword = '';
 	showRecovery = false;
 	logonError = '';
+	showPassword = false;
 
+	viewPassword() {
+		this.showPassword = !this.showPassword;
+	}
 	unlock() {
 		this.unlockWithStoredPassword(this.recaptchaToken)
 			.then((result) => {
@@ -142,7 +160,9 @@ export default class Login extends mixins(Global, Recaptcha) {
 
 	/**
 	 * Execute the logon
+	 *
 	 */
+
 	login() {
 		// block if login is already executing
 		if (this.store.loading) {
@@ -214,16 +234,47 @@ export default class Login extends mixins(Global, Recaptcha) {
 </script>
 
 <style scoped>
-.figma{
+.textbox {
+	border-bottom: 3px solid #a3bdfe;
+	width: 100%;
+	overflow: hidden;
+	font-size: 20px;
+	padding: 8px 0;
+}
+
+.textbox input {
+	border: none;
+	outline: none;
+	background: none;
+	overflow: hidden;
+}
+.signin__button {
+	padding: 10px 100px;
+	border-radius: 24px;
+	color: #fff;
+	border: none;
+	background: #347af0;
+	font-size: 19px;
+	font-weight: 700;
+	cursor: pointer;
+}
+.figma {
 	background: #fff;
 	border-radius: 14px 14px 0 0;
 }
+.fa-eye {
+	cursor: pointer;
+	margin-left: 250px;
+	position: absolute;
+	top: 155px;
+}
+.fa-eye-slash {
+	margin-left: 250px;
+	position: absolute;
+	top: 155px;
+	cursor: pointer;
+}
 .title__mt {
 	padding-top: 25px;
-}
-.auth__banner img{
-    width: 300px;
-	height:300px;
-	background-size: contain;
 }
 </style>

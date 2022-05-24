@@ -50,7 +50,7 @@
     },
     "auth": {
         "ALREADY_HAVE_ACCOUNT":"login to your wallet",
-        "LOGIN__HEADER": "Welcome Back!",
+        "LOGIN__HEADER": "Welcome Back !",
         "LOGIN":"LOGIN",
         "LOGIN_DESCRIPTION": "Unlock your crypto wallet.",
         "RECOVER_YOUR_WALLET_QUESTION": "Recover your wallet?",
@@ -59,7 +59,7 @@
         "DO_NOT_HAVE_WALLET": "Don't have a wallet?",
         "SIGNUP": "Create Wallet Account",
         "SIGNUP_DESCRIPTION": "Create a new wallet.",
-        "CREATE_WALLET": "Create Wallet",
+        "CREATE_WALLET": "Let's Get Started",
         "ALREADY_HAVE_WALLET": "Already have your wallet?",
         "UNLOCK_TITLE": "Welcome Back",
         "UNLOCK_DESCRIPTION": "Unlock your crypto wallet.",
