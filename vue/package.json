@@ -12,6 +12,9 @@
   },
   "dependencies": {
     "@ethereumjs/common": "^2.6.3",
+    "@fortawesome/fontawesome-svg-core": "^6.1.1",
+    "@fortawesome/free-regular-svg-icons": "^6.1.1",
+    "@fortawesome/free-solid-svg-icons": "^6.1.1",
     "@metamask/jazzicon": "^2.0.0",
     "@sentry/integrations": "^6.16.1",
     "@sentry/vue": "^6.16.1",

@@ -8,7 +8,7 @@
 		<div class="send__container">
 			<form @submit.prevent="sendInApp">
 				<div class="field">
-					<label class="label">COIN TO SEND</label>
+					<label class="label">CRYPTO COIN TO SEND</label>
 					<div class="control select">
 						<select v-model="CoinToSend" required>
 							<option v-for="wallet in Wallets" :key="wallet.name">{{ wallet.name }}</option>
@@ -31,15 +31,7 @@
 				<div class="field">
 					<label class="label">AMOUNT OF COINS TO SEND</label>
 					<div class="control">
-						<input
-							data-cy="coinsToSend"
-							type="number"
-							required
-							step="any"
-							class="input"
-							name="coinsToSend"
-							v-model="coinsToSend"
-						/>
+						<input data-cy="coinsToSend" type="number" required step="any" class="input" name="coinsToSend" v-model="coinsToSend" />
 					</div>
 				</div>
 				<p v-if="balanceError" class="value__error">You do not have enough {{ CoinToSend }} coins to send. Try lower amount</p>
@@ -107,7 +99,6 @@ export default class SendCrypto extends mixins(Global, Authenticated) {
 	}
 }
 </script>
-
 
 <style scoped>
 .title {
