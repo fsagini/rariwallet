@@ -99,7 +99,6 @@
 							/>
 						</div>
 					</div>
-
 					<div class="error" v-if="logonError">
 						<p>⚠️ <span v-html="logonError"></span></p>
 					</div>

@@ -94,7 +94,6 @@ export default class TradeCrypto extends mixins(Global, Authenticated) {
 			});
 		}
 		console.log('coins : ', this.coins);
-
 	}
 
 	NavigateBack() {
