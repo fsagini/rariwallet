@@ -17,9 +17,12 @@ import TwoFactorSettings from '../views/TwoFactorSettings.vue';
 import KeysSettings from '../views/KeysSettings.vue';
 import RecoverySettings from '../views/RecoverySettings.vue';
 import DeleteSettings from '../views/DeleteSettings.vue';
-import SendCrypto from '../views/SendCrypto.vue';
+import Send from '../views/Send.vue';
 import Onboarding from '../views/Onboarding.vue';
 import Portfolio from '../views/Portfolio.vue';
+import BuyAsset from '../views/Deposit.vue';
+import Withdraw from '../views/Withdraw.vue';
+import Transactions from '../views/Transactions.vue';
 
 Vue.use(VueRouter);
 
@@ -91,9 +94,25 @@ const routes: Array<RouteConfig> = [
 		}
 	},
 	{
+		path: '/buy/asset',
+		name: 'BuyAsset',
+		component: BuyAsset,
+		meta: {
+			requiresAuth: true
+		}
+	},
+	{
 		path: '/recovery',
 		name: 'Recovery',
 		component: Recovery
+	},
+	{
+		path: '/withdraw/asset',
+		name: 'Withdraw',
+		component: Withdraw,
+		meta: {
+			requiresAuth: true
+		}
 	},
 	{
 		path: '/2fa',
@@ -133,6 +152,14 @@ const routes: Array<RouteConfig> = [
 		}
 	},
 	{
+		path: '/your/transactions',
+		name: 'Transactions',
+		component: Transactions,
+		meta: {
+			requiresAuth: true
+		}
+	},
+	{
 		path: '/trade',
 		name: 'TradeCrypto',
 		component: TradeCrypto,
@@ -154,9 +181,9 @@ const routes: Array<RouteConfig> = [
 		}
 	},
 	{
-		path: '/send/crypto/coin',
-		name: 'SendCrypto',
-		component: SendCrypto,
+		path: '/send/asset',
+		name: 'Send',
+		component: Send,
 		meta: {
 			requiresAuth: true
 		}
@@ -191,7 +218,7 @@ router.beforeEach(async (to, from, next) => {
 			return;
 		}
 
-		await store.dispatch('loadEncryptedSeed')
+		await store.dispatch('loadEncryptedSeed');
 		if (store.state.email) {
 			next('/unlock');
 			return;

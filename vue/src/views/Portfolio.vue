@@ -2,10 +2,10 @@
 	<div>
 		<div class="portfolio__header">
 			<div class="arrow__left">
-				<i class="fa-solid fa-less-than"></i>
+				<span>RARI PAY</span>
 			</div>
 			<div class="portfolio__title">
-				<span>Portfolio</span>
+				<span>WALLET</span>
 			</div>
 			<div class="portfolio__menu">
 				<button class="menu__button" @click="toggleMenu">
@@ -13,7 +13,11 @@
 				</button>
 			</div>
 		</div>
-
+		<div class="portfolio__wallet">
+			<span v-if="walletBalance"> $ {{ walletBalance }}</span>
+			<span v-else> $waiting...</span>
+			<p>Wallet Balance</p>
+		</div>
 		<!-- Menu Beggining -->
 		<div v-if="menuShowing === true" class="menu__items">
 			<div class="user__details">
@@ -26,6 +30,7 @@
 					<p data-cy="currentEmail">+254713654667</p>
 				</div>
 			</div>
+
 			<transition-group tag="ul" name="list" class="menu__list">
 				<li @click="navigatePath(menu.path)" class="menu__row" v-for="menu in menuData" :key="menu.icon">
 					<div id="icon" :class="menu.icon"></div>
@@ -34,14 +39,9 @@
 			</transition-group>
 		</div>
 		<!-- Menu Ending -->
-		<div class="portfolio__wallet">
-			<span v-if="walletBalance"> $ {{ walletBalance }}</span>
-			<span v-else> $ accumulating...</span>
-			<p>Wallet Balance</p>
-		</div>
+
 		<div class="figma">
 			<span class="container__title">Assets</span>
-
 			<!-- Assets Beggining -->
 			<div v-if="transformedWalletAssets.length === 0">
 				<p>Assets loading....</p>
@@ -169,21 +169,17 @@
 					<p>No Transactions at the moment</p>
 				</div>
 			</div>
-
 			<div class="bottom__menu">
 				<div class="bottom__icons">
-					<span
+					<span @click="transactionsPage()"
 						><i class="fa-solid fa-arrow-right-arrow-left"> </i>
-						<p>Transactions</p></span
+						<p class="font-semibold text-lg">Transactions</p></span
 					>
-					<span class="bottom__deposit"><i class="fa-solid fa-plus"></i></span>
+					<span @click="buyAsset()" class="bottom__deposit"><i class="fa-solid fa-plus"></i></span>
 					<span @click="logout()"
 						><i class="fa-solid fa-cube"></i>
-						<p>Sign-out</p></span
+						<p class="font-semibold text-lg">Sign-out</p></span
 					>
-				</div>
-				<div class="bottom__headers">
-					<p>Deposit</p>
 				</div>
 			</div>
 		</div>
@@ -202,6 +198,8 @@ let transacValue: number;
 
 @Component
 export default class Portfolio extends mixins(Global, Authenticated) {
+	walletBalance: number | string;
+	totalValue: number;
 	dropdownIsActive = false;
 	selectedAccount = '';
 	noRecoveryMethods = false;
@@ -212,11 +210,9 @@ export default class Portfolio extends mixins(Global, Authenticated) {
 		google: false,
 		vkontakte: false
 	};
-	walletBalance: number | string;
-	totalValue: number;
 	ShowAll = false;
 	showTransactions = false;
-	menuShowing = true;
+	menuShowing = false;
 	menuData: any = [
 		{
 			title: 'Wallet',
@@ -224,24 +220,19 @@ export default class Portfolio extends mixins(Global, Authenticated) {
 			path: '/'
 		},
 		{
-			title: 'Deposit',
+			title: 'Buy Asset',
 			icon: 'fa-solid fa-circle-plus',
-			path: '/deposit'
+			path: '/buy/asset'
 		},
 		{
 			title: 'Withdraw',
 			icon: 'fa-solid fa-circle-minus',
-			path: '/deposit'
+			path: '/withdraw/asset'
 		},
 		{
 			title: 'Transfer',
 			icon: 'fa-solid fa-location-arrow',
-			path: '/send'
-		},
-		{
-			title: 'Exchange',
-			icon: 'fa-solid fa-arrows-rotate',
-			path: '/exchange'
+			path: '/send/asset'
 		},
 		{
 			title: 'Profile',
@@ -328,7 +319,7 @@ export default class Portfolio extends mixins(Global, Authenticated) {
 	copyETHAddress(ethAddress: string): void {
 		copyToClipboard(ethAddress);
 	}
-    logout() {
+	logout() {
 		this.logoutWallet();
 		//this.router.push('/login').catch(() => undefined);;
 	}
@@ -363,6 +354,13 @@ export default class Portfolio extends mixins(Global, Authenticated) {
 	navigatePath(path: string) {
 		this.router.push(path).catch(() => undefined);
 	}
+	buyAsset() {
+		this.router.push('/buy/asset').catch(() => undefined);
+	}
+	transactionsPage() {
+		this.router.push('/your/transactions').catch(() => undefined);
+	}
+
 	async mounted() {
 		if (this.isIframe() && !this.store.loginComplete) {
 			if (this.store.connection && this.store.connection !== null) {
@@ -428,7 +426,7 @@ export default class Portfolio extends mixins(Global, Authenticated) {
 	}
 }
 </script>
-<style scoped>
+<style>
 .copy-icon {
 	color: #000;
 }
@@ -602,8 +600,9 @@ export default class Portfolio extends mixins(Global, Authenticated) {
 	font-weight: 600;
 	margin-top: -16px;
 }
-.portfolio__title span {
-	font-size: 28px;
+.portfolio__title span,
+.portfolio__header {
+	font-size: 18px;
 	color: #fff;
 	font-family: sans-serif;
 }
@@ -618,7 +617,7 @@ export default class Portfolio extends mixins(Global, Authenticated) {
 	cursor: pointer;
 }
 .portfolio__wallet {
-	padding-bottom: 50px;
+	padding-bottom: 30px;
 }
 .portfolio__wallet span {
 	font-size: 33px;
@@ -634,7 +633,7 @@ export default class Portfolio extends mixins(Global, Authenticated) {
 	height: auto;
 	padding: 0;
 	width: 70%;
-	margin: 10px;
+	margin: 50px;
 	background: #fff;
 	border-radius: 10px;
 }

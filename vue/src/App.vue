@@ -72,7 +72,6 @@ export default class App extends Vue {
 			}
 		}
 	}
-
 	mounted() {
 		if (!this.iFrameDisplay) {
 			this.NFTBackground = getRandomNFTBackground();
@@ -85,4 +84,5 @@ export default class App extends Vue {
 
 <style lang="scss">
 @import '@/assets/stylesheet/wallet.scss';
+@import '@/assets/stylesheet/index.css';
 </style>
