@@ -1,65 +1,64 @@
 <template>
 	<div class="container settings">
 		<div class="title-container has-text-left">
-			<button @click="redirectUser" tag="button" class="button is-grey big-button outlined-button is-thick transition-faster is-icon-only">
-				<span class="icon is-small">
-					<i class="fas fa-chevron-left"></i>
-				</span>
+			<button @click="redirectUser" tag="button" class="button is-grey big-button is-thick transition-faster is-icon-only">
+				<i class="fa-solid fa-chevron-left"/>	
 			</button>
 			<h2 v-if="!isEmailPasswordPage" class="title ml-3 settings">{{ $t('settings.SETTINGS_TITLE') }}</h2>
 			<h2 v-if="isEmailPasswordPage" class="title ml-3">{{ $t('settings.EMAIL_AND_PASSWORD') }}</h2>
 		</div>
 		<div class="divider just-space" />
-		<div v-if="!isEmailPasswordPage" class="settings-data settings">
+		<div v-if="!isEmailPasswordPage" class="settings">
+		<div class="settings-container">
 			<div
 				data-cy="emailPasswordButton"
 				key="email_passowrd"
-				class="settings-link is-flex is-align-items-center"
+				class="settings_item"
 				@click="changeActive('email_password')"
 			>
 				<span class="span__text">
 					{{ $t('settings.EMAIL_AND_PASSWORD') }}
 				</span>
 				<span class="icon">
-					<i class="fas fa-chevron-right" />
+					<i class="fa-solid fa-arrow-right-long" style="opacity: 0.50"/>
 				</span>
 			</div>
-			<div data-cy="recoverySettings" key="recovery" class="settings-link is-flex is-align-items-center" @click="changeActive('recovery')">
+			<div data-cy="recoverySettings" key="recovery" class="settings_item" @click="changeActive('recovery')">
 				<span class="span__text">
 					{{ $t('settings.TRUSTED_ACCOUNT') }}
 				</span>
 				<span class="icon">
-					<i class="fas fa-chevron-right" />
+					<i class="fa-solid fa-arrow-right-long" style="opacity: 0.50"/>
 				</span>
 			</div>
-			<div data-cy="verificationSettings" key="2FA" class="settings-link is-flex is-align-items-center" @click="changeActive('2FA')">
+			<div data-cy="verificationSettings" key="2FA" class="settings_item" @click="changeActive('2FA')">
 				<span class="span__text">
 					{{ $t('settings.2_STEP_VERIFICATION') }}
 				</span>
 				<span class="icon">
-					<i class="fas fa-chevron-right" />
+					<i class="fa-solid fa-arrow-right-long" style="opacity: 0.50"/>
 				</span>
 			</div>
 
-			<div key="keys" class="settings-link is-flex is-align-items-center" data-cy="exportWalletButton" @click="changeActive('keys')">
+			<div key="keys" class="settings_item" data-cy="exportWalletButton" @click="changeActive('keys')">
 				<span class="span__text">
 					{{ $t('settings.EXPORT_WALLET') }}
 				</span>
 				<span class="icon">
-					<i class="fas fa-chevron-right" />
+					<i class="fa-solid fa-arrow-right-long" style="opacity: 0.50"/>
 				</span>
 			</div>
 
-			<div data-cy="deleteAccountSettings" key="delete" class="settings-link is-flex is-align-items-center" @click="changeActive('delete')">
+			<div data-cy="deleteAccountSettings" key="delete" class="settings_item" @click="changeActive('delete')">
 				<span class="span__text">
 					{{ $t('settings.DELETE_ACCOUNT') }}
 				</span>
 				<span class="icon">
-					<i class="fas fa-chevron-right" />
+					<i class="fa-solid fa-arrow-right-long" style="opacity: 0.50"/>
 				</span>
 			</div>
 		</div>
-
+</div>
 		<div v-else class="settings-data">
 			<div key="email" class="settings-link email-password is-flex is-align-items-center reset-cursor">
 				<div class="data">
@@ -158,7 +157,7 @@ a {
 	color: #42b983;
 }
 .settings {
-	color: #000 !important;
+	background: #fff;
 }
 
 .title-container {
@@ -168,5 +167,29 @@ a {
 	.title {
 		margin: 0;
 	}
+}
+.settings_item {
+	display: flex;
+	align-items: center;
+	justify-items: stretch;
+	justify-content: space-between;
+	background: #EDF1F9;
+	box-shadow: 0px 2px 3px rgba(20, 70, 150, 0.15);
+	border-radius: 27px;
+	margin-top: 5px;
+	padding: 15px;
+	width: 100%;
+	margin-top: 15px;
+	cursor: pointer;
+}
+.settings-container{
+	margin-top: 2%;
+	background-color: #fff;
+	display:flex ;
+	align-items: center;
+	width:100%;
+	border: none;
+	flex-direction: column;
+	align-items: center;
 }
 </style>
