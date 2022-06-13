@@ -10,13 +10,13 @@
 					<div class="field" v-if="!hideOldPassword">
 						<label class="label">{{ $t('password.OLD_PASSWORD') }}</label>
 						<div class="control">
-							<input type="password" data-cy="oldPassword" name="oldPassword" class="input" v-model="oldPassword" />
+							<input type="password" data-cy="oldPassword" name="oldPassword" class="input" placeholder="Enter Old Password" v-model="oldPassword" />
 						</div>
 					</div>
 					<div class="field">
 						<label class="label">{{ $t('common.NEW_PASSWORD') }}</label>
 						<div class="control">
-							<input type="password" name="newPassword" data-cy="newPassword" class="input password-input" v-model="walletPassword" />
+							<input type="password" name="newPassword" data-cy="newPassword" placeholder="Enter New Password" class="input password-input" v-model="walletPassword" />
 							<password v-model="walletPassword" :strength-meter-only="true" :secure-length="8" style="max-width: initial" />
 							<div class="password-help">
 								<p>{{ $t('password.REQUIREMENTS') }}</p>
@@ -68,7 +68,7 @@
 					<div class="field">
 						<label class="label">{{ $t('common.CONFIRM_PASSWORD') }}</label>
 						<div class="control">
-							<input type="password" class="input" name="newPasswordRepeat" data-cy="newPasswordRepeat" v-model="walletPasswordRepeat" />
+							<input type="password" class="input" name="newPasswordRepeat" data-cy="newPasswordRepeat" placeholder="Confirm Password" v-model="walletPasswordRepeat" />
 						</div>
 					</div>
 
@@ -76,7 +76,7 @@
 						<p>⚠️ <span data-cy="incorrectPassword" v-html="logonError"></span></p>
 					</div>
 
-					<button class="button is-green big-button is-login transition-faster mt-5" type="submit" data-cy="passwordSubmit">
+					<button class="button is-blue big-button is-login transition-faster mt-5 update" type="submit" data-cy="passwordSubmit">
 						<span class="text">{{ $t('common.UPDATE_PASSWORD') }}</span>
 					</button>
 
@@ -222,5 +222,8 @@ button.card-footer-item {
 	border: 0;
 	font-size: 1rem;
 	line-height: 1.5;
+}
+.update{
+	border-radius: 2%;
 }
 </style>

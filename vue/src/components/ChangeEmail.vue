@@ -5,15 +5,15 @@
 				<div class="card-content">
 					<div class="content">
 						<div class="field">
-							<label class="label">{{ $t('common.NEW_EMAIL') }}</label>
+							<label class="label-text">{{ $t('common.NEW_EMAIL') }}</label>
 							<div class="control">
-								<input data-cy="newEmail" class="input" name="newEmail" v-model="newEmail" />
+								<input data-cy="newEmail" class="input_field" name="newEmail" v-model="newEmail" />
 							</div>
 						</div>
 						<div class="field">
-							<label class="label">{{ $t('common.PASSWORD') }}</label>
+							<label class="label-text">{{ $t('common.PASSWORD') }}</label>
 							<div class="control">
-								<input data-cy="confirmPassword" type="password" class="input" name="password" v-model="password" />
+								<input data-cy="confirmPassword" type="password" class="input_field" name="password" v-model="password" />
 							</div>
 						</div>
 					</div>
@@ -25,7 +25,7 @@
 
 				<div class="mt-5">
 					<button
-						class="button is-green big-button is-login transition-faster"
+						class="button is-blue big-button is-login transition-faster"
 						data-cy="updateEmailButton"
 						:disabled="!newEmail || !password"
 						@click="
@@ -107,5 +107,16 @@ export default class ChangeEmail extends mixins(Global, Authenticated) {
 <style lang="scss" scoped>
 .confirm-button {
 	font-size: 18px;
+}
+.input_field{
+	color: #B5BBC9;
+	outline: 0;
+  	border-width: 0 0 2px;
+  	border-color: #B5BBC9
+
+}
+.label-text{
+	color: #B5BBC9;
+	
 }
 </style>

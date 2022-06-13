@@ -22,9 +22,9 @@ $col_black: #333333;
 $warning_light: #faeec0;
 $warning_dark: #f9de6e;
 
-$green_ligher: #bde4d8;
-$green_lighter_focus: #65ccb3;
-$green_lighter_hover: #80d5c0;
+$green_ligher: #abcdec;
+$green_lighter_focus:#7abae9 ;
+$green_lighter_hover: #347AF0;
 
 $blue_lighter: #abcdec;
 $blue_lighter_focus: #7abae9;
@@ -214,18 +214,17 @@ input {
 	box-shadow: inset 0 0.0625em 0.125em rgba(10, 10, 10, 0.05);
 	max-width: 100%;
 	width: 100%;
-	border: 1px solid $col_grey_light;
 	font-size: 12pt;
 	height: 46px;
 	border-radius: 4px;
-	color: #363636;
+	color:#B5BBC9;
 	margin-top: $spacing_1;
 	padding-left: 10px;
 	display: inline-block;
 	box-sizing: border-box;
 }
 input::placeholder {
-	color: $col_grey_light;
+	color: #B5BBC9;
 }
 
 input[type="checkbox"] {
@@ -820,7 +819,7 @@ input[type="checkbox"]:checked {
 		padding: 3px 14px;
 		border-radius: 5px;
 		margin-left: auto;
-		border: 1px solid #58c08a;
+		border: 1px solid #347af0;
 		line-height: 1rem;
 		font-size: 12px;
 		font-weight: 500;

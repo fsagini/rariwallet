@@ -1,10 +1,8 @@
 <template>
-	<div class="container">
+	<div class="container settings">
 		<div v-if="currentPage === 0" class="title-container has-text-left">
-			<button @click="redirectUser" tag="button" class="button is-grey big-button outlined-button is-thick transition-faster is-icon-only">
-				<span class="icon is-small">
+			<button @click="redirectUser" tag="button" class="button is-grey big-button is-thick transition-faster is-icon-only">
 					<i class="fas fa-chevron-left"></i>
-				</span>
 			</button>
 			<h2 class="title ml-3">{{ $t('settings.2_STEP_VERIFICATION') }}</h2>
 		</div>
@@ -21,6 +19,7 @@
 			<Change2FAEmail v-if="currentMethod === 'email'" @setCode="setCode" @pageBack="pageBack" />
 		</div>
 		<div v-if="currentPage === 3">
+		<div class="settings-container">
 			<div>
 				<img src="@/assets/img/checkmark.svg" alt="Checkmark image" class="mb-3" />
 				<h2 data-cy="2faConfirmedTitle" class="title">
@@ -47,6 +46,7 @@
 					<p class="has-text-left subtitle mt-0">{{ $t('2fa.KYC_DESCRIPTION') }}</p>
 				</div>
 			</div>
+		</div>
 		</div>
 		<div class="error mt-3" v-if="updateError">
 			<p>⚠️ <span v-html="updateError"></span></p>
@@ -248,4 +248,20 @@ export default class TwoFactorSettings extends mixins(Authenticated, Global) {
 		margin: 0;
 	}
 }
+.settings-container{
+	margin-top: 2%;
+	background-color: #fff;
+	display:flex ;
+	align-items: center;
+	width:100%;
+	border: none;
+	flex-direction: column;
+	align-items: center;
+	border-radius : 16px 16px 0 0;
+}
+.settings {
+	background: #fff;
+	border-radius : 16px 16px 0 0;
+}
+
 </style>

@@ -1,16 +1,14 @@
 <template>
-	<div class="container">
+	<div class="container settings">
 		<ConfirmAccess v-if="currentPage === 0" @pageBack="pageBack" @setPassword="setPassword" />
 		<div v-if="currentPage === 1">
 			<div class="title-container has-text-left">
 				<button
 					@click="redirectUser"
 					tag="button"
-					class="button is-grey big-button outlined-button is-thick transition-faster is-icon-only"
+					class="button is-grey big-button is-thick transition-faster is-icon-only"
 				>
-					<span class="icon is-small">
 						<i class="fas fa-chevron-left"></i>
-					</span>
 				</button>
 				<h2 class="title ml-3">{{ $t('recovery.ACCOUNT_RECOVERY') }}</h2>
 			</div>
@@ -21,33 +19,18 @@
 			<div class="error mt-3 mb-3" v-if="logonError">
 				<p>⚠️ <span v-html="logonError"></span></p>
 			</div>
-
+			<div class="settings-container">
 			<div>
 				<AddRecoveryGoogle v-if="whatRecovery.google" @processMethod="processMethod"></AddRecoveryGoogle>
-
-				<AddRecoveryFacebook v-if="whatRecovery.facebook" :walletEmail="store.email" @processMethod="processMethod"></AddRecoveryFacebook>
-
-				<AddRecoveryVkontakte
-					v-if="whatRecovery.vkontakte"
-					:walletEmail="store.email"
-					@processMethod="processMethod"
-				></AddRecoveryVkontakte>
 			</div>
+			</div>
+
 
 			<div v-if="!whatRecovery.google || !whatRecovery.facebook || !whatRecovery.vkontakte">
 				<p v-if="whatRecovery.google || whatRecovery.facebook || whatRecovery.vkontakte" class="another-text has-text-left mt-5">
 					{{ $t('recovery.ADD_ANOTHER_ACCOUNT') }}
 				</p>
-
 				<AddRecoveryGoogle v-if="!whatRecovery.google" @processMethod="processMethod"></AddRecoveryGoogle>
-
-				<AddRecoveryFacebook v-if="!whatRecovery.facebook" :walletEmail="store.email" @processMethod="processMethod"></AddRecoveryFacebook>
-
-				<AddRecoveryVkontakte
-					v-if="!whatRecovery.vkontakte"
-					:walletEmail="store.email"
-					@processMethod="processMethod"
-				></AddRecoveryVkontakte>
 			</div>
 
 			<div class="divider just-space" />
@@ -198,5 +181,20 @@ export default class RecoverySettings extends mixins(Authenticated, Global) {
 
 .another-text {
 	margin-bottom: -10px;
+}
+.settings-container{
+	margin-top: 2%;
+	background-color: #fff;
+	display:flex ;
+	align-items: center;
+	width:100%;
+	border: none;
+	flex-direction: column;
+	align-items: center;
+	border-radius : 16px 16px 0 0;
+}
+.settings {
+	background: #fff;
+	border-radius : 16px 16px 0 0;
 }
 </style>

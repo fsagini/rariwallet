@@ -17,6 +17,8 @@ import {
 	recoverSeedSocialRecovery,
 	verifyEmailConfirmationCode
 } from '../utils/backupRestore';
+import { getPrice } from '@/utils/fetchCoins';
+import { addresses } from '@/types/adresses';
 import { downloadEncryptedKeystore, sortObject } from '../utils/utils';
 import { getKeystore } from '../utils/keystore';
 import { getSessionStore, saveSessionStore, removeSessionStore } from '../utils/sessionStore';
@@ -47,7 +49,8 @@ import {
 	TypeShowPhraseKeyVariables,
 	TypeExportPhraseKeyVariables,
 	TypeUpdateRecovery,
-	TypeUpdateUserPayload
+	TypeUpdateUserPayload,
+	Cryptocurrencies
 } from '../types/global-types';
 
 import isIframe from '../utils/isIframe';
@@ -99,6 +102,7 @@ export interface RootState {
 	loginRetryCount: number;
 	ipCountry: string;
 	app_lang: string;
+	cryptoCurrencies: Cryptocurrencies;
 }
 
 /**
@@ -151,8 +155,9 @@ function initialState(): RootState {
 		redirectPath: '',
 		loginRetryCount: 0,
 		ipCountry: '',
-		app_lang: ''
-	} as RootState;
+		app_lang: '',
+		cryptoCurrencies: [],
+	} as unknown as RootState;
 }
 
 /**

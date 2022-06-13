@@ -1,18 +1,17 @@
 <template>
-	<div class="container">
+	<div class="container settings">
 		<div v-if="currentPage === 0">
 			<div class="title-container has-text-left">
 				<button
 					@click="redirectUser"
 					tag="button"
-					class="button is-grey big-button outlined-button is-thick transition-faster is-icon-only"
+					class="button is-grey big-button is-thick transition-faster is-icon-only"
 				>
-					<span class="icon is-small">
 						<i class="fas fa-chevron-left"></i>
-					</span>
 				</button>
 				<h2 class="title ml-3">{{ $t('delete.DELETE_ACCOUNT_TITLE') }}</h2>
 			</div>
+			<div class="settings-container">
 			<div class="divider just-space" />
 			<p class="has-text-left reset-line-height">
 				<span
@@ -26,7 +25,7 @@
 				{{ $t('delete.DELETE_TIP') }}
 			</p>
 			<div class="field is-grouped mb-5">
-				<button data-cy="deleteAccountButton" @click="setNewPage()" tag="button" class="button big-button is-danger transition-faster">
+				<button data-cy="deleteAccountButton" @click="setNewPage()" tag="button" class="button big-button is-blue transition-faster">
 					<span class="text">{{ $t('delete.DELETE_ACCOUNT_TITLE') }}</span>
 				</button>
 			</div>
@@ -44,8 +43,9 @@
 				<p>{{ $t('delete.WHAT_FUNDS_DESCRIPTION') }}</p>
 			</div>
 		</div>
+		</div>
 		<ConfirmAccess v-if="currentPage === 1" @pageBack="pageBack" @setPassword="setPassword" :error="logonError" />
-		<AccountDeletion v-if="currentPage === 2" @pageBack="resetData" @deleteAccount="deleteAccount" :error="logonError" />
+		<AccountDeletion v-if="currentPage === 2" @pageBack="resetData" @deleteAccount="deleteAccount" :error="logonError" />	
 	</div>
 </template>
 
@@ -151,5 +151,19 @@ export default class RecoverySettings extends mixins(Authenticated, Global) {
 	.title {
 		margin: 0;
 	}
+}
+.settings-container{
+	background-color: #fff;
+	display:flex ;
+	align-items: center;
+	width:100%;
+	border: none;
+	flex-direction: column;
+	align-items: center;
+	border-radius : 16px 16px 0 0;
+}
+.settings {
+	background: #fff;
+	border-radius : 16px 16px 0 0;
 }
 </style>

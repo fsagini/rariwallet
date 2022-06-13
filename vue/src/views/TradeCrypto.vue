@@ -93,8 +93,6 @@ export default class TradeCrypto extends mixins(Global, Authenticated) {
 				keRate:this.rate,
 			});
 		}
-		console.log('coins : ', this.coins);
-
 	}
 
 	NavigateBack() {

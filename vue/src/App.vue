@@ -65,8 +65,8 @@ export default class App extends Vue {
 						this.$router.push('/').catch(() => undefined);
 					}
 				} else {
-					if (this.$router.currentRoute.path !== '/login') {
-						this.$router.push('/login').catch(() => undefined);
+					if (this.$router.currentRoute.path !== '/rari/onboarding') {
+						this.$router.push('/rari/onboarding').catch(() => undefined);
 					}
 				}
 			}

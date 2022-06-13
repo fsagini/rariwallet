@@ -59,9 +59,10 @@
 			</div>
 		</div>
 </div>
-		<div v-else class="settings-data">
-			<div key="email" class="settings-link email-password is-flex is-align-items-center reset-cursor">
-				<div class="data">
+		<div v-else class="settings">
+			<div class="settings-container">
+							<div key="email" class="settings_item">
+				<div class="data-container">
 					<p class="span__text">{{ $t('common.EMAIL') }}</p>
 					<p>{{ store.email }}</p>
 				</div>
@@ -71,8 +72,8 @@
 					</div>
 				</div>
 			</div>
-			<div key="password" class="settings-link email-password is-flex is-align-items-center reset-cursor">
-				<div class="data">
+			<div key="password" class="settings_item">
+				<div class="data-container">
 					<p class="span__text">{{ $t('common.PASSWORD') }}</p>
 					<p>********</p>
 				</div>
@@ -81,6 +82,8 @@
 						<i class="fas fa-pen-square" />
 					</div>
 				</div>
+			</div>
+
 			</div>
 		</div>
 	</div>
@@ -158,6 +161,7 @@ a {
 }
 .settings {
 	background: #fff;
+	border-radius : 16px 16px 0 0;
 }
 
 .title-container {
@@ -191,5 +195,11 @@ a {
 	border: none;
 	flex-direction: column;
 	align-items: center;
+	border-radius : 16px 16px 0 0;
+}
+.data-container{
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
 }
 </style>

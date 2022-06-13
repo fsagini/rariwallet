@@ -52,7 +52,7 @@
 			<p>⚠️ <span v-html="logonError"></span></p>
 		</div>
 
-		<button @click="login()" class="button is-green big-button is-login transition-faster mt-5" :disabled="!walletPassword">
+		<button @click="login()" class="button is-blue big-button is-login transition-faster mt-5" :disabled="!walletPassword">
 			<span class="text">{{ $t('auth.LOGIN') }}</span>
 		</button>
 		<p class="forgot-password">

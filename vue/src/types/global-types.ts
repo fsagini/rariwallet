@@ -219,3 +219,12 @@ export type TypeUpdateSeedPhrase = {
 	__typename?: 'TypeUpdateSeedPhrase';
 	seedPhrase: string;
 };
+export type Cryptocurrencies = {
+	__typename?: 'CryptoCurrencies';
+	symbol:string;
+	address:string;
+	image:string;
+	title:string;
+	price:number;
+};
+

@@ -1,20 +1,20 @@
 <template>
-	<div class="container">
+	<div class="container settings">
 		<div v-if="currentPage === 0">
+		<div class="settings-container">
+			<div style="align-self:flex-start;">
 			<div class="title-container has-text-left">
 				<button
 					data-cy="backArrowButton"
 					@click="redirectUser"
 					tag="button"
-					class="button is-grey big-button outlined-button is-thick transition-faster is-icon-only"
+					class="button is-grey big-button is-thick transition-faster is-icon-only"
 				>
-					<span class="icon is-small">
 						<i class="fas fa-chevron-left"></i>
-					</span>
 				</button>
 				<h2 class="title ml-3">{{ $t('export.EXPORT_WALLET_TITLE') }}</h2>
 			</div>
-
+			</div>
 			<p class="has-text-left mt-2 transition-faster">
 				<span v-html="$t('export.EXPORT_WALLET_DESCRIPTION')">&nbsp;</span>
 				<a href="https://support.morpher.com/en/article/export-morpher-wallet-d6wr6g/" target="__blank" class="login-router">{{
@@ -23,7 +23,7 @@
 			</p>
 
 			<button
-				class="mt-3 button is-black big-button is-login transition-faster"
+				class="mt-3 button is-blue big-button is-login transition-faster"
 				data-cy="exportSeedPhraseButton"
 				type="submit"
 				@click="setExport('seed')"
@@ -42,11 +42,13 @@
 			>
 				<span class="text">{{ $t('export.EXPORT_KEY') }}</span>
 			</button>
+			</div>
 		</div>
 
 		<ConfirmAccess v-if="currentPage === 1" @pageBack="pageBack" @setPassword="setPassword" :error="logonError" />
 
 		<div v-if="currentPage === 2">
+		<div class="settings-container">
 			<h2 class="title">{{ $t('export.EXPORT_SEED') }}</h2>
 			<p data-cy="seedPhraseSuccess" class="subtitle">{{ $t('export.EXPORT_SEED_DESCRIPTION') }}</p>
 
@@ -68,9 +70,11 @@
 			<button @click="resetData()" tag="button" class="button outlined-button is-thick big-button transition-faster mt-4">
 				<span class="text">{{ $t('common.CLOSE') }}</span>
 			</button>
+			</div>
 		</div>
 
 		<div v-if="currentPage === 3">
+		<div class="settings-container">
 			<h2 class="title">{{ $t('export.EXPORT_KEY') }}</h2>
 			<p data-cy="privateKeySuccess" class="subtitle">{{ $t('export.EXPORT_KEY_DESCRIPTION') }}</p>
 
@@ -113,6 +117,7 @@
 			>
 				<span class="text">{{ $t('common.CLOSE') }}</span>
 			</button>
+			</div>
 		</div>
 	</div>
 </template>
@@ -199,5 +204,20 @@ export default class KeysSettings extends mixins(Global, Authenticated) {
 .seed {
 	line-height: 1.5rem !important;
 	overflow-wrap: break-word;
+}
+.settings-container{
+	margin-top: 2%;
+	background-color: #fff;
+	display:flex ;
+	align-items: center;
+	width:100%;
+	border: none;
+	flex-direction: column;
+	align-items: center;
+	border-radius : 16px 16px 0 0;
+}
+.settings {
+	background: #fff;
+	border-radius : 16px 16px 0 0;
 }
 </style>

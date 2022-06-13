@@ -19,7 +19,7 @@
 		<button
 			data-cy="confirmButton"
 			@click="setCode()"
-			class="button is-green big-button is-login transition-faster mt-5"
+			class="button is-blue big-button is-login transition-faster mt-5"
 			:disabled="!authenticatorCode"
 		>
 			<span class="text">{{ $t('common.SUBMIT') }}</span>
