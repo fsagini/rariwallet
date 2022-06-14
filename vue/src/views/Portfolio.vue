@@ -53,7 +53,7 @@
 							<img :src="asset.img" :alt="asset.symbol" />
 						</div>
 						<div class="balance__details">
-							<span>{{ asset.name }} ({{ asset.symbol }})</span>
+							<span style="flex: 1">{{ asset.name }} ({{ asset.symbol }})</span>
 							<p>{{ asset.bal }} {{ asset.symbol }}</p>
 						</div>
 						<!-- coin price increase or decrease dynamic rendering will be added  -->
@@ -286,7 +286,7 @@ export default class Portfolio extends mixins(Global, Authenticated) {
 		},
 		{
 			symbol: 'ETH',
-			name: 'ETHEREUM',
+			name: 'ETHERE..',
 			img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Ethereum_logo_2014.svg/628px-Ethereum_logo_2014.svg.png',
 			addr: '0x8A753747A1Fa494EC906cE90E9f37563A8AF630e',
 			bal: 0.1976994
@@ -455,7 +455,6 @@ export default class Portfolio extends mixins(Global, Authenticated) {
 }
 .bottom__headers p {
 	font-size: 19px;
-	font-family: sans-serif;
 	color: #979797;
 }
 .bottom__menu {
@@ -538,6 +537,7 @@ export default class Portfolio extends mixins(Global, Authenticated) {
 	margin-right: 10px;
 	margin-left: 10px;
 	display: flex;
+	justify-content: space-around;
 	padding-top: 20px;
 	padding-bottom: 20px;
 	background: #edf1f9;
@@ -558,7 +558,7 @@ export default class Portfolio extends mixins(Global, Authenticated) {
 .asset__image img {
 	width: 50px;
 	height: 50px;
-	object-fit: cover;
+	object-fit: contain;
 }
 .balance__details,
 .asset__price {
@@ -567,14 +567,14 @@ export default class Portfolio extends mixins(Global, Authenticated) {
 .balance__details span,
 .asset__price span {
 	font-size: 18px;
-	font-weight: bolder;
+	text-align: start;
 }
 .asset__price p {
 	color: #75bf72;
 }
 .balance__details p,
 .asset__price p {
-	font-size: 17px;
+	font-size: 16px;
 }
 .figma {
 	background: #fff;
@@ -586,8 +586,6 @@ export default class Portfolio extends mixins(Global, Authenticated) {
 	margin-left: 20px;
 	font-size: 22px;
 	color: #000;
-	font-weight: 500;
-	font-family: sans-serif;
 	padding-bottom: 10px;
 	font-weight: 600;
 }
@@ -597,14 +595,12 @@ export default class Portfolio extends mixins(Global, Authenticated) {
 	padding-top: 0;
 	justify-content: space-between;
 	margin: 15px;
-	font-weight: 600;
 	margin-top: -16px;
 }
 .portfolio__title span,
 .portfolio__header {
 	font-size: 18px;
 	color: #fff;
-	font-family: sans-serif;
 }
 .arrow__left .fa-less-than {
 	font-size: 17px;
@@ -623,7 +619,6 @@ export default class Portfolio extends mixins(Global, Authenticated) {
 	font-size: 33px;
 	color: #fff;
 	font-weight: bold;
-	font-family: sans-serif;
 }
 .portfolio__wallet p {
 	color: #fff;
@@ -648,7 +643,6 @@ export default class Portfolio extends mixins(Global, Authenticated) {
 	justify-content: center;
 	cursor: pointer;
 	align-items: center;
-	font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 }
 
 .menu__row #icon {

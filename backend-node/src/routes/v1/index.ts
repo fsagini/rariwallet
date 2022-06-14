@@ -3,7 +3,7 @@ const EmailController = require('../../controllers/email.controller');
 const ValidationController = require('../../controllers/validation.controller');
 const secureRoutes = require('./secure');
 
-import rateLimit from 'express-rate-limit'
+import rateLimit from 'express-rate-limit';
 
 import { Logger } from '../../helpers/functions/winston';
 
@@ -37,19 +37,18 @@ let ipRequestPayload = {};
 
 /**
  * the idea is to allow maximum of 3 _different_ keys per 60 minutes
- * 
+ *
  * that means: if the key was already requested and is just re-requested, the keyGenerator will return a random number (Date.now()), which wasn't rate-limited yet.
- * 
+ *
  * If the getPayload-Key was not requested yet, it returns the actual IP as a key for the keyGenerator
- * 
+ *
  * 15 times the same ip with different keys will get then rate-limited.
  */
-const limiterGetPayload =  rateLimit({
+const limiterGetPayload = rateLimit({
     windowMs: 24 * 60 * 60 * 1000,
     max: 15,
     onLimitReached: limitReached,
     keyGenerator(req, res) {
-
         /**
          * if the requests are not existing yet, define them
          */
@@ -61,10 +60,9 @@ const limiterGetPayload =  rateLimit({
         }
 
         /**
-        * if you are trying a new key, return the IP as a keygenerator-key
-        */
+         * if you are trying a new key, return the IP as a keygenerator-key
+         */
         if (!ipRequestPayload[req.ip].keyRequests.includes(req.body.key)) {
-
             /**
              * if there are not yet 15 addresses in there, add it so it won't rate limit
              */

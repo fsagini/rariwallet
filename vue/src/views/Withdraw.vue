@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<span class="pb-6" @click="NavigateBack()"><i class="fa-solid fa-circle-xmark"></i></span>
-		<p class="text-3xl font-serif font-bold text-yellow-50">Withdraw Ksh</p>
+		<p class="text-3xl font-serif font-bold text-yellow-50 mb-10">Withdraw Ksh</p>
 		<div class="figma">
 			<div class="mt-10 flex justify-center align-middle space-x-8 p-3 overflow-x-scroll scroll-smooth scrollbar-hide">
 				<div v-for="asset in walletAssets" :key="asset.addr">

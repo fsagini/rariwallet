@@ -2,9 +2,10 @@
 
 @import url("https://fonts.googleapis.com/css?family=Roboto:400,500,600,700|Rubik:400,500,600,700");
 @import url('https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Titillium+Web:wght@200;300;400;700&display=swap');
 @font-face {
-	font-family: proxima-condensed;
-	src: url('assets/fonts/proxima_light/ProximaNova-Regular.otf');
+	font-family: 'Titillium Web',sans-serif;
+	src: url('assets/fonts/titilium-web/TitilliumWeb-Regular.ttf');
   }
 
 /* define variables for the interface colors */
@@ -38,8 +39,8 @@ $red_lighter: #e6c6bb;
 $red_lighter_focus: #e4a087;
 $red_lighter_hover: #e8ab95;
 
-$font1: proxima-condensed, "Rubik", sans-serif;
-$font2: proxima-condensed, "Roboto", sans-serif;
+$font1: Titillium Web, 'Titillium Web', sans-serif;
+$font2: Titillium Web, 'Titillium Web', sans-serif;
 $spacing_1: 15px;
 $spacing_2: 30px;
 $spacing_3: 60px;
@@ -115,6 +116,12 @@ body {
 	height: 100%;
 	border-radius: 0;
 	box-shadow: none;
+	-ms-overflow-style: none;
+	scrollbar-width: none
+	
+}
+.main_iframe::-webkit-scrollbar {
+	display: none;
 }
 
 .main {
