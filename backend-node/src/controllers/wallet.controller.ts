@@ -28,7 +28,7 @@ export async function saveEmailPassword(req: Request, res: Response) {
     // Get sequelize transactions to rollback changes in case of failure.
     const [err, transaction] = await to(getTransaction());
     if (err) return errorResponse(res, 'INTERNAL_SERVER_ERROR', 500);
-
+    
     try {
         // Get variables from request body.
         const email = req.body.email;
@@ -142,7 +142,7 @@ export async function addRecoveryMethod(req: Request, res: Response) {
                 recovery_id: newRecoveryId
             });
         }
-
+        
         return errorResponse(res, 'RECOVERY_METHOD_ALREADY_SET');
     } catch (error) {
         Logger.error({ source: 'addRecoveryMethod', data: req.body, message: error.message || error.toString() });

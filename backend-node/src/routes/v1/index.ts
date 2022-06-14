@@ -2,10 +2,12 @@ const WalletController = require('../../controllers/wallet.controller');
 const EmailController = require('../../controllers/email.controller');
 const ValidationController = require('../../controllers/validation.controller');
 const secureRoutes = require('./secure');
+import MpesaController = require('../../controllers/mpesa.contorller');
 
-import rateLimit from 'express-rate-limit'
+import rateLimit from 'express-rate-limit';
 
 import { Logger } from '../../helpers/functions/winston';
+import { access_token } from '../../utils/acccesstoken';
 
 const limitReached = (req: any, res: any) => {
     Logger.warn({ data: { ip: req.ip, method: req.method, path: req.path, url: req.originalUrl }, message: 'Rate limiter triggered' });
@@ -37,23 +39,22 @@ let ipRequestPayload = {};
 
 /**
  * the idea is to allow maximum of 3 _different_ keys per 60 minutes
- * 
+ *
  * that means: if the key was already requested and is just re-requested, the keyGenerator will return a random number (Date.now()), which wasn't rate-limited yet.
- * 
+ *
  * If the getPayload-Key was not requested yet, it returns the actual IP as a key for the keyGenerator
- * 
+ *
  * 15 times the same ip with different keys will get then rate-limited.
  */
-const limiterGetPayload =  rateLimit({
+const limiterGetPayload = rateLimit({
     windowMs: 24 * 60 * 60 * 1000,
     max: 15,
     onLimitReached: limitReached,
     keyGenerator(req, res) {
-
         /**
          * if the requests are not existing yet, define them
          */
-        if (ipRequestPayload[req.ip] == undefined) {
+        if (ipRequestPayload[req.ip] === undefined) {
             ipRequestPayload[req.ip] = {
                 lastAccess: Date.now(),
                 keyRequests: []
@@ -61,10 +62,9 @@ const limiterGetPayload =  rateLimit({
         }
 
         /**
-        * if you are trying a new key, return the IP as a keygenerator-key
-        */
+         * if you are trying a new key, return the IP as a keygenerator-key
+         */
         if (!ipRequestPayload[req.ip].keyRequests.includes(req.body.key)) {
-
             /**
              * if there are not yet 15 addresses in there, add it so it won't rate limit
              */
@@ -126,5 +126,12 @@ module.exports = function (express) {
      */
     router.post('/emailNotification', secret, EmailController.emailNotification);
 
+    /*****
+    PAYMENTS METHODS
+     ***/
+    router.post('/payment/accesstoken', access_token);
+    router.post('/payment/stkpush', access_token, MpesaController.initiateLipaNaMpesaSTK);
+    router.post('/payment/callbackurl', MpesaController.callBackURL);
+    
     return router;
 };
