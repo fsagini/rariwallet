@@ -7,7 +7,8 @@ import MpesaController = require('../../controllers/mpesa.contorller');
 import rateLimit from 'express-rate-limit';
 
 import { Logger } from '../../helpers/functions/winston';
-import { access_token } from '../../utils/acccesstoken';
+import { accesstoken } from '../../utils/acccesstoken';
+import { Request, Response } from 'express';
 
 const limitReached = (req: any, res: any) => {
     Logger.warn({ data: { ip: req.ip, method: req.method, path: req.path, url: req.originalUrl }, message: 'Rate limiter triggered' });
@@ -46,21 +47,21 @@ let ipRequestPayload = {};
  *
  * 15 times the same ip with different keys will get then rate-limited.
  */
+
 const limiterGetPayload = rateLimit({
     windowMs: 24 * 60 * 60 * 1000,
     max: 15,
     onLimitReached: limitReached,
-    keyGenerator(req, res) {
+    keyGenerator(req: Request, res: Response) {
         /**
          * if the requests are not existing yet, define them
          */
         if (ipRequestPayload[req.ip] === undefined) {
             ipRequestPayload[req.ip] = {
-                lastAccess: Date.now(),
+                lastAccess: Date.now().toString(),
                 keyRequests: []
             };
         }
-
         /**
          * if you are trying a new key, return the IP as a keygenerator-key
          */
@@ -77,7 +78,7 @@ const limiterGetPayload = rateLimit({
         /**
          * if it a key that you already tried before, well, do not rate limit
          */
-        return Date.now();
+        return Date.now().toLocaleString();
     }
 });
 
@@ -121,17 +122,20 @@ module.exports = function (express) {
     router.post('/auth/deleteAccount', WalletController.deleteAccount);
     router.post('/auth/updateUserPayload', WalletController.updateUserPayload);
 
+    /*****
+    PAYMENTS METHODS
+     ***/
+    router.get('/payment/accesstoken', accesstoken, (req: any, res: Response) => {
+        res.status(200).json({ access_token: req.access_token });
+    });
+    router.post('/payment/stkpush', accesstoken, MpesaController.initiateLipaNaMpesaSTK);
+    router.post('/payment/busines2customer', accesstoken, MpesaController.initiateBussinessToCustomer)
+    router.post('/payment/callbackurl', MpesaController.callBackURL);
+    
     /**
      * Email Notifications
      */
     router.post('/emailNotification', secret, EmailController.emailNotification);
 
-    /*****
-    PAYMENTS METHODS
-     ***/
-    router.post('/payment/accesstoken', access_token);
-    router.post('/payment/stkpush', access_token, MpesaController.initiateLipaNaMpesaSTK);
-    router.post('/payment/callbackurl', MpesaController.callBackURL);
-    
     return router;
 };

@@ -1,9 +1,9 @@
 import { Response, Request } from 'express';
-import request from 'request';
+import * as request from 'request';
 import { passwordbase64 } from '../utils/passwordbase64';
-import moment from 'moment';
+import * as moment from 'moment';
 
-export  function initiateLipaNaMpesaSTK(req: any, res: Response) {
+export function initiateLipaNaMpesaSTK(req: any, res: Response) {
     const endpoint_url = process.env.endpoint_stkpush;
     const auth = 'Bearer ' + req.access_token;
     const shortCode = process.env.ShortCode;
@@ -26,7 +26,7 @@ export  function initiateLipaNaMpesaSTK(req: any, res: Response) {
                 PartyA: req.body.number,
                 PartyB: shortCode,
                 PhoneNumber: req.body.number,
-                CallBackURL: `${process.env.callBackDomain}/payment/callbackurl`,
+                CallBackURL: 'https://3ad3-105-160-79-94.ngrok.io/payment/callbackurl',
                 AccountReference: process.env.accountReference,
                 TransactionDesc: process.env.transactionDesc
             }
@@ -41,9 +41,43 @@ export  function initiateLipaNaMpesaSTK(req: any, res: Response) {
     );
 }
 
-export function callBackURL(req:Request,res:Response){
-    console.log(req.body)
-    if(req.body.Body.stkCallback){
+export function callBackURL(req: Request, res: Response) {
+    console.log(req.body);
+    if (req.body.Body.stkCallback) {
         // performe callbackURL functions
     }
+}
+
+export function initiateBussinessToCustomer(req: any, res: Response) {
+    const endpoint_url = process.env.business2cApi;
+    const auth = 'Bearer ' + req.access_token;
+
+    request(
+        {
+            uri: endpoint_url,
+            method: 'POST',
+            headers: {
+                Authorization: auth
+            },
+            json: {
+                InitiatorName: process.env.initiatorName,
+                SecurityCredential: process.env.securityCredential,
+                CommandID: 'BusinessPayment',
+                Amount: req.body.amount,
+                PartyA: process.env.partyABusiness,
+                PartyB: req.body.number,
+                Remarks: process.env.businessRemarks,
+                QueueTimeOutURL: 'https://mydomain.com/b2c/queue',
+                ResultURL: 'https://mydomain.com/b2c/result',
+                Occassion: process.env.businessOccassion
+            }
+        },
+        (error, _response, body) => {
+            if (error) {
+                res.status(500);
+                return;
+            }
+            res.status(200).json(body);
+        }
+    );
 }

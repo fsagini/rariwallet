@@ -34,7 +34,6 @@ export const sequelize = new Sequelize({
     }
 });
 
-
 const getTransaction = async () => {
     return sequelize.transaction();
 };
