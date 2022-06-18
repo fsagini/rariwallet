@@ -2,7 +2,7 @@ const WalletController = require('../../controllers/wallet.controller');
 const EmailController = require('../../controllers/email.controller');
 const ValidationController = require('../../controllers/validation.controller');
 const secureRoutes = require('./secure');
-import MpesaController = require('../../controllers/mpesa.contorller');
+import MpesaController = require('../../controllers/mpesa.controller');
 
 import rateLimit from 'express-rate-limit';
 
