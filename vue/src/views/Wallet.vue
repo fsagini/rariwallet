@@ -10,13 +10,12 @@
 							<span class="important-font"> {{ formatEthAddress(accounts[0]) }} </span>
 							<span class="copy-icon" @click="copyETHAddress(accounts[0])"><i class="fas fa-copy" /></span>
 						</p>
-
 						<p data-cy="currentEmail">+254713654667</p>
 					</div>
 				</div>
 				<div class="buttons horizontal-buttons mt-3">
 					<router-link to="/settings">
-						<button class="button is-black is-small-button has-text-weight-bold transition-faster">
+						<button class="button is_login is-small-button has-text-weight-bold transition-faster text_color">
 							<span data-cy="profileButton">{{ $t('common.PROFILE') }}</span>
 						</button>
 					</router-link>
@@ -26,14 +25,10 @@
 		<div class="user-details settings-data">
 			<div class="details">
 				<div class="buttons horizontal-buttons mt-3">
-					<button
-						tag="button"
-						@click="sendRoute"
-						class="button is-black is-small-button has-text-weight-bold transition-faster"
-					>
+					<button tag="button" @click="sendRoute" class="button is_login is-small-button has-text-weight-bold transition-faster text_color">
 						<span data-cy="sendButton" class="text">{{ $t('common.SEND') }}</span>
 					</button>
-					<button class="button is-black is-small-button has-text-weight-bold transition-faster" @click="tradeInApp">
+					<button class="button is_login is-small-button has-text-weight-bold transition-faster text_color" @click="tradeInApp">
 						<span data-cy="tradeButton" class="text">{{ $t('common.TRADE') }}</span>
 					</button>
 				</div>
@@ -43,10 +38,8 @@
 		<div class="mt-1 user-details settings-data">
 			<div v-if="noRecoveryMethods" class="details has-text-left">
 				<p v-html="$t('recovery.ACCOUNT_AT_RISK')"></p>
-				<router-link
-					to="/settings/recovery"
-				>
-					<button class="button is-black is-small-button has-text-weight-bold transition-faster mt-3">
+				<router-link to="/settings/recovery">
+					<button class="button is_login is-small-button has-text-weight-bold transition-faster mt-3 text_color">
 						<span class="text smaller-font">{{ $t('recovery.ADD_ACCOUNT_RECOVERY') }}</span>
 					</button>
 				</router-link>
@@ -124,7 +117,6 @@ export default class Wallet extends mixins(Global, Authenticated) {
 		if (this.isIframe() && !this.store.loginComplete) {
 			if (this.store.connection && this.store.connection !== null) {
 				const promise = this.store.connection.promise;
-
 				(await promise).onLogin(this.store.accounts[0], this.store.email);
 			}
 		}
@@ -175,21 +167,16 @@ export default class Wallet extends mixins(Global, Authenticated) {
 		const image = jazzicon(32, seed);
 		ref.append(image);
 	}
-    
-    sendRoute(){
-		this.router.push('/send/crypto/coin').catch(() => undefined);
+	sendRoute() {
+		// Change later
+		this.router.push('/rari/onboarding').catch(() => undefined);
 	}
-
-	
-
 	copyETHAddress(ethAddress: string): void {
 		copyToClipboard(ethAddress);
 	}
-
-	tradeInApp(){
+	tradeInApp() {
 		this.router.push('/trade').catch(() => undefined);
 	}
-
 	logout() {
 		this.logoutWallet();
 		//this.router.push('/login').catch(() => undefined);;
@@ -198,6 +185,9 @@ export default class Wallet extends mixins(Global, Authenticated) {
 </script>
 
 <style lang="scss" scoped>
+.title {
+	font-weight: 700;
+}
 h3 {
 	margin: 40px 0 0;
 }
@@ -217,5 +207,9 @@ a {
 }
 .smaller-font {
 	font-size: 14px;
+}
+.text_color{
+	color: #fff !important;
+	font-weight: 700;
 }
 </style>

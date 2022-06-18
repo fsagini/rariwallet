@@ -116,7 +116,6 @@ function initialState(): RootState {
 	Sentry.configureScope((scope) => {
 		scope.setUser({ id: '', email: email });
 	});
-	
 
 	return {
 		loading: false,
@@ -198,7 +197,7 @@ const store: Store<RootState> = new Vuex.Store({
 			state.status = 'success';
 			state.encryptedSeed = seedFoundData.encryptedSeed;
 			sessionStorage.setItem('encryptedSeed', JSON.stringify(seedFoundData.encryptedSeed));
-			localStorage.setItem('login', 'true')
+			localStorage.setItem('login', 'true');
 		},
 		recoveryMethodsFound(state: RootState, recoveryMethodsData: Array<any>) {
 			localStorage.setItem('recoveryMethods', JSON.stringify(recoveryMethodsData));
@@ -234,7 +233,7 @@ const store: Store<RootState> = new Vuex.Store({
 			state.hashedPassword = seedCreatedData.hashedPassword;
 			localStorage.setItem('email', seedCreatedData.email);
 			sessionStorage.setItem('encryptedSeed', JSON.stringify(seedCreatedData.encryptedSeed));
-			localStorage.setItem('login', 'true')
+			localStorage.setItem('login', 'true');
 			saveSessionStore('password', seedCreatedData.hashedPassword);
 			Sentry.configureScope((scope) => {
 				scope.setUser({ id: state.accounts && state.accounts.length > 0 ? state.accounts[0] : '', email: state.email });
@@ -249,10 +248,9 @@ const store: Store<RootState> = new Vuex.Store({
 			state.hashedPassword = '';
 
 			sessionStorage.removeItem('encryptedSeed');
-			localStorage.removeItem('login')
-			const email = localStorage.getItem('email')
-			if (email)
-				localStorage.setItem('lastEmail', email);
+			localStorage.removeItem('login');
+			const email = localStorage.getItem('email');
+			if (email) localStorage.setItem('lastEmail', email);
 
 			localStorage.removeItem('email');
 			localStorage.removeItem('iconSeed');
@@ -271,16 +269,15 @@ const store: Store<RootState> = new Vuex.Store({
 
 			state.status = '';
 			state.token = '';
-			const email = localStorage.getItem('email')
-			if (email)
-				localStorage.setItem('lastEmail', email);
+			const email = localStorage.getItem('email');
+			if (email) localStorage.setItem('lastEmail', email);
 
 			localStorage.removeItem('email');
 			localStorage.removeItem('iconSeed');
 			localStorage.removeItem('recoveryMethods');
 			removeSessionStore('password');
 			sessionStorage.removeItem('encryptedSeed');
-			localStorage.removeItem('login')
+			localStorage.removeItem('login');
 			Sentry.configureScope((scope) => {
 				scope.setUser({ id: '', email: '' });
 			});
@@ -361,19 +358,15 @@ const store: Store<RootState> = new Vuex.Store({
 		},
 		async loadEncryptedSeed({ commit }) {
 			let encryptedSeed: TypeEncryptedSeed = {};
-			const sessionEncryptedSeed = await getSessionStore('encryptedSeed')
+			const sessionEncryptedSeed = await getSessionStore('encryptedSeed');
 			if (sessionEncryptedSeed) {
 				try {
 					encryptedSeed = JSON.parse(String(sessionEncryptedSeed));
-					if (encryptedSeed && encryptedSeed.ciphertext)
-						await commit('seedFound', { encryptedSeed });
+					if (encryptedSeed && encryptedSeed.ciphertext) await commit('seedFound', { encryptedSeed });
 				} catch {
 					encryptedSeed = {};
 				}
 			}
-
-			
-
 		},
 		/**
 		 * Fetch the user data from the database and attempt to unlock the wallet using the mail encrypted seed
@@ -482,24 +475,23 @@ const store: Store<RootState> = new Vuex.Store({
 
 									let type;
 									if (params.recoveryTypeId == 2) {
-										type = 'fb'
+										type = 'fb';
 									}
 									if (params.recoveryTypeId == 3) {
-										type = 'google'
+										type = 'google';
 									}
 
 									if (params.recoveryTypeId == 5) {
-										type = 'vk'
+										type = 'vk';
 									}
 
 									if (type) {
 										(await promise).onRecoveryUpdate(type, true);
 									}
-
 								}
 							} catch {
-								console.error('Error calling onRecoveryUpdate callback')
-							}						
+								console.error('Error calling onRecoveryUpdate callback');
+							}
 							resolve(true);
 						});
 					})
@@ -535,7 +527,12 @@ const store: Store<RootState> = new Vuex.Store({
 							 * If no wallet was found, then create a new one (seed = false) otherwise use the decrypted seed from above
 							 */
 							const createdKeystoreObj = await getKeystore(hashedPassword, {}, 1);
-							saveWalletEmailPassword(params.email, createdKeystoreObj.encryptedSeed, createdKeystoreObj.keystore.address, params.recaptchaToken)
+							saveWalletEmailPassword(
+								params.email,
+								createdKeystoreObj.encryptedSeed,
+								createdKeystoreObj.keystore.address,
+								params.recaptchaToken
+							)
 								.then(() => {
 									commit('clearUser');
 									dispatch('fetchUser', { email: params.email, password: params.password, recaptchaToken: params.recaptchaToken })
@@ -560,7 +557,7 @@ const store: Store<RootState> = new Vuex.Store({
 				const hashedPassword = await getSessionStore('password');
 
 				let encryptedSeed: TypeEncryptedSeed = {};
-				const sessionEncryptedSeed = await getSessionStore('encryptedSeed')
+				const sessionEncryptedSeed = await getSessionStore('encryptedSeed');
 				if (sessionEncryptedSeed) {
 					try {
 						encryptedSeed = JSON.parse(String(sessionEncryptedSeed));
@@ -898,18 +895,17 @@ const store: Store<RootState> = new Vuex.Store({
 					url: getBackendEndpoint() + '/v1/auth/change2FAMethods'
 				})
 					.then(async (response) => {
-						
 						try {
 							if (state.connection && state.connection !== null) {
 								const promise = state.connection.promise;
-				
+
 								(await promise).on2FAUpdate('email', params.email);
 								(await promise).on2FAUpdate('authenticator', params.authenticator);
 							}
 						} catch {
-							console.error('Error calling on2FAUpdate callback')
-						 }
-						
+							console.error('Error calling on2FAUpdate callback');
+						}
+
 						commit('updatePayload', params);
 						resolve(response);
 					})
@@ -973,24 +969,23 @@ const store: Store<RootState> = new Vuex.Store({
 
 									let type;
 									if (params.recoveryTypeId == '2') {
-										type = 'fb'
+										type = 'fb';
 									}
 									if (params.recoveryTypeId == '3') {
-										type = 'google'
+										type = 'google';
 									}
 
 									if (params.recoveryTypeId == '5') {
-										type = 'vk'
+										type = 'vk';
 									}
 
 									if (type) {
 										(await promise).onRecoveryUpdate(type, false);
 									}
-
 								}
 							} catch {
-								console.error('Error calling onRecoveryUpdate callback')
-							}								
+								console.error('Error calling onRecoveryUpdate callback');
+							}
 							resolve(true);
 						});
 					})
@@ -1024,7 +1019,7 @@ const store: Store<RootState> = new Vuex.Store({
 			return null;
 		},
 		exportKeystore({ commit, state }, params: TypeExportPhraseKeyVariables) {
-			return new Promise(async(resolve, reject) => {
+			return new Promise(async (resolve, reject) => {
 				const storedPassword = state.hashedPassword;
 
 				if (storedPassword === params.password) {
@@ -1226,7 +1221,7 @@ if (isIframe()) {
 				return signedTx;
 			},
 			async signMessage(txObj: any, config: MorpherWalletConfig) {
-				const signedTx = await new Promise(async(resolve, reject) => {
+				const signedTx = await new Promise(async (resolve, reject) => {
 					//see if we are logged in?!
 					try {
 						if (store.state.keystore !== null) {
@@ -1236,7 +1231,7 @@ if (isIframe()) {
 								store.state.signResponse = null;
 								router.push('/signmsg').catch(() => undefined);
 
-								const interval = setInterval(async() => {
+								const interval = setInterval(async () => {
 									if (store.state.signResponse) {
 										clearInterval(interval);
 										if (store.state.signResponse === 'confirm') {

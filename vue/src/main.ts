@@ -8,12 +8,15 @@ import VueGtag from 'vue-gtag';
 import Cookie from 'js-cookie';
 import { checkErrorFilter } from './utils/sentry';
 import Buefy from 'buefy';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { fas } from '@fortawesome/free-solid-svg-icons';
+
 
 Vue.config.productionTip = false;
 
 // Multi-language i18n plugin
 import { i18n } from './plugins/i18n';
-
+library.add(fas);
 const supportedLocales: string[] = process.env.VUE_APP_I18N_SUPPORTED_LOCALE
 	? JSON.parse(process.env.VUE_APP_I18N_SUPPORTED_LOCALE)
 	: ['en'];
@@ -135,6 +138,7 @@ new Vue({
 	data: {
 		privateState: {}
 	},
+	
 	router,
 	store,
 	i18n,

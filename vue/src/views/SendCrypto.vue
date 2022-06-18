@@ -8,6 +8,14 @@
 		<div class="send__container">
 			<form @submit.prevent="sendInApp">
 				<div class="field">
+					<label class="label">CRYPTO COIN TO SEND</label>
+					<div class="control select">
+						<select v-model="CoinToSend" required>
+							<option v-for="wallet in Wallets" :key="wallet.name">{{ wallet.name }}</option>
+						</select>
+					</div>
+				</div>
+				<div class="field">
 					<label class="label">FROM</label>
 					<div class="control">
 						<input data-cy="transactionFee" disabled type="text" class="input" name="Address" v-model="Address" />
@@ -18,23 +26,16 @@
 					<div class="control">
 						<input data-cy="transactionFee" type="text" autocomplete="off" required class="input" name="AddressTO" v-model="AddressTO" />
 					</div>
-                    <p v-if="addressError" class="value__error"> The address above is not correct. An address should be x hexadecimal characters</p>
+					<p v-if="addressError" class="value__error">The wallet addres is invalid</p>
 				</div>
 				<div class="field">
-					<label class="label">COIN TO SEND</label>
-					<div class="control select">
-						<select v-model="CoinToSend" required>
-							<option value="BTC">BTC</option>
-						</select>
-					</div>
-				</div>
-				<div class="field">
-					<label class="label">VALUE OF COINS TO SEND</label>
+					<label class="label">AMOUNT OF COINS TO SEND</label>
 					<div class="control">
-						<input data-cy="coinsToSend" type="text" required class="input" name="coinsToSend" v-model="coinsToSend" />
+						<input data-cy="coinsToSend" type="number" required step="any" class="input" name="coinsToSend" v-model="coinsToSend" />
 					</div>
 				</div>
-				<p v-if="amountError" class="value__error"> You do not have enough {{}} coins to send. Try lower amount</p>
+				<p v-if="balanceError" class="value__error">You do not have enough {{ CoinToSend }} coins to send. Try lower amount</p>
+				<p v-if="amountError" class="value__error">The least amount of coins you can send is 0.00001</p>
 				<div class="field">
 					<label class="label">TRANSACTION FEE</label>
 					<div class="control">
@@ -55,36 +56,49 @@
 <script lang="ts">
 import Component, { mixins } from 'vue-class-component';
 import { Authenticated, Global } from '../mixins/mixins';
-
+let WAValidator = require('multicoin-address-validator');
 
 @Component
 export default class SendCrypto extends mixins(Global, Authenticated) {
+	Address = '';
+	TransactionFee = 0;
+	amountError = false;
+	balanceError = false;
+	addressError = false;
+	AddressTO = '';
+	coinsToSend = 0;
+	CoinToSend = '';
+	Wallets = [{ name: 'BTC' }, { name: 'BNB' }, { name: 'ETH' }, { name: 'DAI' }, { name: 'USDC' }];
 
-    // All these vars are hard coded just for design purpose but in future I will make them dynamic
-	currencyType = 'KSh';
-	Address = '0x8730ec898adf610c39d4ff90394a7216e9c0a7dd';
-	TransactionFee = `20.12 ${this.currencyType}`;
-    amountError=true;
-    addressError=true;
-    AddressTO ='';
-    coinsToSend= 0.00000456;
-    CoinToSend='';
-
+	async mounted() {
+		this.Address = this.store.accounts[0];
+	}
 
 	async sendInApp() {
-		if (this.isIframe()) {
-			if (this.store.connection && this.store.connection !== null) {
-				const promise = this.store.connection.promise;
-				(await promise).openSendInApp();
-			}
+		const valid = WAValidator.validate(this.AddressTO, this.CoinToSend);
+		if (!valid) {
+			this.addressError = true;
+		} else {
+			return (this.addressError = false);
 		}
+		// To be modiefied after perfoming blockchain transactions with balance and transaction fee accounted for
+		if (this.coinsToSend < 0.00001) {
+			this.amountError = true;
+		} else {
+			return (this.amountError = false);
+		}
+		// if (this.isIframe()) {
+		// 	if (this.store.connection && this.store.connection !== null) {
+		// 		const promise = this.store.connection.promise;
+		// 		(await promise).openSendInApp();
+		// 	}
+		// }
 	}
 	pageBack() {
 		this.$router.push('/').catch(() => undefined);
 	}
 }
 </script>
-
 
 <style scoped>
 .title {
@@ -123,13 +137,13 @@ form {
 	align-content: center;
 }
 
-.value__error{
-    padding: 10px 10px;
-    background: rgb(248, 246, 246);
-    border-radius:14px;
-    color:#f00;
-    font-size: 17px;
-    margin-top: 5px;
+.value__error {
+	padding: 10px 10px;
+	background: rgb(248, 246, 246);
+	border-radius: 14px;
+	color: #f00;
+	font-size: 17px;
+	margin-top: 5px;
 }
 .select option {
 	padding: 10px 5px;
@@ -182,5 +196,4 @@ input[type='radio'] {
 	position: relative;
 	padding: 0 10px;
 }
-
 </style>

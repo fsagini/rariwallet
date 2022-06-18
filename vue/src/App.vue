@@ -10,8 +10,7 @@
 		>
 			<spinner v-bind:active="loading" v-bind:status="spinnerStatusText"></spinner>
 			<NetworkError :active="isNetworkError && !loading" />
-			<div class="header">
-			</div>
+			<div class="header"></div>
 			<transition name="fade" mode="out-in">
 				<router-view />
 			</transition>
@@ -62,9 +61,13 @@ export default class App extends Vue {
 				(await promise).onClose();
 
 				if (this.$store.getters.isLoggedIn) {
-					if (this.$router.currentRoute.path !== '/') this.$router.push('/').catch(() => undefined);
+					if (this.$router.currentRoute.path !== '/') {
+						this.$router.push('/').catch(() => undefined);
+					}
 				} else {
-					if (this.$router.currentRoute.path !== '/login') this.$router.push('/login').catch(() => undefined);
+					if (this.$router.currentRoute.path !== '/login') {
+						this.$router.push('/login').catch(() => undefined);
+					}
 				}
 			}
 		}

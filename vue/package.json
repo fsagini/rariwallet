@@ -12,6 +12,9 @@
   },
   "dependencies": {
     "@ethereumjs/common": "^2.6.3",
+    "@fortawesome/fontawesome-svg-core": "^6.1.1",
+    "@fortawesome/free-regular-svg-icons": "^6.1.1",
+    "@fortawesome/free-solid-svg-icons": "^6.1.1",
     "@metamask/jazzicon": "^2.0.0",
     "@sentry/integrations": "^6.16.1",
     "@sentry/vue": "^6.16.1",
@@ -25,6 +28,7 @@
     "ethereumjs-wallet": "^1.0.1",
     "ethers": "^5.5.4",
     "js-cookie": "^3.0.1",
+    "multicoin-address-validator": "^0.5.9",
     "penpal": "^5.3.0",
     "vue": "^2.6.11",
     "vue-class-component": "^7.2.3",

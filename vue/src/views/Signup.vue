@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div class="sign__up">
 		<vue-recaptcha
 			ref="recaptcha"
 			size="invisible"
@@ -11,99 +11,113 @@
 			@render="onCaptchaLoaded"
 			style="display: none"
 		/>
-		<div class="container">
+		<div>
 			<h2 data-cy="signUpTitle" class="title">{{ $t('auth.SIGNUP') }}</h2>
+			<div class="signup_image">
+				<img src="../assets/img/auth/signupbanner-removebg-preview.png" alt="" />
+			</div>
+		</div>
+		<div class="container figma">
 			<form v-on:submit.prevent="signupExecute" novalidate>
-				<div class="field">
-					<label class="label">{{ $t('common.EMAIL') }}</label>
-					<div class="control">
-						<input type="email" class="input" name="walletEmail" data-cy="walletEmail" v-model="walletEmail" />
-					</div>
-				</div>
-
-				<div class="field">
-					<label class="label">{{ $t('common.PASSWORD') }}</label>
-
-					<div class="control">
-						<input type="password" class="input password-input" name="walletPassword" data-cy="walletPassword" v-model="walletPassword" />
-						<password v-model="walletPassword" :strength-meter-only="true" :secure-length="8" style="max-width: initial" />
-						<div class="password-help">
-							<p>{{ $t('password.REQUIREMENTS') }}</p>
-							<ul class="items">
-								<li
-									:class="{
-										done: passwordChecks.min === 'pass',
-										fail: passwordChecks.min === 'fail'
-									}"
-								>
-									{{ $t('password.MIN_CHARACTERS') }}
-								</li>
-								<li
-									:class="{
-										done: passwordChecks.lowercase === 'pass',
-										fail: passwordChecks.lowercase === 'fail'
-									}"
-								>
-									{{ $t('password.LOWERCASE_LETTER') }}
-								</li>
-								<li
-									:class="{
-										done: passwordChecks.uppercase === 'pass',
-										fail: passwordChecks.uppercase === 'fail'
-									}"
-								>
-									{{ $t('password.UPPERCASE_LETTER') }}
-								</li>
-								<li
-									:class="{
-										done: passwordChecks.number === 'pass',
-										fail: passwordChecks.number === 'fail'
-									}"
-								>
-									{{ $t('password.NUMBER') }}
-								</li>
-								<li
-									:class="{
-										done: passwordChecks.match === 'pass',
-										fail: passwordChecks.match === 'fail'
-									}"
-								>
-									{{ $t('password.PASSWORD_MATCH') }}
-								</li>
-							</ul>
+				<div>
+					<div class="field title__mt">
+						<div class="textbox">
+							<input type="email" name="walletEmail" data-cy="walletEmail" :placeholder="$t('common.EMAIL')" v-model="walletEmail" />
 						</div>
 					</div>
-				</div>
-				<div class="field">
-					<label class="label">{{ $t('common.CONFIRM_PASSWORD') }}</label>
-					<div class="control">
-						<input
-							type="password"
-							class="input"
-							name="walletPasswordRepeat"
-							data-cy="walletPasswordRepeat"
-							v-model="walletPasswordRepeat"
-						/>
+					<div class="field">
+						<div class="textbox">
+							<span @click="viewPassword" class="password">
+								<i :class="{ 'fa-solid fa-eye-slash': showPassword, 'fas fa-eye': !showPassword }"></i>
+							</span>
+							<input
+								:type="showPassword ? 'text' : 'password'"
+								name="walletPassword"
+								data-cy="walletPassword"
+								v-model="walletPassword"
+								:placeholder="$t('common.PASSWORD')"
+							/>
+							<password v-model="walletPassword" :strength-meter-only="true" :secure-length="8" style="max-width: initial" />
+							<div class="password-help">
+								<p>{{ $t('password.REQUIREMENTS') }}</p>
+								<ul class="items">
+									<li
+										:class="{
+											done: passwordChecks.min === 'pass',
+											fail: passwordChecks.min === 'fail'
+										}"
+									>
+										{{ $t('password.MIN_CHARACTERS') }}
+									</li>
+									<li
+										:class="{
+											done: passwordChecks.lowercase === 'pass',
+											fail: passwordChecks.lowercase === 'fail'
+										}"
+									>
+										{{ $t('password.LOWERCASE_LETTER') }}
+									</li>
+									<li
+										:class="{
+											done: passwordChecks.uppercase === 'pass',
+											fail: passwordChecks.uppercase === 'fail'
+										}"
+									>
+										{{ $t('password.UPPERCASE_LETTER') }}
+									</li>
+									<li
+										:class="{
+											done: passwordChecks.number === 'pass',
+											fail: passwordChecks.number === 'fail'
+										}"
+									>
+										{{ $t('password.NUMBER') }}
+									</li>
+									<li
+										:class="{
+											done: passwordChecks.match === 'pass',
+											fail: passwordChecks.match === 'fail'
+										}"
+									>
+										{{ $t('password.PASSWORD_MATCH') }}
+									</li>
+								</ul>
+							</div>
+						</div>
 					</div>
-				</div>
+					<div class="field">
+						<div class="textbox">
+							<span @click="viewPassword" class="confirm__password">
+								<i :class="{ 'fa-solid fa-eye-slash': showPassword, 'fas fa-eye': !showPassword }"></i>
+							</span>
+							<input
+								:placeholder="$t('common.CONFIRM_PASSWORD')"
+								:type="seePassword ? 'text' : 'password'"
+								name="walletPasswordRepeat"
+								data-cy="walletPasswordRepeat"
+								v-model="walletPasswordRepeat"
+							/>
+						</div>
+					</div>
 
-				<div class="error" v-if="logonError">
-					<p>⚠️ <span v-html="logonError"></span></p>
-				</div>
+					<div class="error" v-if="logonError">
+						<p>⚠️ <span v-html="logonError"></span></p>
+					</div>
 
-				<button type="submit" data-cy="createNewWallet" class="button is-green big-button is-login transition-faster">
-					<span class="text">{{ $t('auth.CREATE_WALLET') }}</span>
-				</button>
+					<button type="submit" data-cy="createNewWallet" class="signin__button">
+						<span class="text">{{ $t('auth.CREATE_WALLET') }}</span>
+					</button>
 
-				<div class="divider"></div>
+					<div class="divider"></div>
 
-				<div class="login-link">
-					<span>{{ $t('auth.ALREADY_HAVE_WALLET') }}</span>
-					<router-link to="/login" class="login-router transition-faster">
-						<span data-cy="logInButton">
-							{{ $t('auth.LOGIN') }}
-						</span>
-					</router-link>
+					<div class="login-link">
+						<span>{{ $t('auth.ALREADY_HAVE_WALLET') }}</span>
+						<router-link to="/login" class="login-router transition-faster">
+							<span data-cy="logInButton">
+								{{ $t('auth.ALREADY_HAVE_ACCOUNT') }}
+							</span>
+						</router-link>
+					</div>
 				</div>
 			</form>
 		</div>
@@ -133,6 +147,7 @@ export default class Signup extends mixins(Global, Recaptcha) {
 	walletPasswordRepeat = '';
 	signup = false;
 	logonError = '';
+	showPassword = false;
 	passwordChecks: any = {
 		min: '',
 		uppercase: '',
@@ -152,6 +167,9 @@ export default class Signup extends mixins(Global, Recaptcha) {
 	}
 
 	// Methods
+	viewPassword() {
+		this.showPassword = !this.showPassword;
+	}
 	async signupExecute(e: any) {
 		// block if signup is already executing
 		if (this.store.loading) {
@@ -187,7 +205,6 @@ export default class Signup extends mixins(Global, Recaptcha) {
 		}
 
 		const email = this.walletEmail;
-
 		const recaptchaToken = this.recaptchaToken;
 		this.showSpinner('Creating Wallet...');
 		this.createWallet({ email, password: this.walletPassword, recaptchaToken })
@@ -221,12 +238,85 @@ export default class Signup extends mixins(Global, Recaptcha) {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.signup_image img {
+	outline: none;
+	background: none;
+}
+.title__mt {
+	padding-top: 25px;
+}
+.figma {
+	background: #fff;
+	border-radius: 14px 14px 0 0;
+}
 h3 {
 	margin: 40px 0 0;
 }
 ul {
 	list-style-type: none;
 	padding: 0;
+}
+.password {
+	background: none;
+	outline: none;
+	border: none;
+}
+.create_account {
+	background: #99d7f1;
+	border: none;
+	color: #fff;
+	font-size: 25px;
+	padding: 15px 80px;
+	cursor: pointer;
+	font-weight: 700;
+	border-radius: 10px;
+}
+.textbox {
+	border-bottom: 3px solid #a3bdfe;
+	width: 100%;
+	overflow: hidden;
+	font-size: 20px;
+	padding: 8px 0;
+}
+.confirm__password .fa-eye {
+	cursor: pointer;
+	margin-left: 250px;
+	position: absolute;
+	top: 355px;
+}
+.confirm__password .fa-eye-slash {
+	cursor: pointer;
+	margin-left: 250px;
+	position: absolute;
+	top: 355px;
+}
+.password .fa-eye {
+	cursor: pointer;
+	margin-left: 250px;
+	position: absolute;
+	top: 155px;
+}
+.password .fa-eye-slash {
+	margin-left: 250px;
+	position: absolute;
+	top: 155px;
+	cursor: pointer;
+}
+.textbox input {
+	border: none;
+	outline: none;
+	background: none;
+	overflow: hidden;
+}
+.signin__button {
+	padding: 15px 80px;
+	border-radius: 24px;
+	color: #fff;
+	border: none;
+	background: #347af0;
+	font-size: 19px;
+	font-weight: 700;
+	cursor: pointer;
 }
 li {
 	display: inline-block;

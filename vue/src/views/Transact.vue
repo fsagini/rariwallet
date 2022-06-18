@@ -1,12 +1,17 @@
 <template>
 	<div class="container">
-
 		<h2 class="title">BUY CRYPTO CURRENCY</h2>
-		<p data-cy="buyCryptoTitle" class="sub__title">Purchase crypto via mpesa</p>
+		<p data-cy="buyCryptoTitle" class="sub__title">Purchase Crypto Coins Through M-PESA</p>
 		<div class="coinImage">
 			<img :src="coinImage" alt="coinType" />
 		</div>
-
+		<div class="conversion">
+			<span>1 {{ coinType }} = ${{ coinPrice }}</span>
+			<span
+				><h1>CONVERSION RATES</h1>
+				<label class="label">$1 = KES {{ kesRates }}</label></span
+			>
+		</div>
 		<div class="field">
 			<div class="control">
 				<input disabled type="text" class="input" name="coinType" v-model="coinType" @keypress="handleKeyPress" />
@@ -17,13 +22,12 @@
 			<label class="label">Amount To Pay (Ksh)</label>
 			<div class="control">
 				<input data-cy="amountToPay" type="text" class="input" name="amountToPay" v-model="amountToPay" @keypress="handleKeyPress" />
-
 			</div>
 			<p v-if="amountError" class="value__error">Amount cannot be less than 500</p>
 		</div>
 
 		<div class="field">
-			<label class="label">Total amount of {{ coinType }} you will Recieve</label>
+			<label class="label">Total {{ coinType }} Coins you will Recieve</label>
 			<div class="control">
 				<input
 					data-cy="amountToReceive"
@@ -37,11 +41,10 @@
 			</div>
 		</div>
 		<div class="field">
-			<label class="label">Tranasaction Fee</label>
+			<label class="label">Transaction Fee</label>
 			<div class="control">
 				<input
 					data-cy="transactionFee"
-
 					disabled
 					type="text"
 					class="input"
@@ -59,7 +62,7 @@
 		<button
 			data-cy="confirmAccessButton"
 			@click="purchaseCrypto()"
-			class="button is-green big-button is-login transition-faster mt-5"
+			class="button  big-button is_login transition-faster"
 			:disabled="!amountToPay"
 		>
 			<span class="text">BUY</span>
@@ -74,17 +77,19 @@
 import Component, { mixins } from 'vue-class-component';
 import { Emit, Prop, Watch } from 'vue-property-decorator';
 import { Authenticated } from '../mixins/mixins';
-
 @Component({})
 export default class Transact extends mixins(Authenticated) {
 	walletPassword = '';
 	amountToReceive = 0;
 	amountToPay = 0;
+	coinImage = this.$route.params.img;
 	coinType = this.$route.params.id;
-	coinImage = this.$route.params.addr;
+	kesRates = this.$route.params.keRate;
 	logonError = '';
+	coinPrice = this.$route.params.price;
 	transactionFee = 50;
-	amountError = true;
+	amountError = false;
+	coinsData: any = [];
 
 	@Prop()
 	error!: string;
@@ -129,9 +134,13 @@ export default class Transact extends mixins(Authenticated) {
 	font-size: 17px;
 	margin-top: 5px;
 }
+.conversion span{
+	font-weight: 700;
+}
 .coinImage img {
 	width: 100px;
 	height: 100px;
+	border-radius: 50%;
 	object-fit: cover;
 	background-size: contain;
 }
