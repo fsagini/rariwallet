@@ -72,7 +72,6 @@ export default class TradeCrypto extends mixins(Global, Authenticated) {
 				symbol: this.addresses[i].symbol,
 			 	price: value,
 				addr: this.addresses[i].addr,
-				price: value,
 				imgURL: this.addresses[i].img,
 				title: this.addresses[i].name,
 			});

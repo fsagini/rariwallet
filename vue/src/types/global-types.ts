@@ -166,6 +166,14 @@ export type TransactionReceipt = {
 	type: string;
 	txUrl: string;
 }
+export type TypeCurrencies = {
+	__typename?: 'TypeCurrencies';
+	symbol?:string,
+	price?: number,
+   	address?: string,
+   	imgURL?:string,
+  	title?: string,
+}
 
 export type TypeKeystoreUnlocked = {
 	__typename?: 'TypeKeystoreUnlocked';

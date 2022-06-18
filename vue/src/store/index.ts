@@ -21,7 +21,8 @@ import { downloadEncryptedKeystore, sortObject } from '../utils/utils';
 import { getKeystore } from '../utils/keystore';
 import { getSessionStore, saveSessionStore, removeSessionStore } from '../utils/sessionStore';
 import * as Sentry from '@sentry/vue';
-
+import { getPrice } from '../utils/fetchCoins';
+import { addresses } from '@/assets/json/addresses';
 import {
 	WalletBase,
 	TransactionReceipt,
@@ -47,7 +48,8 @@ import {
 	TypeShowPhraseKeyVariables,
 	TypeExportPhraseKeyVariables,
 	TypeUpdateRecovery,
-	TypeUpdateUserPayload
+	TypeUpdateUserPayload,
+	TypeCurrencies
 } from '../types/global-types';
 
 import isIframe from '../utils/isIframe';
@@ -59,6 +61,7 @@ import download from 'downloadjs';
 
 import { i18n } from '../plugins/i18n';
 import Cookie from 'js-cookie';
+
 
 Vue.use(Vuex);
 
@@ -99,6 +102,7 @@ export interface RootState {
 	loginRetryCount: number;
 	ipCountry: string;
 	app_lang: string;
+	currencies: Array<TypeCurrencies>;
 }
 
 /**
@@ -152,7 +156,8 @@ function initialState(): RootState {
 		redirectPath: '',
 		loginRetryCount: 0,
 		ipCountry: '',
-		app_lang: ''
+		app_lang: '',
+		currencies:[],
 	} as RootState;
 }
 
@@ -323,6 +328,9 @@ const store: Store<RootState> = new Vuex.Store({
 		},
 		updateEmail(state: RootState, payload: string) {
 			state.email = payload;
+		},
+		updateCurrencies(state: RootState, payload) {
+			state.currencies = payload;
 		}
 	},
 	actions: {
@@ -337,6 +345,19 @@ const store: Store<RootState> = new Vuex.Store({
 		},
 		showNetworkError({ commit }, isNetworkError: boolean) {
 			commit('updateNetworkError', isNetworkError);
+		},
+		async loadCurrencies({ commit }, currencies) {
+			for (let i = 0; i < addresses.length; i++) {
+			const value = await getPrice(addresses[i].addr);
+				currencies.push({
+					symbol:addresses[i].symbol,
+					price: value,
+					address:addresses[i].addr,
+					imgURL:addresses[i].img,
+					title:addresses[i].name,
+				});
+			}
+			commit('updateCurrencies', currencies);
 		},
 		async loadEncryptedSeed({ commit }) {
 			let encryptedSeed: TypeEncryptedSeed = {};
