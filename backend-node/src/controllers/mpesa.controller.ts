@@ -26,7 +26,7 @@ export function initiateLipaNaMpesaSTK(req: any, res: Response) {
                 PartyA: req.body.number,
                 PartyB: shortCode,
                 PhoneNumber: req.body.number,
-                CallBackURL: 'https://3ad3-105-160-79-94.ngrok.io/payment/callbackurl',
+                CallBackURL: `${process.env.callBackDomain}/v1/payment/callbackurl`,
                 AccountReference: process.env.accountReference,
                 TransactionDesc: process.env.transactionDesc
             }
