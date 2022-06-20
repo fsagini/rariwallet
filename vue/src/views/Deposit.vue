@@ -22,7 +22,8 @@
 		</div>
 		<div class="figma">
 			<div>
-				<span class="py-6 text-lg text-blue-500 font-semibold">1$ = {{ rate }}Ksh</span>
+				<span v-if="rate" class="py-6 text-lg text-blue-500 font-semibold">1$ = {{ rate }}Ksh</span>
+				<span v-else class="text-blue-500 font-semibold">currency-exchange loading...</span>
 				<div class="row__container">
 					<div class="single__asset" v-for="asset in assets" :key="asset.addr">
 						<div class="asset__img">
@@ -120,12 +121,12 @@ export default class BuyAsset extends mixins(Global, Authenticated) {
 	}
 
 	async mounted() {
-		var myHeaders = new Headers();
+		let myHeaders = new Headers();
 		myHeaders.append('apikey', 'xXHV07ckmqDKWbX2rbe3B42hZIerttDS');
 		fetch('https://api.apilayer.com/fixer/latest?symbols=KES&base=USD', { method: 'GET', redirect: 'follow', headers: myHeaders })
 			.then((response) => response.text())
 			.then((result) => {
-				var kerate: any = JSON.parse(result);
+				let kerate: any = JSON.parse(result);
 				this.rate = kerate.rates.KES.toFixed(2);
 			})
 			.catch((error) => console.log('error', error));

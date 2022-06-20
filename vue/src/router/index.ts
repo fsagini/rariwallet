@@ -165,7 +165,7 @@ const routes: Array<RouteConfig> = [
 		name: 'Transactions',
 		component: Transactions,
 		meta: {
-			requiresAuth: true
+			requiresAuth: false
 		}
 	},
 	{

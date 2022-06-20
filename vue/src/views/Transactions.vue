@@ -3,18 +3,14 @@
 		<div class="flex flex-row justify-around text-white mb-20 cursor-pointer">
 			<span @click="navigateBack()"><i class="fa-solid fa-angles-left"></i></span>
 			<p class="text-2xl font-semibold font-serif">All Transactions</p>
-			<span><i class="fa-solid fa-filter"></i></span>
+			<span @click="toggleFilterTypes()"><i class="fa-solid fa-filter"></i></span>
 		</div>
 		<div class="figma">
-			<div class="flex flex-row justify-around mb-5">
-				<div class="bg_grey">
-					<span class="font-serif">Transaction type <i class="fa-solid fa-angle-down"></i></span>
-				</div>
-				<div class="bg_grey">
-					<span class="font-serif">Coins <i class="fa-solid fa-angle-down"></i></span>
-				</div>
-				<div class="bg_grey">
-					<span class="font-serif">Select Date <i class="fa-solid fa-angle-down"></i></span>
+			<div class="row__container" v-if="showFilterTypes === true">
+				<div class="single__filter" v-for="filter in filterationTypes" :key="filter.type">
+					<div class="filter__name">
+						<div>{{ filter.type }} <i class="fa-solid fa-angle-down"></i></div>
+					</div>
 				</div>
 			</div>
 			<div>
@@ -47,8 +43,19 @@
 <script lang="ts">
 import { mixins } from 'vue-class-component';
 import { Authenticated, Global } from '../mixins/mixins';
-
 export default class Transactions extends mixins(Global, Authenticated) {
+	showFilterTypes = false;
+	filterationTypes: any = [
+		{
+			type: 'All '
+		},
+		{
+			type: 'Type'
+		},
+		{
+			type: 'Crypto'
+		}
+	];
 	walletTransactions: any = [
 		{
 			id: 'tyu567885567',
@@ -87,7 +94,9 @@ export default class Transactions extends mixins(Global, Authenticated) {
 			value: 678
 		}
 	];
-
+	toggleFilterTypes() {
+		this.showFilterTypes = !this.showFilterTypes;
+	}
 	navigateBack() {
 		this.$router.push('/').catch(() => undefined);
 	}
@@ -112,5 +121,29 @@ export default class Transactions extends mixins(Global, Authenticated) {
 	border-radius: 20px;
 	color: #000;
 	cursor: pointer;
+}
+.row__container {
+	display: flex;
+	overflow-x: scroll;
+}
+.single__filter {
+	display: flex;
+	flex-direction: row;
+	padding: 10px 30px;
+	justify-content: space-between;
+	background: rgb(230, 227, 227);
+	margin: 10px;
+	border-radius: 24px;
+	cursor: pointer;
+}
+.row__container::-webkit-scrollbar {
+	display: none;
+}
+.row__container :active {
+	content: '';
+	background: #bddcf3;
+	color: #fff;
+	scale: -90;
+	animation-duration: 100ms;
 }
 </style>
