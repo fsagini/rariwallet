@@ -8,6 +8,7 @@
         "CONTINUE": "Continue",
         "BACK": "Back",
         "ENABLED": "Enabled",
+        "PHONE":"Phone-Number",
         "SEE_TRANSACTIONS":"See All Transactions",
         "HIDE_TRANSACTIONS":"Show Less",
         "HIDE_ASSETS":"Show Less",

@@ -51,7 +51,7 @@ export async function saveEmailPassword(req: Request, res: Response) {
 
         // Attempt to get user from database.
         const user = await User.findOne({ where: { email }, raw: true, transaction });
-
+        
         if (user == null) {
             // If it exists, set the userId and delete the associated recovery method.
             // If it doesnt exist create a new one.

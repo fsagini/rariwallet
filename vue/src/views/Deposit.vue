@@ -25,7 +25,12 @@
 				<span v-if="rate" class="py-6 text-lg text-blue-500 font-semibold">1$ = {{ rate }}Ksh</span>
 				<span v-else class="text-blue-500 font-semibold">currency-exchange loading...</span>
 				<div class="row__container">
-					<div class="single__asset" v-for="asset in assets" :key="asset.addr">
+					<div
+						class="single__asset"
+						v-for="asset in assets"
+						:key="asset.addr"
+						@click="changeCoinAndUpdateCoinAddr(asset.symbol, asset.addr)"
+					>
 						<div class="asset__img">
 							<img :src="asset.img" alt="" />
 						</div>
@@ -35,26 +40,20 @@
 					</div>
 				</div>
 				<div class="m-4 py-4">
-					<!-- <div class="py-4 flex justify-center items-center">
-						<input
-							class="w-[70px] px-4 bg-none border-none outline-noneflex justify-center items-center"
-							type="text"
-							v-model="coinType"
-							disabled
-						/>
-					</div> -->
-					<div class="py-4 flex justify-center items-center">
-						<input class="w-[150px] px-4 bg-none border-none outline-none" type="number" v-model="kshAmount" placeholder="0.00Ksh" />
-					</div>
-					<div class="py-4">
-						<span>Transaction Fee {{ transactionAmount }} Ksh.</span>
-					</div>
-					<div class="py-4">
-						<span>To Recieve {{ coinsToReceive }} {{ coinType }} coins</span>
-					</div>
-					<div class="actions">
-						<button>Buy {{ coinType }}</button>
-					</div>
+					<form @submit.prevent="executeBuying()">
+						<div class="py-4 flex justify-center items-center">
+							<input class="w-[150px] px-4 bg-none border-none outline-none" type="number" v-model="kshAmount" placeholder="0.00Ksh" />
+						</div>
+						<div class="py-4">
+							<span>Transaction Fee {{ transactionAmount }} Ksh.</span>
+						</div>
+						<div class="py-4">
+							<span>To Recieve {{ coinsToReceive }} {{ coinType }} coins</span>
+						</div>
+						<div class="actions">
+							<button>Buy {{ coinType }}</button>
+						</div>
+					</form>
 				</div>
 			</div>
 		</div>
@@ -63,6 +62,7 @@
 
 <script lang="ts">
 import Component, { mixins } from 'vue-class-component';
+import { Watch } from 'vue-property-decorator';
 import { Authenticated, Global } from '../mixins/mixins';
 import { numberWithCommas } from '../utils/Commaseparator';
 import { getPrice } from '../utils/fetchCoins';
@@ -119,7 +119,26 @@ export default class BuyAsset extends mixins(Global, Authenticated) {
 	NavigateBack() {
 		this.$router.push('/').catch(() => undefined);
 	}
-
+    
+	@Watch('kshAmount')
+	handleWithdrawalAmountChange(newValue: number) {
+		// perfome transaction fee actions
+		// amount of coins user will receive actions
+	}
+	executeBuying() {
+		if (!this.kshAmount) {
+			this.$vToastify.error('amount field cannot be empty', 'EMPTY FIELD');
+			this.hideSpinner();
+			return;
+		}
+		if (this.kshAmount < 150 - this.transactionAmount) {
+			this.$vToastify.error('minimum amount is 150ksh', 'AMOUNT ERROR');
+			this.hideSpinner();
+			return;
+		}
+		this.showSpinner('performing blockchain transactions...');
+		// performe withdrawal functions
+	}
 	async mounted() {
 		let myHeaders = new Headers();
 		myHeaders.append('apikey', 'xXHV07ckmqDKWbX2rbe3B42hZIerttDS');
@@ -207,6 +226,7 @@ export default class BuyAsset extends mixins(Global, Authenticated) {
 	font-size: 25px;
 	color: #fff;
 	margin-left: 10px;
+	cursor: pointer;
 }
 .asset__img img {
 	width: 30px;

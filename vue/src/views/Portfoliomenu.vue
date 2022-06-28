@@ -29,12 +29,12 @@ export default class Portfoliomenu extends mixins(Global, Authenticated) {
 			path: '/buy/asset'
 		},
 		{
-			title: 'Withdraw',
+			title: 'Sell Asset',
 			icon: 'fa-solid fa-circle-minus',
 			path: '/withdraw/asset'
 		},
 		{
-			title: 'Transfer',
+			title: 'Transfer Asset',
 			icon: 'fa-solid fa-location-arrow',
 			path: '/send/asset'
 		},

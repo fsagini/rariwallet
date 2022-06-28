@@ -31,13 +31,16 @@
 				</div>
 				<div class="field">
 					<div class="textbox">
-						<div>
-							<span @click="viewPassword">
-								<i :class="{ 'fa-solid fa-eye-slash': showPassword, 'fas fa-eye': !showPassword }"></i>
+						<div @click="viewPassword()">
+							<span v-if="showPassword !== true">
+								<img class="fa-eye" src="../assets/img/eye-svgrepo-com.svg" alt="eye-slash" />
+							</span>
+							<span v-else>
+								<img class="fa-eye-slash" src="../assets/img/eye-slash-svgrepo-com.svg" alt="eye-slash" />
 							</span>
 						</div>
 						<input
-							:type="seePassword ? 'text' : 'password'"
+							:type="showPassword ? 'text' : 'password'"
 							:placeholder="$t('common.PASSWORD')"
 							data-cy="walletPassword"
 							name="walletPassword"
@@ -263,16 +266,20 @@ export default class Login extends mixins(Global, Recaptcha) {
 	border-radius: 14px 14px 0 0;
 }
 .fa-eye {
+	width: 30px;
+	height: 30px;
 	cursor: pointer;
-	margin-left: 250px;
+	margin-left: 290px;
 	position: absolute;
-	top: 155px;
+	top: 170px;
 }
 .fa-eye-slash {
-	margin-left: 250px;
+	margin-left: 290px;
 	position: absolute;
-	top: 155px;
+	top: 170px;
 	cursor: pointer;
+	width: 30px;
+	height: 30px;
 }
 .title__mt {
 	padding-top: 25px;

@@ -62,7 +62,7 @@
 					</div>
 				</div>
 				<div class="actions">
-					<button>{{ $t('common.Deposit') }}</button>
+					<button v-on:click="navigatePath()">{{ $t('common.Deposit') }}</button>
 				</div>
 				<span @click="toggleShowAll" class="view__assets">
 					<p v-if="!ShowAll">
@@ -84,67 +84,33 @@
 					<p>Transactions loading...</p>
 				</div>
 				<div v-else-if="transformedWalletTransactions !== 0">
-					<div v-if="showTransactions === false">
-						<!-- Show only two Transactions -->
-						<div v-for="transaction in transformedWalletTransactions.slice(0, 2)" class="assets" :key="transaction.id">
-							<div class="transaction__avatar">
-								<span class="deposited" v-if="transaction.transactionType === 'Deposited'">
-									<i class="fa-solid fa-arrow-right-from-bracket"></i>
-								</span>
-								<span class="withdraw" v-else-if="transaction.transactionType === 'Withdrawn'">
-									<i class="fa-solid fa-arrow-down"></i>
-								</span>
-								<span class="sent" v-else-if="transaction.transactionType === 'Sent'">
-									<i class="fa-solid fa-money-bill-transfer"></i>
-								</span>
-							</div>
-							<div class="balance__details">
-								<span>$ {{ transaction.value }}</span>
-								<p>{{ transaction.coins }} {{ transaction.coinType }}</p>
-							</div>
-							<div class="asset__price">
-								<span>{{ transaction.transactionType }}</span>
-								<p>{{ transaction.date }}</p>
-							</div>
+					<!-- Show only two Transactions -->
+					<div v-for="transaction in transformedWalletTransactions.slice(0, 2)" class="assets" :key="transaction.id">
+						<div class="transaction__avatar">
+							<span class="deposited" v-if="transaction.transactionType === 'Deposited'">
+								<i class="fa-solid fa-arrow-right-from-bracket"></i>
+							</span>
+							<span class="withdraw" v-else-if="transaction.transactionType === 'Withdrawn'">
+								<i class="fa-solid fa-arrow-down"></i>
+							</span>
+							<span class="sent" v-else-if="transaction.transactionType === 'Sent'">
+								<i class="fa-solid fa-money-bill-transfer"></i>
+							</span>
 						</div>
-						<span @click="toggleTransactions" class="view__assets">
-							<p v-if="!showTransactions">
-								{{ $t('common.SEE_TRANSACTIONS') }}
-							</p>
-							<p v-else>{{ $t('common.HIDE_TRANSACTIONS') }}</p>
-						</span>
-					</div>
-					<div v-else>
-						<!-- Show All Transactions -->
-						<div v-for="transaction in transformedWalletTransactions" class="assets" :key="transaction.id">
-							<div class="transaction__avatar">
-								<span class="deposited" v-if="transaction.transactionType === 'Deposited'">
-									<i class="fa-solid fa-arrow-right-from-bracket"></i>
-								</span>
-								<span class="withdraw" v-else-if="transaction.transactionType === 'Withdrawn'">
-									<i class="fa-solid fa-arrow-down"></i>
-								</span>
-								<span class="sent" v-else-if="transaction.transactionType === 'Sent'">
-									<i class="fa-solid fa-money-bill-transfer"></i>
-								</span>
-							</div>
-							<div class="balance__details">
-								<span>$ {{ transaction.value }}</span>
-								<p>{{ transaction.coins }} {{ transaction.coinType }}</p>
-							</div>
-							<div class="asset__price">
-								<span>{{ transaction.transactionType }}</span>
-								<p>{{ transaction.date }}</p>
-							</div>
+						<div class="balance__details">
+							<span>$ {{ transaction.value }}</span>
+							<p>{{ transaction.coins }} {{ transaction.coinType }}</p>
 						</div>
-
-						<span @click="toggleTransactions" class="view__assets">
-							<p v-if="!showTransactions">
-								{{ $t('common.SEE_TRANSACTIONS') }}
-							</p>
-							<p v-else>{{ $t('common.HIDE_TRANSACTIONS') }}</p>
-						</span>
+						<div class="asset__price">
+							<span>{{ transaction.transactionType }}</span>
+							<p>{{ transaction.date }}</p>
+						</div>
 					</div>
+					<span @click="transactionsPage()" class="view__assets">
+						<p>
+							{{ $t('common.SEE_TRANSACTIONS') }}
+						</p>
+					</span>
 				</div>
 				<div v-else>
 					<p>No Transactions at the moment</p>
@@ -192,7 +158,6 @@ export default class Portfolio extends mixins(Global, Authenticated) {
 		vkontakte: false
 	};
 	ShowAll = false;
-	showTransactions = false;
 	menuShowing = false;
 	walletTransactions: any = [
 		{
@@ -233,35 +198,35 @@ export default class Portfolio extends mixins(Global, Authenticated) {
 	walletAssets: any = [
 		{
 			symbol: 'BTC',
-			name: 'BITCOIN',
+			name: 'Bitcoin',
 			img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Bitcoin.svg/1200px-Bitcoin.svg.png',
 			bal: 0.10994,
 			addr: '0xECe365B379E1dD183B20fc5f022230C044d51404'
 		},
 		{
 			symbol: 'ETH',
-			name: 'ETHERE..',
+			name: 'Ethereum',
 			img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Ethereum_logo_2014.svg/628px-Ethereum_logo_2014.svg.png',
 			addr: '0x8A753747A1Fa494EC906cE90E9f37563A8AF630e',
 			bal: 0.1976994
 		},
 		{
 			symbol: 'USDC',
-			name: 'USDC',
+			name: 'Usdc',
 			img: 'https://seeklogo.com/images/U/usd-coin-usdc-logo-CB4C5B1C51-seeklogo.com.png',
 			addr: '0xa24de01df22b63d23Ebc1882a5E3d4ec0d907bFB',
 			bal: 0.06594
 		},
 		{
 			symbol: 'BNB',
-			name: 'BINANCE',
+			name: 'Binance',
 			img: 'https://seeklogo.com/images/B/binance-coin-bnb-logo-97F9D55608-seeklogo.com.png',
 			addr: '0xcf0f51ca2cDAecb464eeE4227f5295F2384F84ED',
 			bal: 0.06594
 		},
 		{
 			symbol: 'DAI',
-			name: 'DAI',
+			name: 'Dai',
 			img: 'https://cryptologos.cc/logos/multi-collateral-dai-dai-logo.png',
 			addr: '0x2bA49Aaa16E6afD2a993473cfB70Fa8559B523cF',
 			bal: 2
@@ -299,12 +264,6 @@ export default class Portfolio extends mixins(Global, Authenticated) {
 		const image = jazzicon(32, seed);
 		ref.append(image);
 	}
-	toggleTransactions() {
-		this.showTransactions = !this.showTransactions;
-	}
-	toggleMenu() {
-		this.menuShowing = !this.menuShowing;
-	}
 	buyAsset() {
 		this.router.push('/buy/asset').catch(() => undefined);
 	}
@@ -313,6 +272,9 @@ export default class Portfolio extends mixins(Global, Authenticated) {
 	}
 	menuNavigation() {
 		this.router.push('/portfolio/menu').catch(() => undefined);
+	}
+	navigatePath() {
+		this.router.push('/buy/asset').catch(() => undefined);
 	}
 
 	async mounted() {
@@ -393,7 +355,7 @@ export default class Portfolio extends mixins(Global, Authenticated) {
 	margin-left: 20px;
 }
 .actions button {
-	padding: 20px 60px;
+	padding: 10px 60px;
 	border: 1px dotted #9ea5b1;
 	border-radius: 24px;
 	background: #fff;
@@ -493,13 +455,12 @@ export default class Portfolio extends mixins(Global, Authenticated) {
 	margin-left: 10px;
 	display: flex;
 	justify-content: space-around;
-	padding-top: 20px;
-	padding-bottom: 20px;
 	background: #edf1f9;
 	border-radius: 50px;
-	padding: 10px;
-	border: 1px solid #347af0;
+	padding: 10px 20px;
 	margin-bottom: 10px;
+	cursor: pointer;
+	box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
 }
 .view__assets p {
 	padding: 15px 15px;
@@ -509,11 +470,12 @@ export default class Portfolio extends mixins(Global, Authenticated) {
 }
 .asset__image {
 	margin-left: 20px;
+	padding-top: 10px;
 }
 .asset__image img {
-	width: 50px;
-	height: 50px;
-	object-fit: contain;
+	width: 30px;
+	height: 30px;
+	object-fit: cover;
 }
 .balance__details,
 .asset__price {
@@ -521,8 +483,8 @@ export default class Portfolio extends mixins(Global, Authenticated) {
 }
 .balance__details span,
 .asset__price span {
-	font-size: 18px;
 	text-align: start;
+	font-weight: 600;
 }
 .asset__price p {
 	color: #75bf72;
