@@ -3,8 +3,10 @@
 		<span class="pb-6" @click="NavigateBack()"><i class="fa-solid fa-circle-xmark"></i></span>
 		<p class="text-3xl font-bold text-yellow-50 mb-10">Transfer Crypto</p>
 		<div class="figma">
+			<div>
 			<div class="row__container">
-				<div class="single__asset" v-for="asset in walletAssets" :key="asset.addr">
+				<div  v-for="asset in walletAssets" :key="asset.addr" @click="updateBallance(asset.bal, asset.symbol)">
+				 <div class="single__asset" >
 					<div class="asset__img">
 						<img :src="asset.img" alt="" />
 					</div>
@@ -12,8 +14,10 @@
 						<span>{{ asset.name }}</span>
 					</div>
 				</div>
+				</div>
 			</div>
-			<p class="mt-5 text-md text-black-300">{{ coinBallance }} {{ coinType }} Available</p>
+		   </div>
+			<p class="balanceText" >{{ coinBallance }} {{ coinType }} Available</p>
 			<form @submit.prevent="executeSending()" class="flex justify-center flex-col align-middle">
 				<div class="w-60 py-4 ml-10">
 					<input
@@ -48,12 +52,13 @@
 import { mixins } from 'vue-class-component';
 import { Authenticated, Global } from '../mixins/mixins';
 import WAValidator from 'multicoin-address-validator';
+import { Watch } from 'vue-property-decorator';
 
 export default class Withdraw extends mixins(Global, Authenticated) {
 	coinsAmount: number;
 	walletAddress: string;
 	transactionFee = 0.0;
-	walletAssets: any = [
+	walletAssets: Array<any> = [
 		{
 			symbol: 'BTC',
 			name: 'Bitcoin',
@@ -90,12 +95,14 @@ export default class Withdraw extends mixins(Global, Authenticated) {
 			bal:2
 		}
 	];
-	coinBallance = this.walletAssets[0].bal;
-	coinType = this.walletAssets[0].symbol;
+	coinBallance : number;
+	coinType :string;
+
 
 	updateBallance(bal: number, coin: string) {
 		this.coinBallance = bal;
 		this.coinType = coin;
+		console.log(this.coinType,this.coinBallance)
 	}
 	NavigateBack() {
 		this.$router.push('/').catch(() => undefined);
@@ -145,11 +152,13 @@ export default class Withdraw extends mixins(Global, Authenticated) {
 .asset__img {
 	width: 30px;
 	height: 30px;
+	border-radius: 50%;
+	object-fit: contain;
 }
 .asset__img img {
 	width: 30px;
 	height: 30px;
-	object-fit: cover;
+	object-fit: contain;
 }
 .asset_name span {
 	flex: 1;
@@ -160,12 +169,13 @@ export default class Withdraw extends mixins(Global, Authenticated) {
 .single__asset {
 	display: flex;
 	flex-direction: row;
-	padding: 10px 30px;
+	padding: 10px;
 	justify-content: space-between;
-	background: rgb(230, 227, 227);
+	background: #EDF1F9;
 	margin: 10px;
-	border-radius: 24px;
+	border-radius: 30px;
 	cursor: pointer;
+	box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 5px;
 }
 .row__container :active {
 	content: '';
@@ -181,6 +191,10 @@ export default class Withdraw extends mixins(Global, Authenticated) {
 	border-radius: 20px;
 	color: #fff;
 	font-size: 20px;
+}
+.balanceText {
+	color: #485068;
+	font-size: medium;
 }
 </style>
 
