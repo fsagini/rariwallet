@@ -44,7 +44,6 @@ export default class Portfoliomenu extends mixins(Global, Authenticated) {
 			path: '/settings'
 		}
 	];
-
 	navigatePath(path: string) {
 		this.router.push(path).catch(() => undefined);
 	}

@@ -1,28 +1,29 @@
 <template>
 	<div>
+		<div @click="navigateMenu()" class="flex flex-row justify-between pl-5 pr-10 mb-5">
+			<div @click="buyAsset()" class="wallet__menu">BUY</div>
+			<div @click="sellAsset()" class="wallet__menu">SELL</div>
+			<div @click="sendAsset()" class="wallet__menu">SEND</div>
+			<div @click="profilePage()" class="wallet__menu">PROFILE</div>
+		</div>
 		<div class="portfolio__header">
 			<div class="portfolio__title">
 				<div class="ml-3">
-					<span class="important-font">Wallet Address</span>
 					<p class="medium-text has-text-weight-medium">
-						<span class="important-font"> {{ formatEthAddress(accounts[0]) }} </span>
+						<span class="important-font">Wallet Addres - {{ formatEthAddress(accounts[0]) }} </span>
 						<span class="copy-icon" @click="copyETHAddress(accounts[0])"><i class="fas fa-copy" /></span>
 					</p>
 				</div>
 			</div>
-			<div class="portfolio__menu">
-				<button class="menu__button" @click="menuNavigation()">
-					<i class="fa-solid fa-bars"></i>
-				</button>
-			</div>
 		</div>
 		<div class="portfolio__wallet">
 			<span v-if="walletBalance"> $ {{ walletBalance }}</span>
-			<span v-else> $waiting...</span>
+			<span v-else> $balance...</span>
 			<p>Wallet Balance</p>
 		</div>
 		<div class="figma">
 			<span class="container__title">Assets</span>
+
 			<!-- Assets Beggining -->
 			<div v-if="transformedWalletAssets.length === 0">
 				<p>Assets loading....</p>
@@ -120,12 +121,12 @@
 				<div class="bottom__icons">
 					<span @click="transactionsPage()"
 						><i class="fa-solid fa-arrow-right-arrow-left"> </i>
-						<p class="font-semibold text-lg">Transactions</p></span
+						<p class="font-semibold text-sm">Transactions</p></span
 					>
 					<span @click="buyAsset()" class="bottom__deposit"><i class="fa-solid fa-plus"></i></span>
 					<span @click="logout()"
 						><i class="fa-solid fa-cube"></i>
-						<p class="font-semibold text-lg">Sign-out</p></span
+						<p class="font-semibold text-sm">Sign-out</p></span
 					>
 				</div>
 			</div>
@@ -206,7 +207,7 @@ export default class Portfolio extends mixins(Global, Authenticated) {
 		{
 			symbol: 'ETH',
 			name: 'Ethereum',
-			img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Ethereum_logo_2014.svg/628px-Ethereum_logo_2014.svg.png',
+			img: 'https://www.pngkey.com/png/full/264-2645294_download-svg-download-png-ethereum-png.png',
 			addr: '0x8A753747A1Fa494EC906cE90E9f37563A8AF630e',
 			bal: 0.1976994
 		},
@@ -230,6 +231,24 @@ export default class Portfolio extends mixins(Global, Authenticated) {
 			img: 'https://cryptologos.cc/logos/multi-collateral-dai-dai-logo.png',
 			addr: '0x2bA49Aaa16E6afD2a993473cfB70Fa8559B523cF',
 			bal: 2
+		}
+	];
+	menuData: any = [
+		{
+			title: 'Buy',
+			path: '/buy/asset'
+		},
+		{
+			title: 'Sell',
+			path: '/withdraw/asset'
+		},
+		{
+			title: 'Send',
+			path: '/send/asset'
+		},
+		{
+			title: 'Profile',
+			path: '/settings'
 		}
 	];
 	toggleShowAll() {
@@ -264,15 +283,20 @@ export default class Portfolio extends mixins(Global, Authenticated) {
 		const image = jazzicon(32, seed);
 		ref.append(image);
 	}
+	// Wallet Menu Routes
 	buyAsset() {
 		this.router.push('/buy/asset').catch(() => undefined);
+	}
+	sellAsset() {
+		this.router.push('/withdraw/asset').catch(() => undefined);
+	}
+	sendAsset() {
+		this.router.push('/send/asset').catch(() => undefined);
 	}
 	transactionsPage() {
 		this.router.push('/your/transactions').catch(() => undefined);
 	}
-	menuNavigation() {
-		this.router.push('/portfolio/menu').catch(() => undefined);
-	}
+	// End Wallet
 	navigatePath() {
 		this.router.push('/buy/asset').catch(() => undefined);
 	}
@@ -343,6 +367,23 @@ export default class Portfolio extends mixins(Global, Authenticated) {
 }
 </script>
 <style>
+.wallet__menu {
+	padding: 10px 20px;
+	background: #edf1f9;
+	margin: 5px;
+	border-radius: 20px;
+	font-weight: 600;
+	cursor: pointer;
+	box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+	scale: -100;
+}
+.container__title {
+	display: flex;
+	padding-left: 10px;
+	margin-bottom: 5px;
+	font-size: 19px;
+	font-weight: 600;
+}
 .copy-icon {
 	color: #000;
 	cursor: pointer;
@@ -371,7 +412,7 @@ export default class Portfolio extends mixins(Global, Authenticated) {
 	padding-bottom: 20px;
 }
 .bottom__headers p {
-	font-size: 19px;
+	font-size: 16px;
 	color: #979797;
 }
 .bottom__menu {
@@ -379,7 +420,9 @@ export default class Portfolio extends mixins(Global, Authenticated) {
 	border-radius: 20px 20px 0px 0;
 	padding-top: 30px;
 	margin-top: 30px;
+	height: 23.3vh;
 }
+
 .bottom__deposit {
 	border-radius: 50%;
 	height: 60px;
@@ -498,22 +541,7 @@ export default class Portfolio extends mixins(Global, Authenticated) {
 	border-radius: 14px 14px 0 0;
 	padding-top: 30px;
 }
-.container__title {
-	display: flex;
-	margin-left: 20px;
-	font-size: 22px;
-	color: #000;
-	padding-bottom: 10px;
-	font-weight: 600;
-}
-.portfolio__header {
-	display: flex;
-	flex: 1;
-	padding-top: 0;
-	justify-content: space-between;
-	margin: 15px;
-	margin-top: -16px;
-}
+
 .portfolio__title span,
 .portfolio__header {
 	font-size: 18px;
@@ -572,5 +600,11 @@ export default class Portfolio extends mixins(Global, Authenticated) {
 	justify-content: center;
 	color: #fff;
 	font-size: 25px;
+}
+
+@media screen and(max-width:480) {
+	.bottom__menu {
+		height: 24.3vh;
+	}
 }
 </style>

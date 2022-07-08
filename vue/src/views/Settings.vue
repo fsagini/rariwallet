@@ -57,26 +57,28 @@
 					</div>
 				</div>
 			</div>
-			<div v-else class="settings-data">
-				<div key="email" class="settings-link email-password is-flex is-align-items-center reset-cursor">
-					<div class="data">
-						<p class="span__text">{{ $t('common.EMAIL') }}</p>
-						<p>{{ store.email }}</p>
-					</div>
-					<div class="link">
-						<div class="login-router transition-faster" data-cy="emailChangeButton" @click="changeActive('email')">
-							<i class="fas fa-pen-square" />
+			<div v-else>
+				<div class="settings-data">
+					<div key="email" class="settings-link email-password is-flex is-align-items-center reset-cursor">
+						<div class="data">
+							<p class="span__text">{{ $t('common.EMAIL') }}</p>
+							<p>{{ store.email }}</p>
+						</div>
+						<div class="link">
+							<div class="login-router transition-faster" data-cy="emailChangeButton" @click="changeActive('email')">
+								<i class="fas fa-pen-square" />
+							</div>
 						</div>
 					</div>
-				</div>
-				<div key="password" class="settings-link email-password is-flex is-align-items-center reset-cursor">
-					<div class="data">
-						<p class="span__text">{{ $t('common.PASSWORD') }}</p>
-						<p>********</p>
-					</div>
-					<div class="link">
-						<div class="login-router transition-faster" data-cy="passwordChangeButton" @click="changeActive('password')">
-							<i class="fas fa-pen-square" />
+					<div key="password" class="settings-link email-password is-flex is-align-items-center reset-cursor">
+						<div class="data">
+							<p class="span__text">{{ $t('common.PASSWORD') }}</p>
+							<p>********</p>
+						</div>
+						<div class="link">
+							<div class="login-router transition-faster" data-cy="passwordChangeButton" @click="changeActive('password')">
+								<i class="fas fa-pen-square" />
+							</div>
 						</div>
 					</div>
 				</div>
@@ -174,7 +176,7 @@ a {
 }
 .settings {
 	background: #fff;
-	border-radius: 14px 14px 14px 14px;
+	border-radius: 14px 14px 0 0;
 }
 .title {
 	color: #fff;
@@ -213,5 +215,11 @@ a {
 	border: none;
 	flex-direction: column;
 	align-items: center;
+	height: 44.2vh;
+}
+@media screen and(max-width: 480px ) {
+	.settings-container {
+		height: 42.2vh;
+	}
 }
 </style>

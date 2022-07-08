@@ -28,8 +28,17 @@ export type TypeSeedFoundData = {
 export type TypeSeedCreatedData = {
 	__typename?: 'TypeSeedCreatedData';
 	email: string;
+
 	encryptedSeed: TypeEncryptedSeed;
 	hashedPassword: string;
+};
+
+export type TypeCreateUser = {
+	__typename?: 'TypeCreateUser';
+	email: string;
+	password: string;
+	phonenumber: string;
+	recaptchaToken: string;
 };
 
 export type TypeFetchUser = {
@@ -51,10 +60,9 @@ export type WalletBase = {
 	address: string;
 	privateKey: string;
 	accountId: number | undefined;
-	sign: (msg: string)=> Promise<string>;
-	transfer: (txObject: TransactionObject)=> Promise<TransactionReceipt>;
-	encrypt: (password: string)=> Promise<string>;
-	
+	sign: (msg: string) => Promise<string>;
+	transfer: (txObject: TransactionObject) => Promise<TransactionReceipt>;
+	encrypt: (password: string) => Promise<string>;
 };
 
 export type TypeState = {
@@ -149,23 +157,23 @@ export type MorpherWalletConfig = {
 } | null;
 
 export type TransactionObject = {
-	to: string,
+	to: string;
 	token: string;
 	amount: number;
 	fee: number;
 	nonce: number;
 	type: string;
-}
+};
 
 export type TransactionReceipt = {
-	txId: string,
+	txId: string;
 	date: number;
 	amount: number;
 	fee: number;
 	token: string;
 	type: string;
 	txUrl: string;
-}
+};
 
 export type TypeKeystoreUnlocked = {
 	__typename?: 'TypeKeystoreUnlocked';

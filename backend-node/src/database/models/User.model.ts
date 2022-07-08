@@ -31,6 +31,11 @@ export class User extends Model {
     eth_address;
 
     @Column({
+        type: DataType.TEXT
+    })
+    phonenumber;
+
+    @Column({
         type: DataType.INTEGER
     })
     email_verification_code;

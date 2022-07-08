@@ -1,19 +1,24 @@
 <template>
 	<div>
 		<div class="pt-0">
-			<div class="flex flex-row justify-around">
-				<span @click="NavigateBack()" class=""><i class="fa-solid fa-angles-left"></i></span>
-				<p class="text-white text-xl">Buy Crypto Asset</p>
+			<div class="flex flex-row">
+				<button @click="redirectUser" tag="button" class="back-menu">
+					<i class="fa-solid fa-angles-left" />
+				</button>
 			</div>
+			<div class="mb-10 text-yellow-50 font-bold text-2xl"><span>BUY ASSET</span></div>
 			<div v-if="transformedAssets.length !== 0" class="row__container">
 				<div v-for="asset in transformedAssets" class="single__asset__price" :key="asset.symbol">
 					<div class="asset__img">
-						<img :src="asset.imgURL" :alt="asset.symbol" />
+						<img :src="asset.img" :alt="asset.symbol" />
 					</div>
-					<div class="asset_name__price">
+					<div class="symbol">
 						<span>{{ asset.symbol }}</span>
-						<p>${{ asset.value }}</p>
 					</div>
+					<div class="value">
+						<span>${{ asset.value }}</span>
+					</div>
+					<div class="perfomance" :class="{ loss: coinPerfomance < 0, profit: coinPerfomance > 0 }">{{ coinPerfomance }}%</div>
 				</div>
 			</div>
 			<div v-else>
@@ -25,12 +30,7 @@
 				<span v-if="rate" class="py-6 text-lg text-blue-500 font-semibold">1$ = {{ rate }}Ksh</span>
 				<span v-else class="text-blue-500 font-semibold">currency-exchange loading...</span>
 				<div class="row__container">
-					<div
-						class="single__asset"
-						v-for="asset in assets"
-						:key="asset.addr"
-						@click="changeCoinAndUpdateCoinAddr(asset.symbol, asset.addr)"
-					>
+					<div class="single__asset" v-for="asset in assets" :key="asset.addr" @click="changeCoinAndUpdateCoinAddr(asset.name, asset.addr)">
 						<div class="asset__img">
 							<img :src="asset.img" alt="" />
 						</div>
@@ -42,13 +42,19 @@
 				<div class="m-4 py-4">
 					<form @submit.prevent="executeBuying()">
 						<div class="py-4 flex justify-center items-center">
-							<input class="w-[150px] px-4 bg-none border-none outline-none" type="number" v-model="kshAmount" placeholder="0.00Ksh" />
+							<input
+								class="w-[150px] px-4 bg-none border-none outline-none text-lg font-semibold"
+								type="number"
+								v-model="kshAmount"
+								placeholder="0.00Ksh"
+								min="1"
+							/>
 						</div>
 						<div class="py-4">
-							<span>Transaction Fee {{ transactionAmount }} Ksh.</span>
+							<span class="text-lg">Transaction Fee {{ transactionAmount }} Ksh.</span>
 						</div>
 						<div class="py-4">
-							<span>To Recieve {{ coinsToReceive }} {{ coinType }} coins</span>
+							<span class="text-lg">You Will Recieve {{ coinsToReceive }} {{ coinType }} coins</span>
 						</div>
 						<div class="actions">
 							<button>Buy {{ coinType }}</button>
@@ -75,6 +81,7 @@ export default class BuyAsset extends mixins(Global, Authenticated) {
 	transactionAmount = 0;
 	coinsToReceive = 0.0;
 	position = 0;
+	coinPerfomance = -5;
 	rate: number;
 	assets: any = [
 		{
@@ -86,7 +93,7 @@ export default class BuyAsset extends mixins(Global, Authenticated) {
 		{
 			symbol: 'ETH',
 			name: 'Ethereum',
-			img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Ethereum_logo_2014.svg/628px-Ethereum_logo_2014.svg.png',
+			img: 'https://www.pngkey.com/png/full/264-2645294_download-svg-download-png-ethereum-png.png',
 			addr: '0x8A753747A1Fa494EC906cE90E9f37563A8AF630e'
 		},
 		{
@@ -109,17 +116,17 @@ export default class BuyAsset extends mixins(Global, Authenticated) {
 			addr: '0x2bA49Aaa16E6afD2a993473cfB70Fa8559B523cF'
 		}
 	];
-	coinType = this.assets[0].symbol;
+	coinType = this.assets[0].name;
 	coinAddr = this.assets[0].addr;
 
 	changeCoinAndUpdateCoinAddr(coin: string, addr: string) {
 		this.coinType = coin;
 		this.coinAddr = addr;
 	}
-	NavigateBack() {
+	redirectUser() {
 		this.$router.push('/').catch(() => undefined);
 	}
-    
+
 	@Watch('kshAmount')
 	handleWithdrawalAmountChange(newValue: number) {
 		// perfome transaction fee actions
@@ -155,7 +162,7 @@ export default class BuyAsset extends mixins(Global, Authenticated) {
 			this.transformedAssets.push({
 				symbol: this.assets[i].symbol,
 				name: this.assets[i].name,
-				imgURL: this.assets[i].img,
+				img: this.assets[i].img,
 				addr: this.assets[i].addr,
 				value: numberWithCommas(coinValue)
 			});
@@ -168,7 +175,29 @@ export default class BuyAsset extends mixins(Global, Authenticated) {
 .figma {
 	background: #fff;
 	border-radius: 14px 14px 0 0;
-	height: 77%;
+	height: 62vh;
+}
+@media screen and(max-width: 480px) {
+	.figma {
+		height: 58vh;
+	}
+}
+.fa-angles-left {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-size: 25px;
+	color: #fff;
+	margin-left: 10px;
+}
+.back-menu {
+	display: flex;
+	margin-left: 20px;
+	padding: 10px 2px;
+	border: 1px solid #fff;
+	width: 50px;
+	margin-bottom: 20px;
+	cursor: pointer;
 }
 .crypto__asset span {
 	color: #fff;
@@ -187,8 +216,8 @@ export default class BuyAsset extends mixins(Global, Authenticated) {
 	font-size: 19px;
 }
 .crypto__asset img {
-	height: 40px;
-	width: 40px;
+	height: 30px;
+	width: 30px;
 	object-fit: cover;
 }
 .fa-circle-xmark {
@@ -216,6 +245,7 @@ export default class BuyAsset extends mixins(Global, Authenticated) {
 	display: none;
 }
 .asset__img {
+	margin-left: 10px;
 	width: 30px;
 	height: 30px;
 }
@@ -244,14 +274,15 @@ p {
 	margin-left: 15px;
 	margin-top: 10px;
 	font-size: 17px;
+	font-weight: 600;
 }
 .single__asset__price {
 	display: flex;
-	flex-direction: column;
-	padding: 20px 40px;
+	padding: 10px 25px;
 	justify-content: space-between;
 	background: #fff;
-	margin: 10px;
+	margin-bottom: 25px;
+	margin-left: 10px;
 	border-radius: 24px;
 	cursor: pointer;
 }
@@ -271,5 +302,28 @@ p {
 	color: #fff;
 	scale: -90;
 	animation-duration: 100ms;
+}
+.symbol span {
+	padding: 10px;
+	font-size: 16px;
+	font-weight: 600;
+}
+.value span {
+	font-size: 23px;
+	font-weight: 800;
+}
+.perfomance {
+	padding-left: 10px;
+	font-size: 15px;
+}
+.loss {
+	color: #f00;
+	font-style: italic;
+	font-size: 16px;
+}
+.profit {
+	color: #438102;
+	font-style: italic;
+	font-size: 16px;
 }
 </style>

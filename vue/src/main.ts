@@ -93,10 +93,11 @@ if (process.env.VUE_APP_SENTRY_ENDPOINT) {
 }
 Vue.use(VueToastify, {
 	singular: true,
-	errorDuration: 6000,
-	successDuration: 6000,
-	warningInfoDuration: 6000,
-	position: 'top-right'
+	errorDuration: 8000,
+	successDuration: 8000,
+	warningInfoDuration: 8000,
+	position: 'top-right',
+	theme: 'light'
 });
 Vue.use(
 	VueGtag,

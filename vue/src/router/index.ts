@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import VueRouter, { RouteConfig } from 'vue-router';
-import Transact from '../views/Transact.vue';
 import TradeCrypto from '../views/TradeCrypto.vue';
 import Login from '../views/Login.vue';
 import Signup from '../views/Signup.vue';
@@ -180,14 +179,6 @@ const routes: Array<RouteConfig> = [
 		path: '/rari/onboarding',
 		name: 'Onboarding',
 		component: Onboarding
-	},
-	{
-		path: '/trade/buy/:addr/:id/',
-		name: 'Transact',
-		component: Transact,
-		meta: {
-			requiresAuth: true
-		}
 	},
 	{
 		path: '/send/asset',

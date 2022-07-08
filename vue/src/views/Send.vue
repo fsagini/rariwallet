@@ -1,6 +1,10 @@
 <template>
 	<div>
-		<span class="pb-6" @click="NavigateBack()"><i class="fa-solid fa-circle-xmark"></i></span>
+		<div class="flex flex-row">
+			<button @click="redirectUser()" tag="button" class="back-menu">
+				<i class="fa-solid fa-angles-left" />
+			</button>
+		</div>
 		<p class="text-3xl font-bold text-yellow-50 mb-10">Transfer Crypto</p>
 		<div class="figma">
 			<div class="row__container">
@@ -8,27 +12,28 @@
 					<div class="asset__img">
 						<img :src="asset.img" alt="" />
 					</div>
-					<div class="asset_name">
+					<div class="asset_name font-semibold text-sm">
 						<span>{{ asset.name }}</span>
 					</div>
 				</div>
 			</div>
-			<p class="mt-5 text-md text-black-300">{{ coinBallance }} {{ coinType }} Available</p>
+			<p class="mt-5 text-md font-light text-grey-400">{{ coinBallance }} {{ coinType }} Coins Available</p>
 			<form @submit.prevent="executeSending()" class="flex justify-center flex-col align-middle">
 				<div class="w-60 py-4 ml-10">
 					<input
-						type="text"
-						class="px-4 border-none cursor-text outline-none t text-sm bg-none"
+						type="number"
+						class="px-4 border-none font-light cursor-text outline-none t text-lg bg-none"
 						placeholder="0.00"
 						step=".00000001"
 						v-model="coinsAmount"
+						min=".00000001"
 					/>
 				</div>
 				<div class="w-60 py-4 ml-10">
 					<input
 						type="text"
 						placeholder="Wallet Address Sending To"
-						class="px-4 outline-none text-sm bg-none cursor-text border-none"
+						class="px-4 font-light outline-none text-lg bg-none cursor-text border-none"
 						v-model="walletAddress"
 					/>
 				</div>
@@ -64,9 +69,9 @@ export default class Withdraw extends mixins(Global, Authenticated) {
 		{
 			symbol: 'ETH',
 			name: 'Ethereum',
-			img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Ethereum_logo_2014.svg/628px-Ethereum_logo_2014.svg.png',
+			img: 'https://www.pngkey.com/png/full/264-2645294_download-svg-download-png-ethereum-png.png',
 			addr: '0x8A753747A1Fa494EC906cE90E9f37563A8AF630e',
-			bal:0.1976994
+			bal: 0.1976994
 		},
 		{
 			symbol: 'USDC',
@@ -87,7 +92,7 @@ export default class Withdraw extends mixins(Global, Authenticated) {
 			name: 'Dai',
 			img: 'https://cryptologos.cc/logos/multi-collateral-dai-dai-logo.png',
 			addr: '0x2bA49Aaa16E6afD2a993473cfB70Fa8559B523cF',
-			bal:2
+			bal: 2
 		}
 	];
 	coinBallance = this.walletAssets[0].bal;
@@ -96,8 +101,9 @@ export default class Withdraw extends mixins(Global, Authenticated) {
 	updateBallance(bal: number, coin: string) {
 		this.coinBallance = bal;
 		this.coinType = coin;
+		console.log(this.coinBallance);
 	}
-	NavigateBack() {
+	redirectUser() {
 		this.$router.push('/').catch(() => undefined);
 	}
 
@@ -150,6 +156,23 @@ export default class Withdraw extends mixins(Global, Authenticated) {
 	width: 30px;
 	height: 30px;
 	object-fit: cover;
+}
+.fa-angles-left {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-size: 25px;
+	color: #fff;
+	margin-left: 10px;
+}
+.back-menu {
+	display: flex;
+	margin-left: 20px;
+	padding: 10px 2px;
+	border: 1px solid #fff;
+	width: 50px;
+	margin-bottom: 20px;
+	cursor: pointer;
 }
 .asset_name span {
 	flex: 1;

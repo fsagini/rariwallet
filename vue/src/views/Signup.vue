@@ -22,12 +22,26 @@
 				<div>
 					<div class="field title__mt">
 						<div class="textbox">
-							<input type="email" name="walletEmail" data-cy="walletEmail" :placeholder="$t('common.EMAIL')" v-model="walletEmail" />
+							<input
+								class="pl-2"
+								type="email"
+								name="walletEmail"
+								data-cy="walletEmail"
+								:placeholder="$t('common.EMAIL')"
+								v-model="walletEmail"
+							/>
 						</div>
 					</div>
 					<div class="field">
 						<div class="textbox">
-							<input type="text" name="phoneNumber" data-cy="phoneNumber" :placeholder="$t('common.PHONE')" v-model="phoneNumber" />
+							<input
+								class="pl-2"
+								type="text"
+								name="phoneNumber"
+								data-cy="phoneNumber"
+								:placeholder="$t('common.PHONE')"
+								v-model="phoneNumber"
+							/>
 						</div>
 					</div>
 					<div class="field">
@@ -45,6 +59,7 @@
 								name="walletPassword"
 								data-cy="walletPassword"
 								v-model="walletPassword"
+								class="pl-2"
 								:placeholder="$t('common.PASSWORD')"
 							/>
 							<password v-model="walletPassword" :strength-meter-only="true" :secure-length="8" style="max-width: initial" />
@@ -101,6 +116,7 @@
 								:placeholder="$t('common.CONFIRM_PASSWORD')"
 								:type="seePassword ? 'text' : 'password'"
 								name="walletPasswordRepeat"
+								class="pl-2"
 								data-cy="walletPasswordRepeat"
 								v-model="walletPasswordRepeat"
 							/>
@@ -162,12 +178,11 @@ export default class Signup extends mixins(Global, Recaptcha) {
 		number: '',
 		match: ''
 	};
-    
 	@Watch('walletPassword')
 	handlePasswordChange(newValue: string) {
 		this.passwordChecks = this.checkPassword(newValue, false, this.passwordChecks, this.walletPasswordRepeat);
 	}
-    
+
 	@Watch('walletPasswordRepeat')
 	handlePasswordRepeatChange(newValue: string) {
 		this.passwordChecks = this.checkPassword(this.walletPassword, false, this.passwordChecks, newValue, true);
@@ -212,9 +227,10 @@ export default class Signup extends mixins(Global, Recaptcha) {
 		}
 
 		const email = this.walletEmail;
+		const phonenumber = this.phoneNumber;
 		const recaptchaToken = this.recaptchaToken;
 		this.showSpinner('Creating Wallet...');
-		this.createWallet({ email, password: this.walletPassword, recaptchaToken })
+		this.createWallet({ email, phonenumber, password: this.walletPassword, recaptchaToken })
 			.then(() => {
 				this.hideSpinner();
 				if (this.store.twoFaRequired.email || this.store.twoFaRequired.authenticator || this.store.twoFaRequired.needConfirmation) {

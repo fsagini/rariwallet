@@ -9,6 +9,7 @@ import {
 	TypeUnlock2fa,
 	TypeUnlockWithPassword,
 	TypeChangePassword,
+	TypeCreateUser,
 	TypeChangeEmail,
 	Type2FAUpdateParams,
 	TypeRecoveryParams,
@@ -64,7 +65,7 @@ export class Global extends Vue {
 
 	@Action
 	public loadEncryptedSeed!: () => Promise<unknown>;
-		
+
 	@Action
 	public loadPassword!: () => Promise<unknown>;
 
@@ -72,7 +73,7 @@ export class Global extends Vue {
 	public unlock2FA!: (params: TypeUnlock2fa) => Promise<string>;
 
 	@Action
-	public createWallet!: (params: TypeFetchUser) => Promise<unknown>;
+	public createWallet!: (params: TypeCreateUser) => Promise<unknown>;
 
 	@Action
 	public unlockWithPassword!: (params: TypeUnlockWithPassword) => Promise<unknown>;
