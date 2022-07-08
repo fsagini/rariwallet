@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<div @click="navigateMenu()" class="flex flex-row justify-between pl-5 pr-10 mb-5">
+		<div @click="navigateMenu()" class="menu__slide flex flex-row justify-between pl-5 pr-10 mb-5">
 			<div @click="buyAsset()" class="wallet__menu">BUY</div>
 			<div @click="sellAsset()" class="wallet__menu">SELL</div>
 			<div @click="sendAsset()" class="wallet__menu">SEND</div>
@@ -605,7 +605,12 @@ export default class Portfolio extends mixins(Global, Authenticated) {
 	color: #fff;
 	font-size: 25px;
 }
-
+.menu__slide {
+	overflow-x: scroll;
+}
+.menu__slide::-webkit-scrollbar {
+	display: none;
+}
 @media screen and(max-width:480) {
 	.bottom__menu {
 		height: 24.3vh;
