@@ -254,6 +254,7 @@ export default class Portfolio extends mixins(Global, Authenticated) {
 	toggleShowAll() {
 		this.ShowAll = !this.ShowAll;
 	}
+
 	copyETHAddress(ethAddress: string): void {
 		copyToClipboard(ethAddress);
 	}
@@ -295,6 +296,9 @@ export default class Portfolio extends mixins(Global, Authenticated) {
 	}
 	transactionsPage() {
 		this.router.push('/your/transactions').catch(() => undefined);
+	}
+	profilePage() {
+		this.router.push('/settings').catch(() => undefined);
 	}
 	// End Wallet
 	navigatePath() {
@@ -369,7 +373,7 @@ export default class Portfolio extends mixins(Global, Authenticated) {
 <style>
 .wallet__menu {
 	padding: 10px 20px;
-	background: #edf1f9;
+	background: #fff;
 	margin: 5px;
 	border-radius: 20px;
 	font-weight: 600;
