@@ -125,13 +125,14 @@ module.exports = function (express) {
     /*****
     PAYMENTS METHODS
      ***/
-    router.get('/payment/accesstoken', accesstoken, (req: any, res: Response) => {
+    router.get('/payment-accesstoken', accesstoken, (req: any, res: Response) => {
         res.status(200).json({ access_token: req.access_token });
     });
-    router.post('/payment/stkpush', accesstoken, MpesaController.initiateLipaNaMpesaSTK);
-    router.post('/payment/busines2customer', accesstoken, MpesaController.initiateBussinessToCustomer)
-    router.post('/payment/callbackurl', MpesaController.callBackURL);
-    
+    router.post('/payment-stkpush', accesstoken, MpesaController.initiateLipaNaMpesaSTK);
+    router.post('/payment-busines2customer', accesstoken, MpesaController.initiateBussinessToCustomer);
+    router.post('/payment-callbackurl', MpesaController.callBackURL);
+    router.post('/btwoc/result', MpesaController.ResultURL);
+
     /**
      * Email Notifications
      */

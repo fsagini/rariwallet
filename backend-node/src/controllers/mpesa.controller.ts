@@ -1,7 +1,9 @@
+/* eslint-disable no-inner-declarations */
 import { Response, Request } from 'express';
 import * as request from 'request';
 import { passwordbase64 } from '../utils/passwordbase64';
 import * as moment from 'moment';
+import { errorResponse, successResponse } from '../helpers/functions/util';
 
 export function initiateLipaNaMpesaSTK(req: any, res: Response) {
     const endpoint_url = process.env.endpoint_stkpush;
@@ -10,6 +12,7 @@ export function initiateLipaNaMpesaSTK(req: any, res: Response) {
     const timestamp = moment().format('YYYYMMDDHHmmss');
     const passKey = process.env.passKey;
     const password = passwordbase64(shortCode, passKey, timestamp);
+    console.log('payment initiated');
     request(
         {
             uri: endpoint_url,
@@ -26,30 +29,79 @@ export function initiateLipaNaMpesaSTK(req: any, res: Response) {
                 PartyA: req.body.number,
                 PartyB: shortCode,
                 PhoneNumber: req.body.number,
-                CallBackURL: `${process.env.callBackDomain}/v1/payment/callbackurl`,
+                CallBackURL: 'https://89d3-197-181-178-102.ngrok.io/v1/payment-callbackurl',
                 AccountReference: process.env.accountReference,
                 TransactionDesc: process.env.transactionDesc
             }
         },
         (err, _respon, body) => {
             if (err) {
-                res.status(500).json(err);
+                errorResponse(res, err, 4040);
                 return;
             }
-            return res.status(200).json(body);
+            successResponse(res, body, 200);
         }
     );
 }
 
 export function callBackURL(req: Request, res: Response) {
-    console.log(req.body);
-    if (req.body.Body.stkCallback) {
-        // performe callbackURL functions
+    let callBackMetadata: any[];
+    let resultCode: number;
+    try {
+        callBackMetadata = req.body.Body.stkCallBack.CallbackMetadata.Item;
+        resultCode = req.body.Body.stkCallBack.ResultCode;
+        if (resultCode === 0) {
+            // eslint-disable-next-line no-inner-declarations
+            function mapMetadata(metadata: any[]) {
+                return metadata.reduce((result: { [x: string]: any }, entry: { Name: string | number; Value: any }) => {
+                    result[entry.Name] = entry.Value;
+                    return result;
+                }, {});
+            }
+            const mappedResult = mapMetadata(callBackMetadata);
+            const { Amount, MpesaReceiptNumber, TransactionDate, PhoneNumber } = mappedResult;
+
+            // Perfome blockchain transactions
+            // Save transactions to database
+            // Route User to Wallet Page or Success Page
+        } else {
+            errorResponse(res, 'your transaction was not found or it failed during the process, kindly check and try again', 404);
+            // What Should happen if the transaction is not successfull
+            // route user back to wallet or failed transaction page
+        }
+    } catch (error) {
+        return errorResponse(res, error, 500);
+    }
+}
+
+export function ResultURL(req: any, res: Response) {
+    let ResultCode: any;
+    let ResultParameters: any;
+    // eslint-disable-next-line no-empty
+    try {
+        ResultCode = req.body.Result.ResultCode;
+        ResultParameters = req.body.ResultParameters.ResultParameter;
+        if (ResultCode === 0) {
+            function mapMetadata(metadata: any[]) {
+                return metadata.reduce((result: { [x: string]: any }, entry: { Name: string | number; Value: any }) => {
+                    result[entry.Name] = entry.Value;
+                    return result;
+                }, {});
+            }
+            const mappedResult = mapMetadata(ResultParameters);
+            const { TransactionReceipt, TransactionAmount, B2CChargesPaidAccountAvailableFunds, TransactionCompletedDateTime } =
+                mappedResult;
+            // Notify user they have successfully sold their asset and they received money in their mpesa number
+        } else {
+            // Notify user that their transaction failed
+        }
+    } catch (error) {
+        errorResponse(res, error, 500);
     }
 }
 
 export function initiateBussinessToCustomer(req: any, res: Response) {
-    const endpoint_url = process.env.business2cApi;
+    const endpoint_url = process.env.BUSINESS_2_CUSTOMER_API;
     const auth = 'Bearer ' + req.access_token;
 
     request(
@@ -67,17 +119,17 @@ export function initiateBussinessToCustomer(req: any, res: Response) {
                 PartyA: process.env.partyABusiness,
                 PartyB: req.body.number,
                 Remarks: process.env.businessRemarks,
-                QueueTimeOutURL: 'https://mydomain.com/b2c/queue',
-                ResultURL: 'https://mydomain.com/b2c/result',
+                QueueTimeOutURL: `${process.env.WEBSITE_LIVE_URL}/btwoc/timeout`,
+                ResultURL: `${process.env.WEBSITE_LIVE_URL}/v1/btwoc/result`,
                 Occassion: process.env.businessOccassion
             }
         },
         (error, _response, body) => {
             if (error) {
-                res.status(500);
+                errorResponse(res, error);
                 return;
             }
-            res.status(200).json(body);
+            successResponse(res, body, 200);
         }
     );
 }
