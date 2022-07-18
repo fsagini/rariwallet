@@ -22,7 +22,6 @@ import Portfolio from '../views/Portfolio.vue';
 import BuyAsset from '../views/Deposit.vue';
 import Withdraw from '../views/Withdraw.vue';
 import Transactions from '../views/Transactions.vue';
-import Portfoliomenu from '../views/Portfoliomenu.vue';
 
 Vue.use(VueRouter);
 
@@ -51,14 +50,6 @@ const routes: Array<RouteConfig> = [
 		component: EmailSettings,
 		meta: {
 			requiresAuth: true
-		}
-	},
-	{
-		path: '/portfolio/menu',
-		name: 'Portfoliomenu',
-		component: Portfoliomenu,
-		meta: {
-			requiresAuth: false
 		}
 	},
 	{

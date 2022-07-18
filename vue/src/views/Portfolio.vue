@@ -41,7 +41,9 @@
 						<!-- coin price increase or decrease dynamic rendering will be added  -->
 						<div class="asset__price">
 							<span>$ {{ asset.value }}</span>
-							<p>+5.0%</p>
+							<p :class="{ loss: asset.daychange < 0, profit: asset.daychange > 0 }">
+								{{ asset.daychange > 0 ? '+' + asset.daychange : asset.daychange }}%
+							</p>
 						</div>
 					</div>
 				</div>
@@ -142,6 +144,7 @@ import { getPrice } from '../utils/fetchCoins';
 import jazzicon from '@metamask/jazzicon';
 import { copyToClipboard } from '../utils/utils';
 let value: string | number;
+let newAssets: any = [];
 let transacValue: number;
 
 @Component
@@ -160,6 +163,9 @@ export default class Portfolio extends mixins(Global, Authenticated) {
 	};
 	ShowAll = false;
 	menuShowing = false;
+	coinPerfomance: any = [];
+	finalPerfomanceData: any = [];
+	priceChange: any = [];
 	walletTransactions: any = [
 		{
 			id: 1,
@@ -198,6 +204,7 @@ export default class Portfolio extends mixins(Global, Authenticated) {
 	transformedWalletTransactions: any = [];
 	walletAssets: any = [
 		{
+			id: 'bitcoin',
 			symbol: 'BTC',
 			name: 'Bitcoin',
 			img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Bitcoin.svg/1200px-Bitcoin.svg.png',
@@ -205,6 +212,7 @@ export default class Portfolio extends mixins(Global, Authenticated) {
 			addr: '0xECe365B379E1dD183B20fc5f022230C044d51404'
 		},
 		{
+			id: 'ethereum',
 			symbol: 'ETH',
 			name: 'Ethereum',
 			img: 'https://www.pngkey.com/png/full/264-2645294_download-svg-download-png-ethereum-png.png',
@@ -212,6 +220,7 @@ export default class Portfolio extends mixins(Global, Authenticated) {
 			bal: 0.1976994
 		},
 		{
+			id: 'usd-coin',
 			symbol: 'USDC',
 			name: 'Usdc',
 			img: 'https://seeklogo.com/images/U/usd-coin-usdc-logo-CB4C5B1C51-seeklogo.com.png',
@@ -219,6 +228,7 @@ export default class Portfolio extends mixins(Global, Authenticated) {
 			bal: 0.06594
 		},
 		{
+			id: 'binancecoin',
 			symbol: 'BNB',
 			name: 'Binance',
 			img: 'https://seeklogo.com/images/B/binance-coin-bnb-logo-97F9D55608-seeklogo.com.png',
@@ -226,29 +236,12 @@ export default class Portfolio extends mixins(Global, Authenticated) {
 			bal: 0.06594
 		},
 		{
+			id: 'dai',
 			symbol: 'DAI',
 			name: 'Dai',
 			img: 'https://cryptologos.cc/logos/multi-collateral-dai-dai-logo.png',
 			addr: '0x2bA49Aaa16E6afD2a993473cfB70Fa8559B523cF',
 			bal: 2
-		}
-	];
-	menuData: any = [
-		{
-			title: 'Buy',
-			path: '/buy/asset'
-		},
-		{
-			title: 'Sell',
-			path: '/withdraw/asset'
-		},
-		{
-			title: 'Send',
-			path: '/send/asset'
-		},
-		{
-			title: 'Profile',
-			path: '/settings'
 		}
 	];
 	toggleShowAll() {
@@ -337,14 +330,39 @@ export default class Portfolio extends mixins(Global, Authenticated) {
 		this.store.loginComplete = true;
 		// Transform Assets
 
-		for (let i = 0; i < this.walletAssets.length; i++) {
-			value = (await getPrice(this.walletAssets[i].addr)) * this.walletAssets[i].bal;
+		await this.$http
+			.get('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=14&page=1&sparkline=false')
+			.then(async (response) => {
+				let ids = ['bitcoin', 'ethereum', 'dai', 'usd-coin', 'binancecoin'];
+				let { data } = response;
+				await data.map((coin: any) => {
+					this.coinPerfomance.push({
+						id: coin.id,
+						change: coin.price_change_percentage_24h
+					});
+				});
+				const coinPerfArray = JSON.parse(JSON.stringify(this.coinPerfomance));
+				this.priceChange = coinPerfArray.filter((coin: { id: string }) => ids.includes(coin.id));
+				const priceChangeObj = JSON.parse(JSON.stringify(this.priceChange));
+				this.finalPerfomanceData = this.walletAssets.map((el: { id: any }) => ({
+					...el,
+					change: priceChangeObj.find((pc: { id: any }) => pc.id === el.id).change
+				}));
+				newAssets = JSON.parse(JSON.stringify(this.finalPerfomanceData));
+			})
+			.catch((err) => {
+				window.console.log(err);
+			});
+
+		for (let i = 0; i < newAssets.length; i++) {
+			value = (await getPrice(newAssets[i].addr)) * newAssets[i].bal;
 			this.transformedWalletAssets.push({
-				symbol: this.walletAssets[i].symbol,
-				addr: this.walletAssets[i].addr,
-				name: this.walletAssets[i].name,
-				img: this.walletAssets[i].img,
-				bal: this.walletAssets[i].bal,
+				symbol: newAssets[i].symbol,
+				addr: newAssets[i].addr,
+				name: newAssets[i].name,
+				img: newAssets[i].img,
+				bal: newAssets[i].bal,
+				daychange: newAssets[i].change.toFixed(3),
 				value: Math.round(value * 1e2) / 1e2
 			});
 		}
@@ -371,6 +389,18 @@ export default class Portfolio extends mixins(Global, Authenticated) {
 }
 </script>
 <style>
+.loss {
+	color: #f00;
+	font-style: italic;
+	font-size: 16px;
+	font-weight: 600;
+}
+.profit {
+	color: #438102;
+	font-style: italic;
+	font-weight: 600;
+	font-size: 16px;
+}
 .wallet__menu {
 	padding: 10px 20px;
 	background: #fff;

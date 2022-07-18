@@ -7,7 +7,7 @@
 						<i class="fa-solid fa-angles-left" />
 					</button>
 				</div>
-				<h2 class="title">{{ $t('delete.DELETE_ACCOUNT_TITLE') }}</h2>
+				<h2 class="title text-white">{{ $t('delete.DELETE_ACCOUNT_TITLE') }}</h2>
 			</div>
 			<div class="white__container container">
 				<div class="divider just-space" />

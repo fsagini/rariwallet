@@ -6,9 +6,9 @@
 					<i class="fa-solid fa-angles-left" />
 				</button>
 			</div>
-			<div class="mb-10 text-yellow-50 font-bold text-2xl"><span>BUY ASSET</span></div>
-			<div v-if="transformedAssets.length !== 0" class="row__container">
-				<div v-for="asset in transformedAssets" class="single__asset__price" :key="asset.symbol">
+			<div class="mb-10 text-yellow-50 font-bold text-2xl"><span>BUY</span></div>
+			<swiper :slides-per-view="1" loop :autoplay="true" :speed="2500" v-if="transformedAssets.length !== 0" class="row__container__coins">
+				<swiper-slide v-for="asset in transformedAssets" class="single__asset__price" :key="asset.symbol">
 					<div class="asset__img">
 						<img :src="asset.img" :alt="asset.symbol" />
 					</div>
@@ -18,17 +18,21 @@
 					<div class="value">
 						<span>${{ asset.value }}</span>
 					</div>
-					<div class="perfomance" :class="{ loss: coinPerfomance < 0, profit: coinPerfomance > 0 }">{{ coinPerfomance }}%</div>
-				</div>
-			</div>
+					<div class="perfomance" :class="{ loss: asset.daychange < 0, profit: asset.daychange > 0 }">
+						{{ asset.daychange > 0 ? '+' + asset.daychange : asset.daychange }}%
+					</div>
+				</swiper-slide>
+			</swiper>
 			<div v-else>
-				<span>Assets Loading</span>
+				<span>asset_loading...</span>
 			</div>
 		</div>
 		<div class="figma">
 			<div>
-				<span v-if="rate" class="py-6 text-lg text-blue-500 font-semibold">1$ = {{ rate }}Ksh</span>
+				<span v-if="rate" class="py-6 text-lg text-blue-500 font-semibold">Exchange Rate 1$ = {{ rate }}Ksh</span>
+
 				<span v-else class="text-blue-500 font-semibold">currency-exchange loading...</span>
+				<div class="pt-2 font-medium text-gray-500">Choose Crypto to Buy</div>
 				<div class="row__container">
 					<div class="single__asset" v-for="asset in assets" :key="asset.addr" @click="changeCoinAndUpdateCoinAddr(asset.name, asset.addr)">
 						<div class="asset__img">
@@ -57,7 +61,7 @@
 							<span class="text-lg">You Will Recieve {{ coinsToReceive }} {{ coinType }} coins</span>
 						</div>
 						<div class="actions">
-							<button>Buy {{ coinType }}</button>
+							<button :disabled="!rate">Buy {{ coinType }}</button>
 						</div>
 					</form>
 				</div>
@@ -72,31 +76,52 @@ import { Watch } from 'vue-property-decorator';
 import { Authenticated, Global } from '../mixins/mixins';
 import { numberWithCommas } from '../utils/Commaseparator';
 import { getPrice } from '../utils/fetchCoins';
+import { Navigation, Autoplay } from 'swiper';
+import { Swiper, SwiperCore, SwiperSlide } from 'swiper-vue2';
+import 'swiper/swiper-bundle.css';
+import VueAxios from 'vue-axios';
 let coinValue: number;
+let newAssets: any = [];
+declare module 'vue/types/vue' {
+	interface Vue {
+		http: typeof VueAxios;
+	}
+}
+SwiperCore.use([Autoplay, Navigation]);
 
-@Component
+@Component({
+	components: {
+		Swiper,
+		SwiperSlide
+	}
+})
 export default class BuyAsset extends mixins(Global, Authenticated) {
 	kshAmount: number;
 	transformedAssets: any = [];
 	transactionAmount = 0;
 	coinsToReceive = 0.0;
 	position = 0;
-	coinPerfomance = -5;
+	coinPerfomance: any = [];
+	finalPerfomanceData: any = [];
+
 	rate: number;
 	assets: any = [
 		{
+			id: 'bitcoin',
 			symbol: 'BTC',
 			name: 'Bitcoin',
 			img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Bitcoin.svg/1200px-Bitcoin.svg.png',
 			addr: '0xECe365B379E1dD183B20fc5f022230C044d51404'
 		},
 		{
+			id: 'ethereum',
 			symbol: 'ETH',
 			name: 'Ethereum',
 			img: 'https://www.pngkey.com/png/full/264-2645294_download-svg-download-png-ethereum-png.png',
 			addr: '0x8A753747A1Fa494EC906cE90E9f37563A8AF630e'
 		},
 		{
+			id: 'usd-coin',
 			symbol: 'USDC',
 			name: 'Usdc',
 			img: 'https://seeklogo.com/images/U/usd-coin-usdc-logo-CB4C5B1C51-seeklogo.com.png',
@@ -104,18 +129,21 @@ export default class BuyAsset extends mixins(Global, Authenticated) {
 			bal: '0.06594'
 		},
 		{
+			id: 'binancecoin',
 			symbol: 'BNB',
 			name: 'Binance',
 			img: 'https://seeklogo.com/images/B/binance-coin-bnb-logo-97F9D55608-seeklogo.com.png',
 			addr: '0xcf0f51ca2cDAecb464eeE4227f5295F2384F84ED'
 		},
 		{
+			id: 'dai',
 			symbol: 'DAI',
 			name: 'Dai',
 			img: 'https://cryptologos.cc/logos/multi-collateral-dai-dai-logo.png',
 			addr: '0x2bA49Aaa16E6afD2a993473cfB70Fa8559B523cF'
 		}
 	];
+	priceChange: any = [];
 	coinType = this.assets[0].name;
 	coinAddr = this.assets[0].addr;
 
@@ -132,6 +160,7 @@ export default class BuyAsset extends mixins(Global, Authenticated) {
 		// perfome transaction fee actions
 		// amount of coins user will receive actions
 	}
+
 	executeBuying() {
 		if (!this.kshAmount) {
 			this.$vToastify.error('amount field cannot be empty', 'EMPTY FIELD');
@@ -146,7 +175,37 @@ export default class BuyAsset extends mixins(Global, Authenticated) {
 		this.showSpinner('performing blockchain transactions...');
 		// performe withdrawal functions
 	}
+	fetchCryptopriceChange24() {
+		// wait
+	}
 	async mounted() {
+		await this.$http
+			.get('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=14&page=1&sparkline=false')
+			.then(async (response) => {
+				let ids = ['bitcoin', 'ethereum', 'dai', 'usd-coin', 'binancecoin'];
+				let { data } = response;
+				await data.map((coin: any) => {
+					this.coinPerfomance.push({
+						id: coin.id,
+						change: coin.price_change_percentage_24h
+					});
+				});
+				const coinPerfArray = JSON.parse(JSON.stringify(this.coinPerfomance));
+				this.priceChange = coinPerfArray.filter((coin: { id: string }) => ids.includes(coin.id));
+				const priceChangeObj = JSON.parse(JSON.stringify(this.priceChange));
+				this.finalPerfomanceData = this.assets.map((el: { id: any }) => ({
+					...el,
+					change: priceChangeObj.find((pc: { id: any }) => pc.id === el.id).change
+				}));
+				newAssets = JSON.parse(JSON.stringify(this.finalPerfomanceData));
+			})
+			.catch((err) => {
+				window.console.log(err);
+			});
+
+		window.console.log('assets', newAssets);
+		this.fetchCryptopriceChange24();
+
 		let myHeaders = new Headers();
 		myHeaders.append('apikey', 'xXHV07ckmqDKWbX2rbe3B42hZIerttDS');
 		fetch('https://api.apilayer.com/fixer/latest?symbols=KES&base=USD', { method: 'GET', redirect: 'follow', headers: myHeaders })
@@ -157,29 +216,30 @@ export default class BuyAsset extends mixins(Global, Authenticated) {
 			})
 			.catch((error) => console.log('error', error));
 
-		for (let i = 0; i < this.assets.length; i++) {
-			coinValue = await getPrice(this.assets[i].addr);
+		for (let i = 0; i < newAssets.length; i++) {
+			coinValue = await getPrice(newAssets[i].addr);
 			this.transformedAssets.push({
-				symbol: this.assets[i].symbol,
-				name: this.assets[i].name,
-				img: this.assets[i].img,
-				addr: this.assets[i].addr,
+				id: newAssets[i].id,
+				symbol: newAssets[i].symbol,
+				name: newAssets[i].name,
+				img: newAssets[i].img,
+				addr: newAssets[i].addr,
+				daychange: newAssets[i].change.toFixed(2),
 				value: numberWithCommas(coinValue)
 			});
 		}
 	}
 }
 </script>
-
 <style scoped>
 .figma {
 	background: #fff;
 	border-radius: 14px 14px 0 0;
-	height: 62vh;
+	height: 65vh;
 }
-@media screen and(max-width: 480px) {
+@media (max-width: 480px) {
 	.figma {
-		height: 58vh;
+		height: 56vh;
 	}
 }
 .fa-angles-left {
@@ -237,11 +297,18 @@ export default class BuyAsset extends mixins(Global, Authenticated) {
 	border-radius: 24px;
 	font-weight: 700;
 }
+.row__container__coins {
+	display: flex;
+	overflow-x: scroll;
+}
 .row__container {
 	display: flex;
 	overflow-x: scroll;
 }
 .row__container::-webkit-scrollbar {
+	display: none;
+}
+.row__container__coins::-webkit-scrollbar {
 	display: none;
 }
 .asset__img {
@@ -278,11 +345,12 @@ p {
 }
 .single__asset__price {
 	display: flex;
-	padding: 10px 25px;
+	padding: 10px 40px;
 	justify-content: space-between;
 	background: #fff;
 	margin-bottom: 25px;
-	margin-left: 10px;
+	margin-left: 15px;
+	margin-right: 15px;
 	border-radius: 24px;
 	cursor: pointer;
 }
@@ -310,7 +378,7 @@ p {
 }
 .value span {
 	font-size: 23px;
-	font-weight: 800;
+	font-weight: 600;
 }
 .perfomance {
 	padding-left: 10px;
@@ -320,10 +388,13 @@ p {
 	color: #f00;
 	font-style: italic;
 	font-size: 16px;
+	font-weight: 600;
 }
 .profit {
 	color: #438102;
 	font-style: italic;
+	font-weight: 600;
 	font-size: 16px;
 }
 </style>
+
