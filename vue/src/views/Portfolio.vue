@@ -563,9 +563,6 @@ export default class Portfolio extends mixins(Global, Authenticated) {
 	text-align: start;
 	font-weight: 600;
 }
-.asset__price p {
-	color: #75bf72;
-}
 .balance__details p,
 .asset__price p {
 	font-size: 16px;
