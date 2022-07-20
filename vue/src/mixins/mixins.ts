@@ -1,3 +1,4 @@
+import { TypeCreateTransactions } from './../types/global-types';
 // global mixins
 import Vue from 'vue';
 import Component from 'vue-class-component';
@@ -71,6 +72,9 @@ export class Global extends Vue {
 
 	@Action
 	public unlock2FA!: (params: TypeUnlock2fa) => Promise<string>;
+
+	@Action
+	public createTransaction!: (params: TypeCreateTransactions) => Promise<unknown>;
 
 	@Action
 	public createWallet!: (params: TypeCreateUser) => Promise<unknown>;

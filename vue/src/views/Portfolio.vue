@@ -60,7 +60,9 @@
 						<!-- coin price increase or decrease dynamic rendering will be added  -->
 						<div class="asset__price">
 							<span>$ {{ asset.value }}</span>
-							<p>+5.0%</p>
+							<p :class="{ loss: asset.daychange < 0, profit: asset.daychange > 0 }">
+								{{ asset.daychange > 0 ? '+' + asset.daychange : asset.daychange }}%
+							</p>
 						</div>
 					</div>
 				</div>
@@ -181,7 +183,7 @@ export default class Portfolio extends mixins(Global, Authenticated) {
 			coinType: 'USDC',
 			transactionType: 'Deposited',
 			addr: '0xa24de01df22b63d23Ebc1882a5E3d4ec0d907bFB',
-			date: 'Aug 24, 2022'
+			date: 'May 04, 2022'
 		},
 		{
 			id: 3,
@@ -189,7 +191,7 @@ export default class Portfolio extends mixins(Global, Authenticated) {
 			coinType: 'ETH',
 			transactionType: 'Withdrawn',
 			addr: '0x8A753747A1Fa494EC906cE90E9f37563A8AF630e',
-			date: 'Dec 24, 2022'
+			date: 'July 24, 2022'
 		},
 		{
 			id: 4,
@@ -197,7 +199,7 @@ export default class Portfolio extends mixins(Global, Authenticated) {
 			coinType: 'ETH',
 			transactionType: 'Sent',
 			addr: '0x8A753747A1Fa494EC906cE90E9f37563A8AF630e',
-			date: 'Dec 24, 2022'
+			date: 'July 26, 2022'
 		}
 	];
 	transformedWalletAssets: any = [];
@@ -222,7 +224,7 @@ export default class Portfolio extends mixins(Global, Authenticated) {
 		{
 			id: 'usd-coin',
 			symbol: 'USDC',
-			name: 'Usdc',
+			name: 'Usdc-Coin',
 			img: 'https://seeklogo.com/images/U/usd-coin-usdc-logo-CB4C5B1C51-seeklogo.com.png',
 			addr: '0xa24de01df22b63d23Ebc1882a5E3d4ec0d907bFB',
 			bal: 0.06594
@@ -331,7 +333,7 @@ export default class Portfolio extends mixins(Global, Authenticated) {
 		// Transform Assets
 
 		await this.$http
-			.get('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=14&page=1&sparkline=false')
+			.get('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1&sparkline=false')
 			.then(async (response) => {
 				let ids = ['bitcoin', 'ethereum', 'dai', 'usd-coin', 'binancecoin'];
 				let { data } = response;
@@ -346,7 +348,7 @@ export default class Portfolio extends mixins(Global, Authenticated) {
 				const priceChangeObj = JSON.parse(JSON.stringify(this.priceChange));
 				this.finalPerfomanceData = this.walletAssets.map((el: { id: any }) => ({
 					...el,
-					change: priceChangeObj.find((pc: { id: any }) => pc.id === el.id).change
+					change: priceChangeObj.find((pc: { id: any }) => pc.id === el.id)?.change
 				}));
 				newAssets = JSON.parse(JSON.stringify(this.finalPerfomanceData));
 			})
@@ -391,15 +393,11 @@ export default class Portfolio extends mixins(Global, Authenticated) {
 <style>
 .loss {
 	color: #f00;
-	font-style: italic;
-	font-size: 16px;
-	font-weight: 600;
+	font-size: 12px !important;
 }
 .profit {
 	color: #438102;
-	font-style: italic;
-	font-weight: 600;
-	font-size: 16px;
+	font-size: 12px !important;
 }
 .wallet__menu {
 	padding: 10px 20px;

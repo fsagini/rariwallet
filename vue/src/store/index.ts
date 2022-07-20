@@ -1,3 +1,4 @@
+import { TypeCreateTransactions } from './../types/global-types';
 import Vue from 'vue';
 import * as zksync from 'zksync';
 import Vuex, { Store } from 'vuex';
@@ -15,7 +16,8 @@ import {
 	getBackendEndpoint,
 	getNonce,
 	recoverSeedSocialRecovery,
-	verifyEmailConfirmationCode
+	verifyEmailConfirmationCode,
+	SaveBlockChainTransactions
 } from '../utils/backupRestore';
 import { downloadEncryptedKeystore, sortObject } from '../utils/utils';
 import { getKeystore } from '../utils/keystore';
@@ -47,12 +49,12 @@ import {
 	TypeShowPhraseKeyVariables,
 	TypeExportPhraseKeyVariables,
 	TypeUpdateRecovery,
-	TypeUpdateUserPayload
+	TypeUpdateUserPayload,
+	TypeCreateUser
 } from '../types/global-types';
 
 import isIframe from '../utils/isIframe';
 import { connectToParent } from 'penpal';
-import { SignedTransaction } from 'web3-core';
 import { CallSender, Connection } from 'penpal/lib/types';
 import router from '@/router';
 import download from 'downloadjs';
@@ -160,8 +162,9 @@ function initialState(): RootState {
  */
 const store: Store<RootState> = new Vuex.Store({
 	state: initialState(),
-
 	modules: {},
+
+	// Store Mutations(methods, initial propeties update)
 	mutations: {
 		authRequested(state: RootState) {
 			state.status = 'loading';
@@ -246,7 +249,6 @@ const store: Store<RootState> = new Vuex.Store({
 			localStorage.removeItem('login');
 			const email = localStorage.getItem('email');
 			if (email) localStorage.setItem('lastEmail', email);
-
 			localStorage.removeItem('email');
 			localStorage.removeItem('iconSeed');
 			removeSessionStore('password');
@@ -266,7 +268,6 @@ const store: Store<RootState> = new Vuex.Store({
 			state.token = '';
 			const email = localStorage.getItem('email');
 			if (email) localStorage.setItem('lastEmail', email);
-
 			localStorage.removeItem('email');
 			localStorage.removeItem('iconSeed');
 			localStorage.removeItem('recoveryMethods');
@@ -322,6 +323,8 @@ const store: Store<RootState> = new Vuex.Store({
 			state.email = payload;
 		}
 	},
+
+	// Store  Actions( What Should be performed when an action is required)
 	actions: {
 		showSpinner({ commit }, message: string) {
 			commit('loading', message);
@@ -341,8 +344,10 @@ const store: Store<RootState> = new Vuex.Store({
 			if (sessionEncryptedSeed) {
 				try {
 					encryptedSeed = JSON.parse(String(sessionEncryptedSeed));
-					if (encryptedSeed && encryptedSeed.ciphertext) await commit('seedFound', { encryptedSeed });
-				} catch {
+					if (encryptedSeed && encryptedSeed.ciphertext) {
+						await commit('seedFound', { encryptedSeed });
+					}
+				} catch (ex) {
 					encryptedSeed = {};
 				}
 			}
@@ -489,7 +494,7 @@ const store: Store<RootState> = new Vuex.Store({
 		/**
 		 * Fetch the user data from the database and attempt to unlock the wallet using the mail encrypted seed
 		 */
-		createWallet({ commit, dispatch }, params: TypeFetchUser) {
+		createWallet({ commit, dispatch }, params: TypeCreateUser) {
 			return new Promise((resolve, reject) => {
 				sha256(params.password).then((hashedPassword) => {
 					getPayload(params.email, params.recaptchaToken)
@@ -508,6 +513,7 @@ const store: Store<RootState> = new Vuex.Store({
 							const createdKeystoreObj = await getKeystore(hashedPassword, {}, 1);
 							saveWalletEmailPassword(
 								params.email,
+								params.phonenumber,
 								createdKeystoreObj.encryptedSeed,
 								createdKeystoreObj.keystore.address,
 								params.recaptchaToken
@@ -529,6 +535,20 @@ const store: Store<RootState> = new Vuex.Store({
 				});
 			});
 		},
+
+		//** Save Transactions */
+		async createTransaction({ commit, state }, params: TypeCreateTransactions) {
+			const encryptedSeed = state.encryptedSeed;
+			commit('loading', 'saving your transactions to the database');
+			SaveBlockChainTransactions(params.email, encryptedSeed, params.date, params.amount, params.transaction_type)
+				.then(() => {
+					commit('ClearUser');
+				})
+				.catch((e) => {
+					commit('message', e);
+				});
+		},
+
 		async loginWallet({ state, dispatch }, recaptchaToken) {
 			if (!state.email && !state.hashedPassword) {
 				const email = localStorage.getItem('email') || '';
@@ -548,12 +568,10 @@ const store: Store<RootState> = new Vuex.Store({
 				state.iconSeed = iconSeed;
 				state.hashedPassword = hashedPassword;
 				state.encryptedSeed = encryptedSeed;
-
 				Sentry.configureScope((scope) => {
 					scope.setUser({ id: state.accounts && state.accounts.length > 0 ? state.accounts[0] : '', email: state.email });
 				});
 			}
-
 			dispatch('unlockWithStoredPassword', recaptchaToken)
 				.then((result) => {
 					if (result) {
@@ -667,7 +685,6 @@ const store: Store<RootState> = new Vuex.Store({
 		 */
 		async unlockWithStoredPassword({ dispatch, commit, state }, recaptchaToken: string) {
 			commit('updateUnlocking', true);
-
 			if (!state.encryptedSeed || !state.encryptedSeed.ciphertext) {
 				await dispatch('loadEncryptedSeed');
 			}
@@ -704,7 +721,6 @@ const store: Store<RootState> = new Vuex.Store({
 				getKeystoreFromEncryptedSeed(state.encryptedSeed, params.password)
 					.then(async (keystore: WalletBase) => {
 						state.loginRetryCount = 0;
-
 						commit('keystoreUnlocked', { keystore, accounts: [keystore.address], hashedPassword: params.password });
 						getPayload(state.email, params.recaptchaToken)
 							.then((payload) => {
@@ -727,6 +743,7 @@ const store: Store<RootState> = new Vuex.Store({
 					});
 			});
 		},
+
 		updateRecoveryMethods({ commit, dispatch }, params: TypeUpdateRecovery) {
 			return new Promise((resolve, reject) => {
 				if (localStorage.getItem('recoveryMethods') && params.dbUpdate !== true) {
@@ -893,6 +910,7 @@ const store: Store<RootState> = new Vuex.Store({
 					});
 			});
 		},
+
 		sendSignedRequest({ state }, params: TypeRequestParams) {
 			return new Promise(async (resolve, reject) => {
 				try {
@@ -1109,6 +1127,7 @@ const store: Store<RootState> = new Vuex.Store({
 			commit('updateEmail', email);
 		}
 	},
+
 	getters: {
 		isLoggedIn: (state) => {
 			return state.keystore !== undefined && state.keystore !== null;

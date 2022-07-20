@@ -1,3 +1,4 @@
+import { Transactions } from './Transactions.model';
 import { AutoIncrement, Column, DataType, HasMany, Model, PrimaryKey, Table, Unique } from 'sequelize-typescript';
 import { Recovery } from './Recovery.model';
 import { Userhistory } from './Userhistory.model';
@@ -13,12 +14,12 @@ export class User extends Model {
     @Column({
         type: DataType.TEXT
     })
-    email;
+    email: string;
 
     @Column({
         type: DataType.TEXT
     })
-    authenticator_qr;
+    authenticator_qr: any;
 
     @Column({
         type: DataType.TEXT
@@ -33,7 +34,7 @@ export class User extends Model {
     @Column({
         type: DataType.TEXT
     })
-    phonenumber;
+    phonenumber: any;
 
     @Column({
         type: DataType.INTEGER
@@ -75,4 +76,7 @@ export class User extends Model {
 
     @HasMany(() => Userhistory)
     history: Userhistory[];
+
+    @HasMany(() => Transactions)
+    transactions: Transactions[];
 }

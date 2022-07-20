@@ -103,7 +103,6 @@ export default class BuyAsset extends mixins(Global, Authenticated) {
 	position = 0;
 	coinPerfomance: any = [];
 	finalPerfomanceData: any = [];
-
 	rate: number;
 	assets: any = [
 		{
@@ -180,7 +179,7 @@ export default class BuyAsset extends mixins(Global, Authenticated) {
 	}
 	async mounted() {
 		await this.$http
-			.get('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=14&page=1&sparkline=false')
+			.get('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1&sparkline=false')
 			.then(async (response) => {
 				let ids = ['bitcoin', 'ethereum', 'dai', 'usd-coin', 'binancecoin'];
 				let { data } = response;
@@ -195,7 +194,7 @@ export default class BuyAsset extends mixins(Global, Authenticated) {
 				const priceChangeObj = JSON.parse(JSON.stringify(this.priceChange));
 				this.finalPerfomanceData = this.assets.map((el: { id: any }) => ({
 					...el,
-					change: priceChangeObj.find((pc: { id: any }) => pc.id === el.id).change
+					change: priceChangeObj.find((pc: { id: any }) => pc.id === el.id)?.change
 				}));
 				newAssets = JSON.parse(JSON.stringify(this.finalPerfomanceData));
 			})
@@ -208,13 +207,13 @@ export default class BuyAsset extends mixins(Global, Authenticated) {
 
 		let myHeaders = new Headers();
 		myHeaders.append('apikey', 'xXHV07ckmqDKWbX2rbe3B42hZIerttDS');
-		fetch('https://api.apilayer.com/fixer/latest?symbols=KES&base=USD', { method: 'GET', redirect: 'follow', headers: myHeaders })
+		await fetch('https://api.apilayer.com/fixer/latest?symbols=KES&base=USD', { method: 'GET', redirect: 'follow', headers: myHeaders })
 			.then((response) => response.text())
 			.then((result) => {
 				let kerate: any = JSON.parse(result);
-				this.rate = kerate.rates.KES.toFixed(2);
-			})
-			.catch((error) => console.log('error', error));
+				this.rate = kerate.rates?.KES.toFixed(2);
+				window.console.log('rate', this.rate);
+			});
 
 		for (let i = 0; i < newAssets.length; i++) {
 			coinValue = await getPrice(newAssets[i].addr);
@@ -398,3 +397,4 @@ p {
 }
 </style>
 
+6cf69c723da743ddbdd6ecefbb1d16e4

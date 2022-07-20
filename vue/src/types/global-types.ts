@@ -156,7 +156,16 @@ export type MorpherWalletConfig = {
 	confirm_message: boolean;
 } | null;
 
+export type TypeCreateTransactions = {
+	__typename?: 'TypeCreateTransactions';
+	email: string;
+	transaction_type: string;
+	amount: number;
+	date: Date;
+};
+
 export type TransactionObject = {
+	__typename?: 'TransactionObject';
 	to: string;
 	token: string;
 	amount: number;
@@ -166,6 +175,7 @@ export type TransactionObject = {
 };
 
 export type TransactionReceipt = {
+	__typename?: 'TransactionReceipt';
 	txId: string;
 	date: number;
 	amount: number;
