@@ -20,7 +20,6 @@ const OAuth2 = Google.auth.OAuth2;
 const oauth2Client = new OAuth2();
 const countryList = process.env.COUNTRY_LIST || '[]';
 
-
 import { Logger } from '../helpers/functions/winston';
 
 // Function to save new signups to the database.
@@ -28,10 +27,10 @@ export async function saveEmailPassword(req: Request, res: Response) {
     // Get sequelize transactions to rollback changes in case of failure.
     const [err, transaction] = await to(getTransaction());
     if (err) return errorResponse(res, 'INTERNAL_SERVER_ERROR', 500);
-    
     try {
         // Get variables from request body.
         const email = req.body.email;
+        const phonenumber = req.body.phonenumber;
         const key = req.body.key;
         const encryptedSeed = req.body.encryptedSeed;
         const recoveryTypeId = req.body.recoveryTypeId || 1;
@@ -47,7 +46,7 @@ export async function saveEmailPassword(req: Request, res: Response) {
             return errorResponse(res, 'BAD_REQUEST', 400);
         }
 
-        let userId;
+        let userId: any;
 
         // Attempt to get user from database.
         const user = await User.findOne({ where: { email }, raw: true, transaction });
@@ -59,7 +58,7 @@ export async function saveEmailPassword(req: Request, res: Response) {
 
             const nonce = 1;
 
-            userId = (await User.create({ email, payload, nonce, eth_address }, { transaction })).getDataValue('id');
+            userId = (await User.create({ email, phonenumber, payload, nonce, eth_address }, { transaction })).getDataValue('id');
 
             // Create a new recovery method.
             const recoveryId = (
@@ -76,7 +75,14 @@ export async function saveEmailPassword(req: Request, res: Response) {
             // Commit changes to database and return successfully.
             await transaction.commit();
 
-            Logger.info({ method: arguments.callee.name, type: 'New Wallet', user_id: userId, headers: req.headers, body: req.body, message: `saveEmailPassword: New Wallet [${userId}] [${email}] [${eth_address}]` });
+            Logger.info({
+                method: arguments.callee.name,
+                type: 'New Wallet',
+                user_id: userId,
+                headers: req.headers,
+                body: req.body,
+                message: `saveEmailPassword: New Wallet [${userId}] [${email}] [${eth_address}]`
+            });
 
             return successResponse(res, {
                 recovery_id: recoveryId
@@ -142,7 +148,7 @@ export async function addRecoveryMethod(req: Request, res: Response) {
                 recovery_id: newRecoveryId
             });
         }
-        
+
         return errorResponse(res, 'RECOVERY_METHOD_ALREADY_SET');
     } catch (error) {
         Logger.error({ source: 'addRecoveryMethod', data: req.body, message: error.message || error.toString() });
@@ -153,7 +159,6 @@ export async function addRecoveryMethod(req: Request, res: Response) {
 // Function to save new email/password to the database.
 //only works if passed through a middleware that checks the signature!
 export async function updatePassword(req: Request, res: Response) {
-
     try {
         const key = req.header('key');
         const encryptedSeed = req.body.encryptedSeed;
@@ -174,14 +179,12 @@ export async function updatePassword(req: Request, res: Response) {
             });
             return successResponse(res, 'updated');
         }
-
     } catch (error) {
         Logger.error({ source: 'updatePassword', data: req.body, message: error.message || error.toString() });
         return errorResponse(res, 'INTERNAL_SERVER_ERROR', 500);
     }
     //error out in any other case
     return errorResponse(res, 'INTERNAL_SERVER_ERROR', 500);
-
 }
 
 // Function to save new email/password to the database.
@@ -282,7 +285,7 @@ export async function getEncryptedSeed(req, res) {
 
         const ip_address = req.ip;
 
-        const ip_country = await getIPCountryCode(ip_address)
+        const ip_country = await getIPCountryCode(ip_address);
 
         if (recovery) {
             const user = await User.findOne({ where: { id: recovery.user_id } });
@@ -303,10 +306,9 @@ export async function getEncryptedSeed(req, res) {
                                 stringified_headers: JSON.stringify(req.headers)
                             });
                             user.payload.email = true;
-                            user.changed('payload', true)
+                            user.changed('payload', true);
                         }
                     }
-
                 }
 
                 user.ip_address = ip_address;
@@ -328,16 +330,20 @@ export async function getEncryptedSeed(req, res) {
                             ignoreCountry = true;
                         }
 
-                        if(process.env.ENVIRONMENT !== 'development' && ignoreCountry == false){
+                        if (process.env.ENVIRONMENT !== 'development' && ignoreCountry == false) {
                             user.payload.needConfirmation = true;
                         }
 
-                        user.changed('payload', true)
+                        user.changed('payload', true);
                     }
                 }
 
                 if (ip_country && user.ip_country !== ip_country) {
-                    Logger.log({ source: 'getEncryptedSeed', data: { id: user.id, old_country: user.ip_country, new_country: ip_country }, message: `getEncryptedSeed: User country changed [${user.id}  ${user.ip_country} ${ip_country}]` });
+                    Logger.log({
+                        source: 'getEncryptedSeed',
+                        data: { id: user.id, old_country: user.ip_country, new_country: ip_country },
+                        message: `getEncryptedSeed: User country changed [${user.id}  ${user.ip_country} ${ip_country}]`
+                    });
                     user.ip_country = ip_country;
                 }
 
@@ -448,11 +454,16 @@ async function getFacebookEncryptedSeed(req, res) {
                     body: req.body,
                     message: `getFacebookEncryptedSeed: Recovered Encrypted seed from Facebook [${key.substr(0, 10)}...]`
                 });
-                return successResponse(res, { encryptedSeed: await decrypt(JSON.parse(recovery.encrypted_seed), process.env.DB_BACKEND_SALT) });
+                return successResponse(res, {
+                    encryptedSeed: await decrypt(JSON.parse(recovery.encrypted_seed), process.env.DB_BACKEND_SALT)
+                });
             }
         }
         Logger.info({
-            method: arguments.callee.name, type: 'Failed Recover Encrypted Seed', headers: req.headers, body: req.body,
+            method: arguments.callee.name,
+            type: 'Failed Recover Encrypted Seed',
+            headers: req.headers,
+            body: req.body,
             message: `getFacebookEncryptedSeed: Failed to recover seed from Facebook [${user.id}]`
         });
         // If user does not exist return an error.
@@ -508,7 +519,10 @@ async function getGoogleEncryptedSeed(req, res) {
         }
 
         Logger.info({
-            method: arguments.callee.name, type: 'Failed Recover Encrypted Seed', headers: req.headers, body: req.body,
+            method: arguments.callee.name,
+            type: 'Failed Recover Encrypted Seed',
+            headers: req.headers,
+            body: req.body,
             message: `getGoogleEncryptedSeed: Failed to recover seed [${key.substr(0, 10)}...]`
         });
         // If user does not exist return an error.
@@ -551,11 +565,16 @@ async function getVKontakteEncryptedSeed(req, res) {
                     body: req.body,
                     message: `getVKontakteEncryptedSeed: Recovered Encrypted seed from VKontakte [${user.id}]`
                 });
-                return successResponse(res, { encryptedSeed: await decrypt(JSON.parse(recovery.encrypted_seed), process.env.DB_BACKEND_SALT) });
+                return successResponse(res, {
+                    encryptedSeed: await decrypt(JSON.parse(recovery.encrypted_seed), process.env.DB_BACKEND_SALT)
+                });
             }
         }
         Logger.info({
-            method: arguments.callee.name, type: 'Failed Recover Encrypted Seed', headers: req.headers, body: req.body,
+            method: arguments.callee.name,
+            type: 'Failed Recover Encrypted Seed',
+            headers: req.headers,
+            body: req.body,
             message: `getVKontakteEncryptedSeed: Failed to recover seed from VKontakte [${key.substr(0, 10)}...]`
         });
         // If user does not exist return an error.
@@ -583,13 +602,17 @@ export async function recoverSeedSocialRecovery(req: Request, res: Response) {
 export async function getPayload(req, res) {
     try {
         const ip_address = req.ip;
-        const ip_country = await getIPCountryCode(ip_address)
+        const ip_country = await getIPCountryCode(ip_address);
 
         const key = req.body.key;
         const recovery = await Recovery.findOne({ where: { key } });
         if (recovery == null) {
-
-            Logger.error({ source: 'getPayload', data: req.body, message: `getPayload: User not found. [${req.ip}] [${key.substr(0, 10)}...]`, remoteAddress: req.ip });
+            Logger.error({
+                source: 'getPayload',
+                data: req.body,
+                message: `getPayload: User not found. [${req.ip}] [${key.substr(0, 10)}...]`,
+                remoteAddress: req.ip
+            });
             return errorResponse(res, 'USER_NOT_FOUND', 404);
         }
         const user = await User.findOne({ where: { id: recovery.user_id } });
@@ -611,17 +634,15 @@ export async function getPayload(req, res) {
                             change_type: 'autoemail2fa',
                             stringified_headers: JSON.stringify(req.headers)
                         });
-                        user.changed('payload', true)
+                        user.changed('payload', true);
                     }
                 }
-
             }
 
             user.ip_address = ip_address;
 
             if (ip_country && ip_country !== user.ip_country) {
                 if (!user.payload.authenticator && !user.payload.email) {
-
                     if (!user.payload.needConfirmation) {
                         await Userhistory.create({
                             user_id: user.id,
@@ -637,31 +658,35 @@ export async function getPayload(req, res) {
                         ignoreCountry = true;
                     }
 
-                    if(process.env.ENVIRONMENT !== 'development' && ignoreCountry == false){
+                    if (process.env.ENVIRONMENT !== 'development' && ignoreCountry == false) {
                         user.payload.needConfirmation = true;
                     }
-                    
-                    user.changed('payload', true)
+
+                    user.changed('payload', true);
                 }
             }
 
             if (ip_country && user.ip_country !== ip_country) {
-                Logger.log({ source: 'getPayload', data: { id: user.id, old_country: user.ip_country, new_country: ip_country }, message: `getPayload: User country changed [${user.id}] [${user.ip_country} to ${ip_country}]` });
+                Logger.log({
+                    source: 'getPayload',
+                    data: { id: user.id, old_country: user.ip_country, new_country: ip_country },
+                    message: `getPayload: User country changed [${user.id}] [${user.ip_country} to ${ip_country}]`
+                });
                 user.ip_country = ip_country;
             }
 
             await user.save();
 
             if (user != null && user['payload'] !== null) {
-                // default app language to en 
+                // default app language to en
                 if (!user['payload'].app_lang) {
                     user['payload'].app_lang = 'en';
-                    user.changed('payload', true)
+                    user.changed('payload', true);
                     await user.save();
                 }
 
                 payload['app_lang'] = user['payload'].app_lang;
-                
+
                 if (user['payload'].email !== undefined) {
                     payload['email'] = user.payload.email;
                 }
@@ -681,7 +706,15 @@ export async function getPayload(req, res) {
         }
 
         if (user) {
-            Logger.info({ method: arguments.callee.name, type: 'Get Payload', user_id: user.id, user, headers: req.headers, body: req.body, message: `getPayload: Successful [${user.id}] [${user.email}]` });
+            Logger.info({
+                method: arguments.callee.name,
+                type: 'Get Payload',
+                user_id: user.id,
+                user,
+                headers: req.headers,
+                body: req.body,
+                message: `getPayload: Successful [${user.id}] [${user.email}]`
+            });
             payload['ip_country'] = user.ip_country;
             return successResponse(res, payload);
         } else {
@@ -698,13 +731,28 @@ export async function getNonce(req, res) {
         const key = req.body.key;
         const recovery = await Recovery.findOne({ where: { key } });
         if (recovery == null) {
-            Logger.info({ method: arguments.callee.name, type: 'Error: User Not found', key, headers: req.headers, body: req.body, message: `getNonce: User not found [${key.substr(0, 10)}...]` });
+            Logger.info({
+                method: arguments.callee.name,
+                type: 'Error: User Not found',
+                key,
+                headers: req.headers,
+                body: req.body,
+                message: `getNonce: User not found [${key.substr(0, 10)}...]`
+            });
             return errorResponse(res, 'USER_NOT_FOUND', 404);
         }
         const user = await User.findOne({ where: { id: recovery.user_id }, raw: true });
 
         if (user) {
-            Logger.info({ method: arguments.callee.name, type: 'Get Nonce', user_id: user.id, user, headers: req.headers, body: req.body, message: `getNonce: User found [${user.id}]` });
+            Logger.info({
+                method: arguments.callee.name,
+                type: 'Get Nonce',
+                user_id: user.id,
+                user,
+                headers: req.headers,
+                body: req.body,
+                message: `getNonce: User found [${user.id}]`
+            });
             return successResponse(res, { nonce: user.nonce });
         } else {
             return errorResponse(res, 'NONCE_NOT_FOUND', 404);
@@ -736,7 +784,6 @@ export async function change2FAMethods(req, res) {
 
             if (toggleEmail) {
                 if (!email2faVerification) {
-
                     const verificationCode = await updateEmail2fa(user.id);
 
                     if (sendEmails === 'true') {
@@ -764,8 +811,7 @@ export async function change2FAMethods(req, res) {
             }
 
             if (toggleAuthenticator) {
-
-                if (!authenticator2faVerification || !await verifyGoogle2FA(user.id.toString(), authenticator2faVerification, false)) {
+                if (!authenticator2faVerification || !(await verifyGoogle2FA(user.id.toString(), authenticator2faVerification, false))) {
                     Logger.info({
                         method: arguments.callee.name,
                         type: 'Error: Authenticator Code Wrong',
@@ -909,7 +955,7 @@ async function updateEmail2fa(user_id) {
     const user = await User.findOne({ where: { id: user_id } });
     const verificationCode = randomFixedInteger(6);
     user.email_verification_code = verificationCode;
-    user.email2fa_valid_until = new Date(Date.now() + (15 * 60 * 1000)); //15 minutes valid
+    user.email2fa_valid_until = new Date(Date.now() + 15 * 60 * 1000); //15 minutes valid
     await user.save();
     return user.email_verification_code;
 }
@@ -1068,7 +1114,6 @@ export async function resetRecovery(req, res) {
                 return successResponse(res, true);
             }
 
-
             Logger.error({
                 method: arguments.callee.name,
                 type: 'Error: Recovery Method Not found',
@@ -1128,7 +1173,6 @@ export async function deleteAccount(req, res) {
             message: `deleteAccount: User Not Found [${req.body.email}]`
         });
 
-
         return errorResponse(res, 'USER_NOT_FOUND', 404);
     } catch (error) {
         Logger.error({ source: 'deleteAccount', data: req.body, message: error.message || error.toString() });
@@ -1139,18 +1183,17 @@ export async function deleteAccount(req, res) {
 async function verifyEmail2FA(user_id: string, code: string, isEmailChange: boolean = false): Promise<boolean> {
     const user = await User.findOne({ where: { id: user_id } });
     if (user.payload.needConfirmation || isEmailChange) {
-        return user.email_verification_code === Number(code)
+        return user.email_verification_code === Number(code);
     }
 
-    return user.payload.email === false || (user.email_verification_code === Number(code));
-
+    return user.payload.email === false || user.email_verification_code === Number(code);
 }
 
 async function isEmail2FaStillValid(user_id: string): Promise<boolean> {
     const user = await User.findOne({ where: { id: user_id } });
 
     const email2faValidUntil = new Date(user.email2fa_valid_until);
-    return (user.payload.email === false || email2faValidUntil > new Date());
+    return user.payload.email === false || email2faValidUntil > new Date();
 }
 
 async function verifyGoogle2FA(user_id: string, code: string, getSeed: boolean = true): Promise<boolean> {
@@ -1165,10 +1208,10 @@ export async function updateUserPayload(req, res) {
         const key = req.header('key');
         const payloadColumn = req.body.column;
         const payloadValue = req.body.value;
-        
+
         // only allow updates to app lang payload column
         if (payloadColumn !== 'app_lang') {
-            return res.status(403).json({ error: "INVALID_REQUEST" });
+            return res.status(403).json({ error: 'INVALID_REQUEST' });
         }
         // Create a new recovery method.
         const recovery = await Recovery.findOne({ where: { key, recovery_type_id: 1 } });

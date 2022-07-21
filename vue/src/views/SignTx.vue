@@ -93,7 +93,7 @@
 				</div>
 			</div>
 
-			<button class="button is-green big-button is-login transition-faster mt-5" @click="sign()">
+			<button class="button is-blue big-button is-login transition-faster mt-5" @click="sign()">
 				<span class="text">{{ $t('common.CONFIRM') }}</span>
 			</button>
 
@@ -196,7 +196,7 @@ export default class SignTx extends mixins(Global, Authenticated) {
 	align-items: center;
 	justify-content: center;
 	background-color: rgba(0, 195, 134, 0.1);
-	border: 1px solid #00c386;
+	border: 1px solid #347AF0;
 	box-shadow: 0 1px 2px 0 rgb(0 195 134 / 20%), 0 5px 12px 0 rgb(0 0 0 / 10%);
 	position: relative;
 	z-index: 1;

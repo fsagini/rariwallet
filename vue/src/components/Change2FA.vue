@@ -13,7 +13,7 @@
 					<div class="actions">
 						<button
 							:class="{
-								'button is-black is-small-button has-text-weight-bold transition-faster': true,
+								'button is-grey is-small-button has-text-weight-bold transition-faster': true,
 								'is-light-danger': store.twoFaRequired.email
 							}"
 							:disabled="ipCountry == 'RU'"
@@ -46,7 +46,7 @@
 					<div class="actions">
 						<button
 							:class="{
-								'button is-black is-small-button has-text-weight-bold transition-faster': true,
+								'button is-grey is-small-button has-text-weight-bold transition-faster': true,
 								'is-light-danger': store.twoFaRequired.authenticator
 							}"
 							data-cy="authenticatorToggle"

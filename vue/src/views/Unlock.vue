@@ -52,7 +52,7 @@
 			<p>⚠️ <span v-html="logonError"></span></p>
 		</div>
 
-		<button @click="login()" class="button is-green big-button is-login transition-faster mt-5" :disabled="!walletPassword">
+		<button @click="login()" class="button is-blue big-button is-login transition-faster mt-5" :disabled="!walletPassword">
 			<span class="text">{{ $t('auth.LOGIN') }}</span>
 		</button>
 		<p class="forgot-password">
@@ -103,10 +103,8 @@ export default class Unlock extends mixins(Global, Recaptcha) {
 		}
 
 		if (this.$store.state.hashedPassword && this.$store.state.encryptedSeed.ciphertext !== undefined) {
-
 			this.showSpinner(this.$t('loader.LOADING_ACCOUNT').toString());
 
-			
 			// Check if the wallet can be unlocked using the local-storage stored password
 			this.unlockWithStoredPassword(this.recaptchaToken)
 				.then((result) => {
@@ -123,7 +121,7 @@ export default class Unlock extends mixins(Global, Recaptcha) {
 					}
 					// error
 				});
-		} else{
+		} else {
 			this.unlockUpdate();
 		}
 	}
@@ -142,8 +140,6 @@ export default class Unlock extends mixins(Global, Recaptcha) {
 		const recaptchaToken = this.recaptchaToken;
 
 		if (this.$store.state.encryptedSeed && this.$store.state.encryptedSeed.ciphertext) {
-
-
 			// Call the fetchUser store action to process the wallet logon
 			this.unlockWithPassword({ password, recaptchaToken })
 				.then(() => {
@@ -169,7 +165,6 @@ export default class Unlock extends mixins(Global, Recaptcha) {
 		} else {
 			this.loginEmail();
 		}
-
 	}
 
 	loginEmail() {

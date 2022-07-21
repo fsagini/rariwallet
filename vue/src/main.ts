@@ -10,8 +10,9 @@ import { checkErrorFilter } from './utils/sentry';
 import Buefy from 'buefy';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
-
-
+import VueToastify from 'vue-toastify';
+import axios from 'axios';
+import VueAxios from 'vue-axios';
 Vue.config.productionTip = false;
 
 // Multi-language i18n plugin
@@ -92,7 +93,16 @@ if (process.env.VUE_APP_SENTRY_ENDPOINT) {
 		}
 	});
 }
-
+Vue.prototype.$log = console.log;
+Vue.use(VueAxios, axios);
+Vue.use(VueToastify, {
+	singular: true,
+	errorDuration: 8000,
+	successDuration: 8000,
+	warningInfoDuration: 8000,
+	position: 'top-right',
+	theme: 'light'
+});
 Vue.use(
 	VueGtag,
 	{
@@ -138,7 +148,7 @@ new Vue({
 	data: {
 		privateState: {}
 	},
-	
+
 	router,
 	store,
 	i18n,

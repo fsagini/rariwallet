@@ -27,7 +27,6 @@ import Component from 'vue-class-component';
 import Spinner from './components/loading-spinner/Spinner.vue';
 import NetworkError from './components/NetworkError.vue';
 import Footer from './components/Footer.vue';
-
 import { BackgroundNFT, getRandomNFTBackground } from '../src/utils/backgroundNFT';
 
 @Component({
@@ -65,14 +64,13 @@ export default class App extends Vue {
 						this.$router.push('/').catch(() => undefined);
 					}
 				} else {
-					if (this.$router.currentRoute.path !== '/login') {
-						this.$router.push('/login').catch(() => undefined);
+					if (this.$router.currentRoute.path !== '/rari/onboarding') {
+						this.$router.push('/rari/onboarding').catch(() => undefined);
 					}
 				}
 			}
 		}
 	}
-
 	mounted() {
 		if (!this.iFrameDisplay) {
 			this.NFTBackground = getRandomNFTBackground();
@@ -85,4 +83,5 @@ export default class App extends Vue {
 
 <style lang="scss">
 @import '@/assets/stylesheet/wallet.scss';
+@import '@/assets/stylesheet/index.css';
 </style>

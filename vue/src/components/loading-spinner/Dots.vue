@@ -45,10 +45,10 @@ export default class Dots extends Vue {
 	width: 64px;
 	height: 64px;
 	margin: 8px;
-	border: 8px solid #00c386;
+	border: 8px solid #347AF0;
 	border-radius: 50%;
 	animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-	border-color: #00c386 transparent transparent transparent;
+	border-color: #347AF0 transparent transparent transparent;
 }
 .lds-ring div:nth-child(1) {
 	animation-delay: -0.45s;

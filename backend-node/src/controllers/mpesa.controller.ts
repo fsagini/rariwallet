@@ -1,9 +1,10 @@
-/* eslint-disable no-inner-declarations */
 import { Response, Request } from 'express';
 import * as request from 'request';
 import { passwordbase64 } from '../utils/passwordbase64';
 import * as moment from 'moment';
+
 import { errorResponse, successResponse } from '../helpers/functions/util';
+
 
 export function initiateLipaNaMpesaSTK(req: any, res: Response) {
     const endpoint_url = process.env.endpoint_stkpush;
@@ -12,7 +13,6 @@ export function initiateLipaNaMpesaSTK(req: any, res: Response) {
     const timestamp = moment().format('YYYYMMDDHHmmss');
     const passKey = process.env.passKey;
     const password = passwordbase64(shortCode, passKey, timestamp);
-    console.log('payment initiated');
     request(
         {
             uri: endpoint_url,
@@ -29,17 +29,23 @@ export function initiateLipaNaMpesaSTK(req: any, res: Response) {
                 PartyA: req.body.number,
                 PartyB: shortCode,
                 PhoneNumber: req.body.number,
+
                 CallBackURL: 'https://89d3-197-181-178-102.ngrok.io/v1/payment-callbackurl',
+
                 AccountReference: process.env.accountReference,
                 TransactionDesc: process.env.transactionDesc
             }
         },
         (err, _respon, body) => {
             if (err) {
+
                 errorResponse(res, err, 4040);
                 return;
             }
             successResponse(res, body, 200);
+                res.status(500).json(err);
+                return;
+            }
         }
     );
 }

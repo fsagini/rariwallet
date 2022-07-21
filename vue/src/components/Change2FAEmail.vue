@@ -1,32 +1,36 @@
 <template>
-	<div>
-		<img src="@/assets/img/email_verification.svg" alt="Email 2FA image" class="mb-3" />
-		<h2 data-cy="emailConfirmationTitle" class="title">{{ $t('2fa.EMAIL_CONFIRMATION_TITLE') }}</h2>
-		<p class="subtitle">{{ $t('2fa.EMAIL_CONFIRMATION_DESCRIPTION') }}</p>
-
-		<div class="field">
-			<label class="label">{{ $t('2fa.VERIFICATION_CODE') }}</label>
-
-			<div class="control">
-				<input data-cy="2faEmailCode" type="number" inputmode="numeric" class="input" v-model="authenticatorCode" />
+	<div class="">
+		<div class="email__img">
+			<img src="@/assets/img/email_verification.png" alt="Email 2FA image" />
+		</div>
+		<div class="white__container container">
+			<h2 data-cy="emailConfirmationTitle" class="title mt-3">{{ $t('2fa.EMAIL_CONFIRMATION_TITLE') }}</h2>
+			<p class="subtitle">{{ $t('2fa.EMAIL_CONFIRMATION_DESCRIPTION') }}</p>
+			<div class="field">
+				<div class="control__input">
+					<input
+						data-cy="2faEmailCode"
+						type="number"
+						:placeholder="$t('2fa.EMAIL_CODE')"
+						inputmode="numeric"
+						class="border-none bg-none outline-none p-2"
+						v-model="authenticatorCode"
+						min="0"
+					/>
+				</div>
 			</div>
+			<button
+				data-cy="confirmButton"
+				@click="setCode()"
+				class="button is-green big-button is-login transition-faster mt-5"
+				:disabled="!authenticatorCode"
+			>
+				<span class="text">{{ $t('common.SUBMIT') }}</span>
+			</button>
+			<button v-on:click="pageBack()" class="button is-ghost is-blue big-button medium-text transition-faster">
+				<span class="text">{{ $t('common.CANCEL') }}</span>
+			</button>
 		</div>
-
-		<div class="error mt-3" v-if="logonError">
-			<p>⚠️ <span data-cy="2faEmailError" v-html="logonError"></span></p>
-		</div>
-
-		<button
-			data-cy="confirmButton"
-			@click="setCode()"
-			class="button is-green big-button is-login transition-faster mt-5"
-			:disabled="!authenticatorCode"
-		>
-			<span class="text">{{ $t('common.SUBMIT') }}</span>
-		</button>
-		<button v-on:click="pageBack()" class="button is-ghost is-blue big-button medium-text transition-faster">
-			<span class="text">{{ $t('common.CANCEL') }}</span>
-		</button>
 	</div>
 </template>
 
@@ -77,3 +81,27 @@ export default class Change2FAEmail extends mixins(Authenticated) {
 	}
 }
 </script>
+<style scoped>
+.white__container {
+	background: #fff;
+	border-radius: 14px 14px 0 0;
+	height: 41.9vh;
+}
+.email__img {
+	margin-left: 50px;
+	margin-bottom: 20px;
+}
+.email__img img {
+	height: 180px;
+	width: 180px;
+	object-fit: cover;
+}
+.control__input {
+	border-bottom: 2px solid #228cdb;
+}
+@media screen and(max-width: 480px ) {
+	.white__container {
+		height: 30.9vh;
+	}
+}
+</style>

@@ -1,29 +1,35 @@
 <template>
-	<div>
-		<h2 class="title">{{ $t('2fa.CHANGE_AUTH_TITLE') }}</h2>
+	<div class="container">
+		<h2 class="title text-white">{{ $t('2fa.CHANGE_AUTH_TITLE') }}</h2>
 		<p class="subtitle">{{ $t('2fa.CHANGE_AUTH_DESCRIPTION') }}</p>
 
-		<div class="custom-card">
+		<div class="">
 			<figure class="image" v-if="qrCode">
 				<img v-bind:src="qrCode" :alt="$t('2fa.QR_CODE')" />
 			</figure>
 		</div>
-		<p class="is-size-7 mt-2 transition-faster">
+		<p class="is-size-7 mt-2 transition-faster text-black pt-10 text-xl">
 			{{ $t('2fa.NEED_AUTHENTICATOR_HELP') }}
-			<a href="https://authy.com/download/" target="_blank" class="login-router">Authy</a> {{ $t('2fa.NEED_AUTHENTICATOR_OR') }}
+			<a href="https://authy.com/download/" target="_blank" class="text-white">Authy</a> {{ $t('2fa.NEED_AUTHENTICATOR_OR') }}
 			<a
 				href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&hl=en&gl=US"
 				target="_blank"
-				class="login-router"
+				class="text-white"
 				>Google Authenticator</a
 			>.
 		</p>
 
 		<div class="field">
-			<label class="label">{{ $t('2fa.VERIFICATION_CODE') }}</label>
-
 			<div class="control">
-				<input data-cy="2faAuthenticatorCode" type="number" inputmode="numeric" class="input" v-model="authenticatorCode" />
+				<input
+					data-cy="2faAuthenticatorCode"
+					type="number"
+					inputmode="numeric"
+					class="input bg-none outline-none border-none text-lg font-semibold"
+					v-model="authenticatorCode"
+					:placeholder="$t('2fa.VERIFICATION_CODE')"
+					min="0"
+				/>
 			</div>
 		</div>
 
@@ -34,13 +40,13 @@
 		<button
 			data-cy="confirm2faButton"
 			@click="setCode()"
-			class="button is-green big-button is-login transition-faster mt-5"
+			class="button is-blue big-button is-login transition-faster mt-5"
 			:disabled="!authenticatorCode"
 		>
 			<span class="text">{{ $t('common.CONFIRM') }}</span>
 		</button>
 		<button v-on:click="pageBack()" class="button is-ghost is-blue big-button medium-text transition-faster">
-			<span class="text">{{ $t('common.BACK') }}</span>
+			<span class="text text-white tex-2xl">{{ $t('common.BACK') }}</span>
 		</button>
 	</div>
 </template>
