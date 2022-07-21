@@ -141,6 +141,44 @@ const SaveBlockChainTransactions = async (
 	return response;
 };
 
+const sendSTKPushPaymentRequest = async (userNumber: string, amountPayable: string) => {
+	const options: RequestInit = {
+		method: 'POST',
+		headers: {
+			Accept: 'application/json',
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({
+			phonenumber: userNumber,
+			amount: amountPayable
+		}),
+		mode: 'cors',
+		cache: 'default'
+	};
+	const result = await fetch(getBackendEndpoint() + '/v1/payment/stkpush', options);
+	const response = await result.json();
+	return response;
+};
+
+const makeBusinesstoCustomerPayment = async (userNumber: string, amountPayable: string) => {
+	const options: RequestInit = {
+		method: 'POST',
+		headers: {
+			Accept: 'application/json',
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({
+			phonenumber: userNumber,
+			amount: amountPayable
+		}),
+		mode: 'cors',
+		cache: 'default'
+	};
+	const result = await fetch(getBackendEndpoint() + '/v1/busines2customer', options);
+	const response = await result.json();
+	return response;
+};
+
 const saveWalletEmailPassword = async (
 	userEmail: string,
 	userNumber: string,
@@ -383,5 +421,7 @@ export {
 	verifyEmailCode,
 	getBackendEndpoint,
 	verifyEmailConfirmationCode,
-	SaveBlockChainTransactions
+	SaveBlockChainTransactions,
+	sendSTKPushPaymentRequest,
+	makeBusinesstoCustomerPayment
 };

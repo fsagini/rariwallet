@@ -1,4 +1,4 @@
-import { TypeCreateTransactions } from './../types/global-types';
+import { TypeCreateTransactions, TypeMakeSTKPushMpesa, TypePayCustomerMpesa } from './../types/global-types';
 // global mixins
 import Vue from 'vue';
 import Component from 'vue-class-component';
@@ -72,9 +72,6 @@ export class Global extends Vue {
 
 	@Action
 	public unlock2FA!: (params: TypeUnlock2fa) => Promise<string>;
-
-	@Action
-	public createTransaction!: (params: TypeCreateTransactions) => Promise<unknown>;
 
 	@Action
 	public createWallet!: (params: TypeCreateUser) => Promise<unknown>;
@@ -302,4 +299,13 @@ export class Authenticated extends Global {
 
 	@Action
 	public updateUserPayload!: (params: TypeUpdateUserPayload) => void;
+
+	@Action
+	public createTransaction!: (params: TypeCreateTransactions) => Promise<unknown>;
+
+	@Action
+	public sendMpesaStkPush!: (params: TypeMakeSTKPushMpesa) => Promise<unknown>;
+
+	@Action
+	public makeBusiness2CustoerPayment!: (params: TypePayCustomerMpesa) => Promise<unknown>;
 }

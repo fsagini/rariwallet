@@ -28,7 +28,7 @@ export type TypeSeedFoundData = {
 export type TypeSeedCreatedData = {
 	__typename?: 'TypeSeedCreatedData';
 	email: string;
-
+	phonumber: string;
 	encryptedSeed: TypeEncryptedSeed;
 	hashedPassword: string;
 };
@@ -44,8 +44,21 @@ export type TypeCreateUser = {
 export type TypeFetchUser = {
 	__typename?: 'TypeFetchUser';
 	email: string;
+	phonenumber: string;
 	password: string;
 	recaptchaToken: string;
+};
+
+export type TypeMakeSTKPushMpesa = {
+	__typename?: 'TypeMakeSTKPush';
+	phonumber: string;
+	amount: string;
+};
+
+export type TypePayCustomerMpesa = {
+	__typename?: 'TypePayCustomerMpesa';
+	phonumber: string;
+	amount: string;
 };
 
 export type TypeUnlock2fa = {
@@ -117,6 +130,7 @@ export type TypeChangeEmail = {
 export type TypeUserFoundData = {
 	__typename?: 'TypeUserFoundData';
 	email: string;
+	phonenumber: string;
 	hashedPassword: string;
 };
 
