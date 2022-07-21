@@ -91,7 +91,7 @@ process.on('SIGTERM', quitBackend);
 if (!module.parent) {
     // Listen to the server ports.
     httpServer.listen(process.env.PORT, async () => {
-        Logger.info({ status: `🚀Express Server ready at http://localhost:${process.env.PORT}` });
+        Logger.info({ status: `🚀Express Server ready and running at http://localhost:${process.env.PORT}` });
 
         // Database initialization.
         await sequelize.sync();

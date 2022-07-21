@@ -1,47 +1,45 @@
 <template>
-	<div class="container">
+	<div>
 		<div v-if="currentPage === 0">
-			<div class="title-container has-text-left">
-				<button
-					@click="redirectUser"
-					tag="button"
-					class="button is-grey big-button outlined-button is-thick transition-faster is-icon-only"
-				>
-					<span class="icon is-small">
-						<i class="fas fa-chevron-left"></i>
-					</span>
-				</button>
-				<h2 class="title ml-3">{{ $t('delete.DELETE_ACCOUNT_TITLE') }}</h2>
+			<div class="container">
+				<div class="flex flex-row justify-between">
+					<button @click="redirectUser" tag="button" class="back-menu">
+						<i class="fa-solid fa-angles-left" />
+					</button>
+				</div>
+				<h2 class="title text-white">{{ $t('delete.DELETE_ACCOUNT_TITLE') }}</h2>
 			</div>
-			<div class="divider just-space" />
-			<p class="has-text-left reset-line-height">
-				<span
-					class="has-text-weight-medium"
-					v-html="
-						$t('delete.PLEASE_EXPORT_YOUR_WALLET', {
-							link: '/settings/keys'
-						})
-					"
-				></span>
-				{{ $t('delete.DELETE_TIP') }}
-			</p>
-			<div class="field is-grouped mb-5">
-				<button data-cy="deleteAccountButton" @click="setNewPage()" tag="button" class="button big-button is-danger transition-faster">
-					<span class="text">{{ $t('delete.DELETE_ACCOUNT_TITLE') }}</span>
-				</button>
-			</div>
+			<div class="white__container container">
+				<div class="divider just-space" />
+				<p class="has-text-left reset-line-height pt-10">
+					<span
+						class="has-text-weight-medium"
+						v-html="
+							$t('delete.PLEASE_EXPORT_YOUR_WALLET', {
+								link: '/settings/keys'
+							})
+						"
+					></span>
+					{{ $t('delete.DELETE_TIP') }}
+				</p>
+				<div class="field is-grouped mb-5">
+					<button data-cy="deleteAccountButton" @click="setNewPage()" tag="button" class="button big-button is-danger transition-faster">
+						<span class="text">{{ $t('delete.DELETE_ACCOUNT_TITLE') }}</span>
+					</button>
+				</div>
 
-			<div class="divider" />
+				<div class="divider" />
 
-			<div class="has-text-left mt-5 reset-line-height">
-				<p class="has-text-weight-medium">{{ $t('delete.WHAT_DELETE_TITLE') }}</p>
-				<p>{{ $t('delete.WHAT_DELETE_DESCRIPTION') }}</p>
+				<div class="has-text-left mt-5 reset-line-height">
+					<p class="has-text-weight-medium">{{ $t('delete.WHAT_DELETE_TITLE') }}</p>
+					<p>{{ $t('delete.WHAT_DELETE_DESCRIPTION') }}</p>
 
-				<p class="has-text-weight-medium mt-2">{{ $t('delete.DOES_DELETE_WALLET_TITLE') }}</p>
-				<p>{{ $t('delete.DOES_DELETE_WALLET_DESCRIPTION') }}</p>
+					<p class="has-text-weight-medium mt-2">{{ $t('delete.DOES_DELETE_WALLET_TITLE') }}</p>
+					<p>{{ $t('delete.DOES_DELETE_WALLET_DESCRIPTION') }}</p>
 
-				<p class="has-text-weight-medium mt-2">{{ $t('delete.WHAT_FUNDS_TITLE') }}</p>
-				<p>{{ $t('delete.WHAT_FUNDS_DESCRIPTION') }}</p>
+					<p class="has-text-weight-medium mt-2">{{ $t('delete.WHAT_FUNDS_TITLE') }}</p>
+					<p>{{ $t('delete.WHAT_FUNDS_DESCRIPTION') }}</p>
+				</div>
 			</div>
 		</div>
 		<ConfirmAccess v-if="currentPage === 1" @pageBack="pageBack" @setPassword="setPassword" :error="logonError" />
@@ -151,5 +149,29 @@ export default class RecoverySettings extends mixins(Authenticated, Global) {
 	.title {
 		margin: 0;
 	}
+}
+</style>
+<style scoped>
+.fa-angles-left {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-size: 25px;
+	color: #fff;
+	margin-left: 10px;
+}
+.back-menu {
+	display: flex;
+	margin-left: 20px;
+	padding: 10px 2px;
+	border: 1px solid #fff;
+	width: 50px;
+	margin-bottom: 20px;
+	cursor: pointer;
+}
+.white__container {
+	background: #fff;
+	border-radius: 14px 14px 0 0;
+	height: 53.7vh;
 }
 </style>

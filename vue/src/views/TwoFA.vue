@@ -171,5 +171,9 @@ export default class TwoFA extends mixins(Global, Recaptcha) {
 .figma {
 	background: #fff;
 	border-radius: 14px 14px 0 0;
+	color: #fff;
+}
+.title {
+	color: #fff !important;
 }
 </style>

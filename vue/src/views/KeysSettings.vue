@@ -1,19 +1,15 @@
 <template>
-	<div class="container">
-		<div v-if="currentPage === 0">
-			<div class="title-container has-text-left">
-				<button
-					data-cy="backArrowButton"
-					@click="redirectUser"
-					tag="button"
-					class="button is-grey big-button outlined-button is-thick transition-faster is-icon-only"
-				>
-					<span class="icon is-small">
-						<i class="fas fa-chevron-left"></i>
-					</span>
+	<div>
+		<div v-if="currentPage === 0" class="container">
+			<div class="flex flex-row justify-between">
+				<button @click="redirectUser" tag="button" class="back-menu">
+					<i class="fa-solid fa-angles-left" />
 				</button>
-				<h2 class="title ml-3">{{ $t('export.EXPORT_WALLET_TITLE') }}</h2>
 			</div>
+			<div>
+				<img class="w-[150px] h-[150px]" src="../assets/img/export_wallet.png" alt="" />
+			</div>
+			<h2 class="title ml-3 text-white">{{ $t('export.EXPORT_WALLET_TITLE') }}</h2>
 
 			<p class="has-text-left mt-2 transition-faster">
 				<span v-html="$t('export.EXPORT_WALLET_DESCRIPTION')">&nbsp;</span>
@@ -33,22 +29,25 @@
 
 			<div class="divider just-space" />
 
-			<p class="mt-4 has-text-left">{{ $t('export.ADDITIONAL_OPTIONS') }}</p>
+			<p class="mt-4 has-text-left font-medium">{{ $t('export.ADDITIONAL_OPTIONS') }}</p>
 			<button
 				data-cy="exportPrivateKeyButton"
 				@click="setExport('key')"
 				tag="button"
-				class="button outlined-button is-thick big-button transition-faster mt-2"
+				class="button outline-dotted border-2 outline-yellow-400 border-white is-thick big-button transition-faster mt-2"
 			>
-				<span class="text">{{ $t('export.EXPORT_KEY') }}</span>
+				<span class="text text-black font-semibold">{{ $t('export.EXPORT_KEY') }}</span>
 			</button>
 		</div>
 
 		<ConfirmAccess v-if="currentPage === 1" @pageBack="pageBack" @setPassword="setPassword" :error="logonError" />
 
-		<div v-if="currentPage === 2">
+		<div v-if="currentPage === 2" class="container">
+			<div>
+				<img src="../assets/img/seed_phrase.png" alt="seed_phrase" />
+			</div>
 			<h2 class="title">{{ $t('export.EXPORT_SEED') }}</h2>
-			<p data-cy="seedPhraseSuccess" class="subtitle">{{ $t('export.EXPORT_SEED_DESCRIPTION') }}</p>
+			<p data-cy="seedPhraseSuccess" class="subtitle text-lg">{{ $t('export.EXPORT_SEED_DESCRIPTION') }}</p>
 
 			<div class="settings-data user-details">
 				<div class="details">
@@ -58,21 +57,28 @@
 
 			<div class="links is-flex is-align-items-center is-justify-content-center mt-2">
 				<div class="link is-flex has-text-weight-medium is-align-items-center">
-					<i class="fas fa-copy mr-1"></i>
+					<i class="text-2xl fas fa-copy mr-1"></i>
 					<div @click="copyToClipboard(store.seedPhrase)" class="login-router is-size-7 transition-faster">
 						{{ $t('common.COPY_TO_CLIPBOARD') }}
 					</div>
 				</div>
 			</div>
 
-			<button @click="resetData()" tag="button" class="button outlined-button is-thick big-button transition-faster mt-4">
-				<span class="text">{{ $t('common.CLOSE') }}</span>
+			<button
+				@click="resetData()"
+				tag="button"
+				class="button outline-yellow-400 outline-dashed bg-slate-100 is-thick big-button transition-faster mt-4"
+			>
+				<span class="text text-black font-semibold">{{ $t('common.CLOSE') }}</span>
 			</button>
 		</div>
 
-		<div v-if="currentPage === 3">
-			<h2 class="title">{{ $t('export.EXPORT_KEY') }}</h2>
-			<p data-cy="privateKeySuccess" class="subtitle">{{ $t('export.EXPORT_KEY_DESCRIPTION') }}</p>
+		<div v-if="currentPage === 3" class="container">
+			<h2 class="title text-white">{{ $t('export.EXPORT_KEY') }}</h2>
+			<div>
+				<img src="../assets/img/private_key.png" alt="key" />
+			</div>
+			<p data-cy="privateKeySuccess" class="subtitle text-lg">{{ $t('export.EXPORT_KEY_DESCRIPTION') }}</p>
 
 			<div class="settings-data user-details">
 				<div class="details">
@@ -89,13 +95,13 @@
 				</div>
 			</div>
 
-			<div data-cy="privateKeyJsonMessage" class="alert warning has-text-left is-size-7 mt-5">
+			<div data-cy="privateKeyJsonMessage" class="alert warning has-text-left is-size-7 mt-5 text-lg">
 				⚠ {{ $t('export.KEY_PASSWORD_PROTECTED') }}
 			</div>
 
 			<button
 				data-cy="privateKeyJsonButton"
-				class="button is-blue big-button is-login transition-faster mt-4"
+				class="button bg-white big-button is-login transition-faster mt-4"
 				@click="exportPhrase(store.accounts[0])"
 			>
 				<span class="text">{{
@@ -109,9 +115,9 @@
 				data-cy="exportBackButton"
 				@click="resetData()"
 				tag="button"
-				class="button outlined-button is-thick big-button transition-faster mt-4"
+				class="button bg-none is-thick big-button transition-faster mt-4 outline-dashed"
 			>
-				<span class="text">{{ $t('common.CLOSE') }}</span>
+				<span class="text text-black">{{ $t('common.CLOSE') }}</span>
 			</button>
 		</div>
 	</div>
@@ -199,5 +205,28 @@ export default class KeysSettings extends mixins(Global, Authenticated) {
 .seed {
 	line-height: 1.5rem !important;
 	overflow-wrap: break-word;
+}
+</style>
+<style scoped>
+.fa-angles-left {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-size: 25px;
+	color: #fff;
+	margin-left: 10px;
+}
+.back-menu {
+	display: flex;
+	margin-left: 20px;
+	padding: 10px 2px;
+	border: 1px solid #fff;
+	width: 50px;
+	margin-bottom: 20px;
+	cursor: pointer;
+}
+.fa-copy {
+	font-size: 30px;
+	color: yellow;
 }
 </style>

@@ -43,7 +43,7 @@ export default class Spinner extends Vue {
 .overlay {
 	background: rgba(255, 255, 255, 0.7);
 	width: 100%;
-	height: 100%;
+	height: 109%;
 	position: absolute;
 	overflow: none;
 	top: 0;

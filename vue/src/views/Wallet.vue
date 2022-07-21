@@ -168,7 +168,7 @@ export default class Wallet extends mixins(Global, Authenticated) {
 	}
 	sendRoute() {
 		// Change later
-		this.router.push('/rari/onboarding').catch(() => undefined);
+		this.router.push('/portfolio').catch(() => undefined);
 	}
 	copyETHAddress(ethAddress: string): void {
 		copyToClipboard(ethAddress);
