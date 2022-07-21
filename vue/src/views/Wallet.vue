@@ -168,7 +168,7 @@ export default class Wallet extends mixins(Global, Authenticated) {
 	}
 	sendRoute() {
 		// Change later
-		this.router.push('/send/crypto/coin').catch(() => undefined);
+		this.router.push('/portfolio').catch(() => undefined);
 	}
 	copyETHAddress(ethAddress: string): void {
 		copyToClipboard(ethAddress);
@@ -199,7 +199,7 @@ li {
 	margin: 0 10px;
 }
 a {
-	color: #347AF0;
+	color: #42b983;
 }
 .copy-button {
 	margin-left: auto;

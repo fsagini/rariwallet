@@ -27,7 +27,6 @@ import Component from 'vue-class-component';
 import Spinner from './components/loading-spinner/Spinner.vue';
 import NetworkError from './components/NetworkError.vue';
 import Footer from './components/Footer.vue';
-
 import { BackgroundNFT, getRandomNFTBackground } from '../src/utils/backgroundNFT';
 
 @Component({
@@ -72,7 +71,6 @@ export default class App extends Vue {
 			}
 		}
 	}
-
 	mounted() {
 		if (!this.iFrameDisplay) {
 			this.NFTBackground = getRandomNFTBackground();
@@ -85,4 +83,5 @@ export default class App extends Vue {
 
 <style lang="scss">
 @import '@/assets/stylesheet/wallet.scss';
+@import '@/assets/stylesheet/index.css';
 </style>

@@ -1,14 +1,16 @@
 <template>
-	<div class="container settings">
+	<div>
 		<div v-if="currentPage === 0" class="title-container has-text-left">
-			<button @click="redirectUser" tag="button" class="button is-grey big-button is-thick transition-faster is-icon-only">
-					<i class="fas fa-chevron-left"></i>
-			</button>
-			<h2 class="title ml-3">{{ $t('settings.2_STEP_VERIFICATION') }}</h2>
+			<div class="flex flex-row">
+				<button @click="redirectUser()" tag="button" class="back-menu">
+					<i class="fa-solid fa-angles-left" />
+				</button>
+			</div>
+			<h2 class="title ml-3 text-white">{{ $t('settings.2_STEP_VERIFICATION') }}</h2>
 		</div>
-
-		<div v-if="currentPage === 0">
+		<div v-if="currentPage === 0" class="white__container__two container">
 			<div class="divider just-space" />
+			<div class="mb-10" />
 			<Change2FA @setCurrentMethod="setCurrentMethod" />
 		</div>
 		<div v-if="currentPage === 1">
@@ -19,37 +21,36 @@
 			<Change2FAEmail v-if="currentMethod === 'email'" @setCode="setCode" @pageBack="pageBack" />
 		</div>
 		<div v-if="currentPage === 3">
-		<div class="settings-container">
 			<div>
-				<img src="@/assets/img/checkmark.svg" alt="Checkmark image" class="mb-3" />
-				<h2 data-cy="2faConfirmedTitle" class="title">
-					{{
-						$t('2fa.2_STEP_ACTIVATED', {
-							isActivated: isEnabling ? $t('common.ACTIVATED') : $t('common.DEACTIVATED')
-						})
-					}}
-				</h2>
-				<p data-cy="2faConfirmedDescription" v-if="isEnabling" class="subtitle">
-					{{ $t('2fa.2_STEP_ADDED') }}
-				</p>
-				<p data-cy="2faDisabledDescription" v-else class="subtitle">{{ $t('2fa.2_STEP_REMOVED') }}</p>
+				<div class="container">
+					<img class="confirmed__img" src="@/assets/img/email_confirmed.svg" alt="Checkmark image" />
+				</div>
+				<div class="white__container container">
+					<h2 data-cy="2faConfirmedTitle" class="title p-5">
+						{{
+							$t('2fa.2_STEP_ACTIVATED', {
+								isActivated: isEnabling ? $t('common.ACTIVATED') : $t('common.DEACTIVATED')
+							})
+						}}
+					</h2>
+					<p data-cy="2faConfirmedDescription" v-if="isEnabling" class="subtitle">
+						{{ $t('2fa.2_STEP_ADDED') }}
+					</p>
+					<p data-cy="2faDisabledDescription" v-else class="subtitle">{{ $t('2fa.2_STEP_REMOVED') }}</p>
 
-				<div v-if="!isEnabling" class="alert warning mt-3 is-size-7 has-text-left mb-5">⚠ {{ $t('2fa.2_STEP_REMOVED_WARNING') }}</div>
+					<div v-if="!isEnabling" class="alert warning mt-3 is-size-7 has-text-left mb-5">⚠ {{ $t('2fa.2_STEP_REMOVED_WARNING') }}</div>
 
-				<button @click="resetData" tag="button" class="button outlined-button big-button transition-faster">
-					<span data-cy="closeButton" class="text">{{ $t('common.CLOSE') }}</span>
-				</button>
+					<button @click="resetData" tag="button" class="button outlined-button big-button transition-faster">
+						<span data-cy="closeButton" class="text">{{ $t('common.CLOSE') }}</span>
+					</button>
 
-				<div v-if="isEnabling">
-					<div class="divider"></div>
-					<p class="has-text-left has-text-weight-bold mb-0">{{ $t('2fa.KYC_TITLE') }}</p>
-					<p class="has-text-left subtitle mt-0">{{ $t('2fa.KYC_DESCRIPTION') }}</p>
+					<div v-if="isEnabling">
+						<div class="divider"></div>
+						<p class="has-text-left has-text-weight-bold mb-0">{{ $t('2fa.KYC_TITLE') }}</p>
+						<p class="has-text-left subtitle mt-0">{{ $t('2fa.KYC_DESCRIPTION') }}</p>
+					</div>
 				</div>
 			</div>
-		</div>
-		</div>
-		<div class="error mt-3" v-if="updateError">
-			<p>⚠️ <span v-html="updateError"></span></p>
 		</div>
 	</div>
 </template>
@@ -142,14 +143,13 @@ export default class TwoFactorSettings extends mixins(Authenticated, Global) {
 			this.hideSpinner();
 		} catch (error) {
 			this.hideSpinner();
-
 			if (error && error.toString() === 'TypeError: Failed to fetch') {
 				this.showNetworkError(true);
 			} else {
 				this.logSentryError('submitChange', error.toString(), {});
 			}
-
 			this.updateError = getDictionaryValue(error.toString());
+			this.$vToastify.error(this.updateError, 'WALLET ERROR');
 		}
 	}
 
@@ -239,29 +239,48 @@ export default class TwoFactorSettings extends mixins(Authenticated, Global) {
 }
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
 .title-container {
 	display: flex;
 	align-items: center;
-
-	.title {
-		margin: 0;
+}
+.confirmed__img img {
+	width: 150px;
+	height: 150px;
+}
+.fa-angles-left {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-size: 25px;
+	color: #fff;
+	margin-left: 10px;
+	cursor: pointer;
+}
+.back-menu {
+	display: flex;
+	margin-left: 20px;
+	padding: 10px 2px;
+	border: 1px solid #fff;
+	width: 50px;
+	cursor: pointer;
+}
+.white__container__two {
+	background: #fff;
+	border-radius: 14px 14px 0 0;
+	height: 60vh;
+}
+.white__container {
+	background: #fff;
+	border-radius: 14px 14px 0 0;
+	height: 42.9vh;
+}
+@media screen and(max-width: 480px ) {
+	.white__container {
+		height: 31.6vh;
+	}
+	.white__container__two {
+		height: 31vh;
 	}
 }
-.settings-container{
-	margin-top: 2%;
-	background-color: #fff;
-	display:flex ;
-	align-items: center;
-	width:100%;
-	border: none;
-	flex-direction: column;
-	align-items: center;
-	border-radius : 16px 16px 0 0;
-}
-.settings {
-	background: #fff;
-	border-radius : 16px 16px 0 0;
-}
-
 </style>

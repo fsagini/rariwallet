@@ -8,15 +8,28 @@
 			<form v-on:submit.prevent="changePasswordExecute">
 				<div>
 					<div class="field" v-if="!hideOldPassword">
-						<label class="label">{{ $t('password.OLD_PASSWORD') }}</label>
 						<div class="control">
-							<input type="password" data-cy="oldPassword" name="oldPassword" class="input" placeholder="Enter Old Password" v-model="oldPassword" />
+							<input
+								type="password"
+								data-cy="oldPassword"
+								name="oldPassword"
+								class="bg-none outline-none border-none p-2"
+								v-model="oldPassword"
+								:placeholder="$t('password.OLD_PASSWORD')"
+							/>
 						</div>
 					</div>
 					<div class="field">
-						<label class="label">{{ $t('common.NEW_PASSWORD') }}</label>
 						<div class="control">
-							<input type="password" name="newPassword" data-cy="newPassword" placeholder="Enter New Password" class="input password-input" v-model="walletPassword" />
+							<input
+								type="password"
+								name="newPassword"
+								data-cy="newPassword"
+								class="bg-none outline-none border-none p-2"
+								v-model="walletPassword"
+								:placeholder="$t('common.NEW_PASSWORD')"
+							/>
+							<div class="mb-5"></div>
 							<password v-model="walletPassword" :strength-meter-only="true" :secure-length="8" style="max-width: initial" />
 							<div class="password-help">
 								<p>{{ $t('password.REQUIREMENTS') }}</p>
@@ -66,9 +79,15 @@
 						</div>
 					</div>
 					<div class="field">
-						<label class="label">{{ $t('common.CONFIRM_PASSWORD') }}</label>
 						<div class="control">
-							<input type="password" class="input" name="newPasswordRepeat" data-cy="newPasswordRepeat" placeholder="Confirm Password" v-model="walletPasswordRepeat" />
+							<input
+								type="password"
+								class="bg-none outline-none border-none p-2"
+								name="newPasswordRepeat"
+								data-cy="newPasswordRepeat"
+								v-model="walletPasswordRepeat"
+								:placeholder="$t('common.CONFIRM_PASSWORD')"
+							/>
 						</div>
 					</div>
 
@@ -76,7 +95,7 @@
 						<p>⚠️ <span data-cy="incorrectPassword" v-html="logonError"></span></p>
 					</div>
 
-					<button class="button is-blue big-button is-login transition-faster mt-5 update" type="submit" data-cy="passwordSubmit">
+					<button class="button is-green big-button is-login transition-faster mt-5" type="submit" data-cy="passwordSubmit">
 						<span class="text">{{ $t('common.UPDATE_PASSWORD') }}</span>
 					</button>
 
@@ -87,7 +106,7 @@
 							type="button"
 							class="button is-ghost is-blue big-button medium-text transition-faster"
 						>
-							<span class="text">{{ $t('common.CANCEL') }}</span>
+							<span class="text-white text-lg font-semibold">{{ $t('common.CANCEL') }}</span>
 						</button>
 					</div>
 				</div>
@@ -96,12 +115,12 @@
 
 		<div v-if="currentPage === 1">
 			<div>
-				<img src="@/assets/img/checkmark.svg" alt="Checkmark image" class="mb-3" />
+				<img src="@/assets/img/email_confirmed.svg" alt="Checkmark image" class="mb-3" />
 				<h2 data-cy="passwordChangeTitle" class="title">{{ $t('password.PASSWORD_UPDATED_TITLE') }}</h2>
-				<p data-cy="passwordChangeDescription" class="subtitle">{{ $t('password.PASSWORD_UPDATED_DESCRIPTION') }}</p>
+				<p data-cy="passwordChangeDescription" class="text-xl">{{ $t('password.PASSWORD_UPDATED_DESCRIPTION') }}</p>
 
-				<button @click="resetData" tag="button" class="button outlined-button big-button transition-faster">
-					<span class="text">{{ $t('common.CLOSE') }}</span>
+				<button @click="resetData" tag="button" class="button outline-white big-button transition-faster">
+					<span class="text-blue-400 text-xl">{{ $t('common.CLOSE') }}</span>
 				</button>
 			</div>
 		</div>
@@ -222,8 +241,5 @@ button.card-footer-item {
 	border: 0;
 	font-size: 1rem;
 	line-height: 1.5;
-}
-.update{
-	border-radius: 2%;
 }
 </style>

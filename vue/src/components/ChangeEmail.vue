@@ -1,19 +1,32 @@
 <template>
-	<div class="card">
+	<div>
 		<div>
 			<div>
 				<div class="card-content">
 					<div class="content">
+						<div class="push__down mb-20"></div>
 						<div class="field">
-							<label class="label-text">{{ $t('common.NEW_EMAIL') }}</label>
-							<div class="control">
-								<input data-cy="newEmail" class="input_field" name="newEmail" v-model="newEmail" />
+							<div class="border-b-2 border-y-black">
+								<input
+									data-cy="newEmail"
+									class="bg-none outline-none border-none p-2 text-lg"
+									name="newEmail"
+									type="email"
+									v-model="newEmail"
+									:placeholder="$t('common.NEW_EMAIL')"
+								/>
 							</div>
 						</div>
 						<div class="field">
-							<label class="label-text">{{ $t('common.PASSWORD') }}</label>
-							<div class="control">
-								<input data-cy="confirmPassword" type="password" class="input_field" name="password" v-model="password" />
+							<div class="border-b-2 border-y-black">
+								<input
+									data-cy="confirmPassword"
+									type="password"
+									class="bg-none outline-none border-none p-2 text-lg"
+									name="password"
+									v-model="password"
+									:placeholder="$t('common.PASSWORD')"
+								/>
 							</div>
 						</div>
 					</div>
@@ -25,7 +38,7 @@
 
 				<div class="mt-5">
 					<button
-						class="button is-blue big-button is-login transition-faster"
+						class="button__update"
 						data-cy="updateEmailButton"
 						:disabled="!newEmail || !password"
 						@click="
@@ -42,7 +55,7 @@
 						tag="button"
 						class="button is-ghost is-blue big-button medium-text transition-faster"
 					>
-						<span class="text">{{ $t('common.CANCEL') }}</span>
+						<span class="text-black fontweight-semibold">{{ $t('common.CANCEL') }}</span>
 					</button>
 				</div>
 			</div>
@@ -104,19 +117,22 @@ export default class ChangeEmail extends mixins(Global, Authenticated) {
 }
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
 .confirm-button {
 	font-size: 18px;
 }
-.input_field{
-	color: #B5BBC9;
-	outline: 0;
-  	border-width: 0 0 2px;
-  	border-color: #B5BBC9
 
+.white__container {
+	background: #fff;
+	border-radius: 14px 14px 0 0;
+	height: 51.7vh;
 }
-.label-text{
-	color: #B5BBC9;
-	
+.button__update {
+	padding: 14px 80px;
+	background: #000;
+	color: #fff;
+	font-weight: 600;
+	border-radius: 20px;
+	cursor: pointer;
 }
 </style>
