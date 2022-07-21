@@ -59,7 +59,7 @@
 						<p data-cy="loginError">⚠️ <span v-html="logonError"></span></p>
 					</div>
 
-					<button data-cy="confirmButton" type="submit" class="button is-green big-button is-login transition-faster">
+					<button data-cy="confirmButton" type="submit" class="button is-blue big-button is-login transition-faster">
 						<span class="text">{{ $t('common.CONTINUE') }}</span>
 					</button>
 					<router-link to="/login">

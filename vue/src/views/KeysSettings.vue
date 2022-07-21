@@ -1,152 +1,75 @@
 <template>
 	<div>
-		<div v-if="currentPage === 0" class="container">
-			<div class="flex flex-row justify-between">
-				<button @click="redirectUser" tag="button" class="back-menu">
-					<i class="fa-solid fa-angles-left" />
-				</button>
+		<div v-if="currentPage === 0">
+			<div class="container">
+				<div class="flex flex-row justify-between">
+					<button @click="redirectUser" tag="button" class="back-menu">
+						<i class="fa-solid fa-angles-left" />
+					</button>
+				</div>
+				<h2 class="title text-white">{{ $t('delete.DELETE_ACCOUNT_TITLE') }}</h2>
 			</div>
-			<div>
-				<img class="w-[150px] h-[150px]" src="../assets/img/export_wallet.png" alt="" />
+			<div class="white__container container">
+				<div class="divider just-space" />
+				<p class="has-text-left reset-line-height pt-10">
+					<span
+						class="has-text-weight-medium"
+						v-html="
+							$t('delete.PLEASE_EXPORT_YOUR_WALLET', {
+								link: '/settings/keys'
+							})
+						"
+					></span>
+					{{ $t('delete.DELETE_TIP') }}
+				</p>
+				<div class="field is-grouped mb-5">
+					<button data-cy="deleteAccountButton" @click="setNewPage()" tag="button" class="button big-button is-danger transition-faster">
+						<span class="text">{{ $t('delete.DELETE_ACCOUNT_TITLE') }}</span>
+					</button>
+				</div>
+
+				<div class="divider" />
+
+				<div class="has-text-left mt-5 reset-line-height">
+					<p class="has-text-weight-medium">{{ $t('delete.WHAT_DELETE_TITLE') }}</p>
+					<p>{{ $t('delete.WHAT_DELETE_DESCRIPTION') }}</p>
+
+					<p class="has-text-weight-medium mt-2">{{ $t('delete.DOES_DELETE_WALLET_TITLE') }}</p>
+					<p>{{ $t('delete.DOES_DELETE_WALLET_DESCRIPTION') }}</p>
+
+					<p class="has-text-weight-medium mt-2">{{ $t('delete.WHAT_FUNDS_TITLE') }}</p>
+					<p>{{ $t('delete.WHAT_FUNDS_DESCRIPTION') }}</p>
+				</div>
 			</div>
-			<h2 class="title ml-3 text-white">{{ $t('export.EXPORT_WALLET_TITLE') }}</h2>
-
-			<p class="has-text-left mt-2 transition-faster">
-				<span v-html="$t('export.EXPORT_WALLET_DESCRIPTION')">&nbsp;</span>
-				<a href="https://support.morpher.com/en/article/export-morpher-wallet-d6wr6g/" target="__blank" class="login-router">{{
-					$t('common.LEARN_MORE')
-				}}</a>
-			</p>
-
-			<button
-				class="mt-3 button is-black big-button is-login transition-faster"
-				data-cy="exportSeedPhraseButton"
-				type="submit"
-				@click="setExport('seed')"
-			>
-				<span class="text">{{ $t('export.EXPORT_SEED') }}</span>
-			</button>
-
-			<div class="divider just-space" />
-
-			<p class="mt-4 has-text-left font-medium">{{ $t('export.ADDITIONAL_OPTIONS') }}</p>
-			<button
-				data-cy="exportPrivateKeyButton"
-				@click="setExport('key')"
-				tag="button"
-				class="button outline-dotted border-2 outline-yellow-400 border-white is-thick big-button transition-faster mt-2"
-			>
-				<span class="text text-black font-semibold">{{ $t('export.EXPORT_KEY') }}</span>
-			</button>
 		</div>
-
 		<ConfirmAccess v-if="currentPage === 1" @pageBack="pageBack" @setPassword="setPassword" :error="logonError" />
-
-		<div v-if="currentPage === 2" class="container">
-			<div>
-				<img src="../assets/img/seed_phrase.png" alt="seed_phrase" />
-			</div>
-			<h2 class="title">{{ $t('export.EXPORT_SEED') }}</h2>
-			<p data-cy="seedPhraseSuccess" class="subtitle text-lg">{{ $t('export.EXPORT_SEED_DESCRIPTION') }}</p>
-
-			<div class="settings-data user-details">
-				<div class="details">
-					<p class="seed">{{ store.seedPhrase }}</p>
-				</div>
-			</div>
-
-			<div class="links is-flex is-align-items-center is-justify-content-center mt-2">
-				<div class="link is-flex has-text-weight-medium is-align-items-center">
-					<i class="text-2xl fas fa-copy mr-1"></i>
-					<div @click="copyToClipboard(store.seedPhrase)" class="login-router is-size-7 transition-faster">
-						{{ $t('common.COPY_TO_CLIPBOARD') }}
-					</div>
-				</div>
-			</div>
-
-			<button
-				@click="resetData()"
-				tag="button"
-				class="button outline-yellow-400 outline-dashed bg-slate-100 is-thick big-button transition-faster mt-4"
-			>
-				<span class="text text-black font-semibold">{{ $t('common.CLOSE') }}</span>
-			</button>
-		</div>
-
-		<div v-if="currentPage === 3" class="container">
-			<h2 class="title text-white">{{ $t('export.EXPORT_KEY') }}</h2>
-			<div>
-				<img src="../assets/img/private_key.png" alt="key" />
-			</div>
-			<p data-cy="privateKeySuccess" class="subtitle text-lg">{{ $t('export.EXPORT_KEY_DESCRIPTION') }}</p>
-
-			<div class="settings-data user-details">
-				<div class="details">
-					<p data-cy="privateKeyValue" class="seed">{{ store.privateKey }}</p>
-				</div>
-			</div>
-
-			<div class="links is-flex is-align-items-center is-justify-content-center mt-2">
-				<div class="link is-flex has-text-weight-medium is-align-items-center">
-					<i class="fas fa-copy mr-1"></i>
-					<div @click="copyToClipboard(store.privateKey)" class="login-router is-size-7 transition-faster">
-						{{ $t('common.COPY_TO_CLIPBOARD') }}
-					</div>
-				</div>
-			</div>
-
-			<div data-cy="privateKeyJsonMessage" class="alert warning has-text-left is-size-7 mt-5 text-lg">
-				⚠ {{ $t('export.KEY_PASSWORD_PROTECTED') }}
-			</div>
-
-			<button
-				data-cy="privateKeyJsonButton"
-				class="button bg-white big-button is-login transition-faster mt-4"
-				@click="exportPhrase(store.accounts[0])"
-			>
-				<span class="text">{{
-					$t('common.DOWNLOAD_TYPE', {
-						type: 'JSON'
-					})
-				}}</span>
-			</button>
-
-			<button
-				data-cy="exportBackButton"
-				@click="resetData()"
-				tag="button"
-				class="button bg-none is-thick big-button transition-faster mt-4 outline-dashed"
-			>
-				<span class="text text-black">{{ $t('common.CLOSE') }}</span>
-			</button>
-		</div>
+		<AccountDeletion v-if="currentPage === 2" @pageBack="resetData" @deleteAccount="deleteAccount" :error="logonError" />
 	</div>
 </template>
 
 <script lang="ts">
 import Component, { mixins } from 'vue-class-component';
+import AccountDeletion from '../components/AccountDeletion.vue';
 import ConfirmAccess from '../components/ConfirmAccess.vue';
 import { Authenticated, Global } from '../mixins/mixins';
-import { copyToClipboard } from '../utils/utils';
+import { getDictionaryValue } from '../utils/dictionary';
 
 @Component({
 	components: {
+		AccountDeletion,
 		ConfirmAccess
 	}
 })
-export default class KeysSettings extends mixins(Global, Authenticated) {
+export default class RecoverySettings extends mixins(Authenticated, Global) {
 	currentPage = 0;
 	logonError = '';
-	page = '';
 	password = '';
-	copyToClipboard = copyToClipboard;
 
 	redirectUser() {
 		this.$router.push('/settings').catch(() => undefined);
 	}
 
-	setExport(page: string) {
-		this.page = page;
+	setNewPage() {
 		this.currentPage = 1;
 	}
 
@@ -158,36 +81,62 @@ export default class KeysSettings extends mixins(Global, Authenticated) {
 		if (!password) return;
 
 		this.password = password;
-
-		if (this.page === 'seed') {
-			this.showPhrase(password);
-			this.currentPage = 2;
-		} else if (this.page === 'key') {
-			this.showKey(password);
-			this.currentPage = 3;
-		}
+		this.currentPage = 2;
 	}
 
 	resetData() {
 		this.currentPage = 0;
 		this.logonError = '';
-		this.page = '';
-		this.clearPrivateKey();
-		this.clearSeedPhrase();
 		this.password = '';
 	}
 
-	async showKey(password: string) {
-		await this.showPrivateKey({ password });
-	}
+	async deleteAccount(data: any) {
+		try {
+			this.logonError = '';
 
-	async showPhrase(password: string) {
-		await this.showSeedPhrase({ password });
-	}
+			if (data.method === 'seed') {
+				const seed = await this.showSeedPhraseBackground({ password: this.password });
 
-	async exportPhrase(account: any) {
-		if (!this.password) return;
-		await this.exportKeystore({ account, password: this.password });
+				if (!seed || data.input !== seed) {
+					this.logonError = this.$t('common.WRONG_SEED').toString();
+					return;
+				}
+
+				try {
+					await this.deleteWalletAccount({ password: this.password });
+					this.showSpinnerThenAutohide(this.$t('loader.ACCOUNT_DELETED_SUCCESSFULLY').toString());
+				} catch (error) {
+					this.logSentryError('deleteAccount', error.toString(), data);
+					if (error && error.toString() === 'TypeError: Failed to fetch') {
+						this.showNetworkError(true);
+					}
+
+					this.logonError = getDictionaryValue(error.toString());
+				}
+			} else if (data.method === 'key') {
+				const key = await this.showPrivateKeyBackground({ password: this.password });
+
+				if (!key || data.input !== key) {
+					this.logonError = this.$t('common.WRONG_PRIVATE_KEY').toString();
+					return;
+				}
+
+				try {
+					await this.deleteWalletAccount({ password: this.password });
+					this.showSpinnerThenAutohide(this.$t('loader.ACCOUNT_DELETED_SUCCESSFULLY').toString());
+				} catch (error) {
+					this.logSentryError('deleteAccount', error.toString(), data);
+					if (error && error.toString() === 'TypeError: Failed to fetch') {
+						this.showNetworkError(true);
+					}
+
+					this.logonError = getDictionaryValue(error.toString());
+				}
+			}
+		} catch (e) {
+			this.logSentryError('deleteAccount', e.toString(), data);
+			this.logonError = getDictionaryValue('');
+		}
 	}
 }
 </script>
@@ -200,11 +149,6 @@ export default class KeysSettings extends mixins(Global, Authenticated) {
 	.title {
 		margin: 0;
 	}
-}
-
-.seed {
-	line-height: 1.5rem !important;
-	overflow-wrap: break-word;
 }
 </style>
 <style scoped>
@@ -225,8 +169,9 @@ export default class KeysSettings extends mixins(Global, Authenticated) {
 	margin-bottom: 20px;
 	cursor: pointer;
 }
-.fa-copy {
-	font-size: 30px;
-	color: yellow;
+.white__container {
+	background: #fff;
+	border-radius: 14px 14px 0 0;
+	height: 53.7vh;
 }
 </style>

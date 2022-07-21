@@ -1,6 +1,8 @@
 <template>
-	<div class="container">
-		<ChangePassword />
+	<div class="wrapper">
+		<div class="settings-container">
+			<ChangePassword />
+		</div>
 	</div>
 </template>
 
@@ -29,5 +31,18 @@ export default class PasswordSettings extends Vue {
 	.title {
 		margin: 0;
 	}
+}
+.settings-container{
+	background: #fff;
+	border-radius : 16px 16px 0 0;
+	width:100%;
+	padding: 1%;
+	bottom: 0;
+}
+.wrapper{
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	
 }
 </style>
