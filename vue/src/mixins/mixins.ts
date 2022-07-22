@@ -18,8 +18,7 @@ import {
 	TypeUpdateUserPayload,
 	TypeResetRecovery,
 	TypeExportPhraseKeyVariables,
-	TypeShowPhraseKeyVariables,
-	TypeCurrencies
+	TypeShowPhraseKeyVariables
 } from '../types/global-types';
 import { mapState } from 'vuex';
 import { RootState } from '../store';
@@ -126,7 +125,6 @@ export class Global extends Vue {
 
 	@Action
 	public loadCurrencies!: () => Promise<unknown>;
-
 
 	// Map Store Properties
 	store: RootState = this.$store.state;

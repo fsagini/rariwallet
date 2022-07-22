@@ -5,7 +5,6 @@ import * as moment from 'moment';
 
 import { errorResponse, successResponse } from '../helpers/functions/util';
 
-
 export function initiateLipaNaMpesaSTK(req: any, res: Response) {
     const endpoint_url = process.env.endpoint_stkpush;
     const auth = 'Bearer ' + req.access_token;
@@ -30,21 +29,18 @@ export function initiateLipaNaMpesaSTK(req: any, res: Response) {
                 PartyB: shortCode,
                 CallBackURL: 'https://89d3-197-181-178-102.ngrok.io/v1/payment-callbackurl',
                 PhoneNumber: req.body.phonenumber,
-                CallBackURL: `${process.env.callBackDomain}/v1/payment/callbackurl`,
                 AccountReference: process.env.accountReference,
                 TransactionDesc: process.env.transactionDesc
             }
         },
         (err, _respon, body) => {
             if (err) {
-
                 errorResponse(res, err, 4040);
                 return;
             }
             successResponse(res, body, 200);
-                res.status(500).json(err);
-                return;
-            }
+            res.status(500).json(err);
+            return;
         }
     );
 }
