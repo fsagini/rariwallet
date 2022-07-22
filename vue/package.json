@@ -25,6 +25,7 @@
 		"bulma-tooltip": "^3.0.2",
 		"chart.js": "^3.8.0",
 		"core-js": "^3.6.5",
+		"dotenv": "^16.0.1",
 		"downloadjs": "^1.4.7",
 		"eslint-plugin-import": "^2.22.1",
 		"ethereumjs-wallet": "^1.0.1",

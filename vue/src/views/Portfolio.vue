@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<div @click="navigateMenu()" class="menu__slide flex flex-row justify-between pl-5 pr-10 mb-5">
+		<div @click="navigateMenu()" class="menu__slide flex flex-row justify-between mb-5">
 			<div @click="buyAsset()" class="wallet__menu">BUY</div>
 			<div @click="sellAsset()" class="wallet__menu">SELL</div>
 			<div @click="sendAsset()" class="wallet__menu">SEND</div>
@@ -11,7 +11,7 @@
 				<div class="ml-3">
 					<p class="medium-text has-text-weight-medium">
 						<span class="important-font">Wallet Addres - {{ formatEthAddress(accounts[0]) }} </span>
-						<span class="copy-icon" @click="copyETHAddress(accounts[0])"><i class="fas fa-copy" /></span>
+						<span class="important-font">{{ walletPhoneNumber }} </span>
 					</p>
 				</div>
 			</div>
@@ -153,15 +153,14 @@ let transacValue: number;
 export default class Portfolio extends mixins(Global, Authenticated) {
 	walletBalance: number | string;
 	totalValue: number;
+	walletPhoneNumber = this.$store.getters.walletPhoneNumber;
 	dropdownIsActive = false;
 	selectedAccount = '';
 	noRecoveryMethods = false;
 	twoFactorActive = false;
 	twoFactorEmailActive = false;
 	whatRecovery = {
-		facebook: false,
-		google: false,
-		vkontakte: false
+		google: false
 	};
 	ShowAll = false;
 	menuShowing = false;
@@ -319,14 +318,10 @@ export default class Portfolio extends mixins(Global, Authenticated) {
 		if (this.store.accounts && this.store.accounts[0]) {
 			this.generateImage(this.store.accounts[0]);
 		}
-		const facebook = await this.hasRecovery(2);
 		const google = await this.hasRecovery(3);
-		const vkontakte = await this.hasRecovery(5);
 
 		this.whatRecovery = {
-			facebook,
-			google,
-			vkontakte
+			google
 		};
 
 		this.store.loginComplete = true;

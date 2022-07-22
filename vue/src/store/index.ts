@@ -230,7 +230,6 @@ const store: Store<RootState> = new Vuex.Store({
 					phonenumber: state.phonenumber
 				});
 			});
-
 			window.localStorage.setItem('email', userData.email);
 			window.localStorage.setItem('phonenumber', userData.phonenumber);
 			saveSessionStore('password', userData.hashedPassword);
@@ -560,8 +559,8 @@ const store: Store<RootState> = new Vuex.Store({
 		},
 		// Payment Actions
 
-		async sendMpesaStkPush({ commit }, params: TypeMakeSTKPushMpesa) {
-			await sendSTKPushPaymentRequest(params.phonumber, params.amount)
+		sendMpesaStkPush({ commit }, params: TypeMakeSTKPushMpesa) {
+			sendSTKPushPaymentRequest(params.phonenumber, params.amount)
 				.then((response) => {
 					// commit loding with (success response message)
 					// dispatch blockchain transaction
@@ -572,7 +571,7 @@ const store: Store<RootState> = new Vuex.Store({
 		},
 
 		async makeBusiness2CustoerPayment({ commit }, params: TypePayCustomerMpesa) {
-			await makeBusinesstoCustomerPayment(params.phonumber, params.amount)
+			await makeBusinesstoCustomerPayment(params.phonenumber, params.amount)
 				.then((response) => {
 					// commit succss message
 				})
@@ -599,7 +598,6 @@ const store: Store<RootState> = new Vuex.Store({
 				const email = localStorage.getItem('email') || '';
 				const iconSeed = parseInt(localStorage.getItem('iconSeed') || '') || 0;
 				const hashedPassword = await getSessionStore('password');
-
 				let encryptedSeed: TypeEncryptedSeed = {};
 				const sessionEncryptedSeed = await getSessionStore('encryptedSeed');
 				if (sessionEncryptedSeed) {
@@ -614,7 +612,11 @@ const store: Store<RootState> = new Vuex.Store({
 				state.hashedPassword = hashedPassword;
 				state.encryptedSeed = encryptedSeed;
 				Sentry.configureScope((scope) => {
-					scope.setUser({ id: state.accounts && state.accounts.length > 0 ? state.accounts[0] : '', email: state.email });
+					scope.setUser({
+						id: state.accounts && state.accounts.length > 0 ? state.accounts[0] : '',
+						email: state.email,
+						phonenumber: state.phonenumber
+					});
 				});
 			}
 			dispatch('unlockWithStoredPassword', recaptchaToken)
