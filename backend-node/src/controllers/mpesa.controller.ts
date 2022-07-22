@@ -26,12 +26,11 @@ export function initiateLipaNaMpesaSTK(req: any, res: Response) {
                 Timestamp: timestamp,
                 TransactionType: 'CustomerPayBillOnline',
                 Amount: req.body.amount,
-                PartyA: req.body.number,
+                PartyA: req.body.phonenumber,
                 PartyB: shortCode,
-                PhoneNumber: req.body.number,
-
                 CallBackURL: 'https://89d3-197-181-178-102.ngrok.io/v1/payment-callbackurl',
-
+                PhoneNumber: req.body.phonenumber,
+                CallBackURL: `${process.env.callBackDomain}/v1/payment/callbackurl`,
                 AccountReference: process.env.accountReference,
                 TransactionDesc: process.env.transactionDesc
             }
@@ -123,7 +122,7 @@ export function initiateBussinessToCustomer(req: any, res: Response) {
                 CommandID: 'BusinessPayment',
                 Amount: req.body.amount,
                 PartyA: process.env.partyABusiness,
-                PartyB: req.body.number,
+                PartyB: req.body.phonenumber,
                 Remarks: process.env.businessRemarks,
                 QueueTimeOutURL: `${process.env.WEBSITE_LIVE_URL}/btwoc/timeout`,
                 ResultURL: `${process.env.WEBSITE_LIVE_URL}/v1/btwoc/result`,
