@@ -155,7 +155,7 @@ const sendSTKPushPaymentRequest = async (userNumber: string, amountPayable: stri
 		mode: 'cors',
 		cache: 'default'
 	};
-	const result = await fetch(getBackendEndpoint() + '/v1/payment/stkpush', options);
+	const result = await fetch(getBackendEndpoint() + '/v1/payment-stkpush', options);
 	const response = await result.json();
 	return response;
 };

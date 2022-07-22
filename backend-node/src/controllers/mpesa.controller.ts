@@ -4,7 +4,6 @@ import { passwordbase64 } from '../utils/passwordbase64';
 import * as moment from 'moment';
 
 import { errorResponse, successResponse } from '../helpers/functions/util';
-
 export function initiateLipaNaMpesaSTK(req: any, res: Response) {
     const endpoint_url = process.env.endpoint_stkpush;
     const auth = 'Bearer ' + req.access_token;
@@ -25,22 +24,20 @@ export function initiateLipaNaMpesaSTK(req: any, res: Response) {
                 Timestamp: timestamp,
                 TransactionType: 'CustomerPayBillOnline',
                 Amount: req.body.amount,
-                PartyA: req.body.phonenumber,
+                PartyA: `254${req.body.phonenumber}`,
                 PartyB: shortCode,
                 CallBackURL: 'https://89d3-197-181-178-102.ngrok.io/v1/payment-callbackurl',
-                PhoneNumber: req.body.phonenumber,
+                PhoneNumber: `254${req.body.phonenumber}`,
                 AccountReference: process.env.accountReference,
                 TransactionDesc: process.env.transactionDesc
             }
         },
         (err, _respon, body) => {
             if (err) {
-                errorResponse(res, err, 4040);
+                errorResponse(res, err.message, 404);
                 return;
             }
-            successResponse(res, body, 200);
-            res.status(500).json(err);
-            return;
+            return successResponse(res, body, 200);
         }
     );
 }
@@ -61,10 +58,6 @@ export function callBackURL(req: Request, res: Response) {
             }
             const mappedResult = mapMetadata(callBackMetadata);
             const { Amount, MpesaReceiptNumber, TransactionDate, PhoneNumber } = mappedResult;
-
-            // Perfome blockchain transactions
-            // Save transactions to database
-            // Route User to Wallet Page or Success Page
         } else {
             errorResponse(res, 'your transaction was not found or it failed during the process, kindly check and try again', 404);
             // What Should happen if the transaction is not successfull
@@ -74,7 +67,6 @@ export function callBackURL(req: Request, res: Response) {
         return errorResponse(res, error, 500);
     }
 }
-
 export function ResultURL(req: any, res: Response) {
     let ResultCode: any;
     let ResultParameters: any;
@@ -83,6 +75,7 @@ export function ResultURL(req: any, res: Response) {
         ResultCode = req.body.Result.ResultCode;
         ResultParameters = req.body.ResultParameters.ResultParameter;
         if (ResultCode === 0) {
+            // eslint-disable-next-line no-inner-declarations
             function mapMetadata(metadata: any[]) {
                 return metadata.reduce((result: { [x: string]: any }, entry: { Name: string | number; Value: any }) => {
                     result[entry.Name] = entry.Value;

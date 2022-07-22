@@ -561,9 +561,8 @@ const store: Store<RootState> = new Vuex.Store({
 
 		sendMpesaStkPush({ commit }, params: TypeMakeSTKPushMpesa) {
 			sendSTKPushPaymentRequest(params.phonenumber, params.amount)
-				.then((response) => {
-					// commit loding with (success response message)
-					// dispatch blockchain transaction
+				.then(async (response) => {
+					await commit('delayedSpinnerMessage', response.CustomerMessage);
 				})
 				.catch((error) => {
 					commit('delayedSpinnerMessage', error.message);
