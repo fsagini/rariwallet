@@ -400,5 +400,3 @@ p {
 	font-size: 16px;
 }
 </style>
-
-6cf69c723da743ddbdd6ecefbb1d16e4
