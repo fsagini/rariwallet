@@ -77,6 +77,7 @@ export default class Unlock extends mixins(Global, Recaptcha) {
 	// Component properties
 	walletPassword = '';
 	walletEmail = this.$store.getters.walletEmail;
+	walletPhoneNumber = this.$store.getters.walletPhoneNumber;
 	iconSeed = this.$store.getters.iconSeed;
 	showRecovery = false;
 	logonError = '';
@@ -172,11 +173,12 @@ export default class Unlock extends mixins(Global, Recaptcha) {
 		this.showSpinner(this.$t('loader.LOADING_ACCOUNT').toString());
 		this.store.loginComplete = false;
 		const email = this.walletEmail;
+		const phonenumber = this.walletPhoneNumber;
 		const password = this.walletPassword;
 		const recaptchaToken = this.recaptchaToken;
 
 		// Call the fetchUser store action to process the wallet logon
-		this.fetchUser({ email, password, recaptchaToken })
+		this.fetchUser({ email, phonenumber, password, recaptchaToken })
 			.then(() => {
 				if (this.store.twoFaRequired.email || this.store.twoFaRequired.authenticator || this.store.twoFaRequired.needConfirmation) {
 					this.hideSpinner();

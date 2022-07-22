@@ -28,7 +28,6 @@ import Spinner from './components/loading-spinner/Spinner.vue';
 import NetworkError from './components/NetworkError.vue';
 import Footer from './components/Footer.vue';
 import { BackgroundNFT, getRandomNFTBackground } from '../src/utils/backgroundNFT';
-
 @Component({
 	components: {
 		Spinner,

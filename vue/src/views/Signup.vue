@@ -352,4 +352,13 @@ li {
 a {
 	color: #42b983;
 }
+
+@media (max-width: 480px) {
+	.fa-eye {
+		margin-left: 250px;
+	}
+	.fa-eye-slash {
+		margin-left: 250px;
+	}
+}
 </style>

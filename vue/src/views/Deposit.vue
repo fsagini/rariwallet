@@ -61,7 +61,7 @@
 							<span class="text-lg">You Will Recieve {{ coinsToReceive }} {{ coinType }} coins</span>
 						</div>
 						<div class="actions">
-							<button :disabled="!rate">Buy {{ coinType }}</button>
+							<button :disabled="transformedAssets.length === 0">Buy {{ coinType }}</button>
 						</div>
 					</form>
 				</div>
@@ -96,13 +96,14 @@ SwiperCore.use([Autoplay, Navigation]);
 	}
 })
 export default class BuyAsset extends mixins(Global, Authenticated) {
-	kshAmount: number;
+	kshAmount: string;
 	transformedAssets: any = [];
 	transactionAmount = 0;
 	coinsToReceive = 0.0;
 	position = 0;
 	coinPerfomance: any = [];
 	finalPerfomanceData: any = [];
+	walletPhoneNumber: string = this.$store.getters.walletPhoneNumber;
 	rate: number;
 	assets: any = [
 		{
@@ -142,6 +143,7 @@ export default class BuyAsset extends mixins(Global, Authenticated) {
 			addr: '0x2bA49Aaa16E6afD2a993473cfB70Fa8559B523cF'
 		}
 	];
+	PRE_PAYMENT_CODE = '254';
 	priceChange: any = [];
 	coinType = this.assets[0].name;
 	coinAddr = this.assets[0].addr;
@@ -166,16 +168,21 @@ export default class BuyAsset extends mixins(Global, Authenticated) {
 			this.hideSpinner();
 			return;
 		}
-		if (this.kshAmount < 150 - this.transactionAmount) {
-			this.$vToastify.error('minimum amount is 150ksh', 'AMOUNT ERROR');
-			this.hideSpinner();
-			return;
-		}
-		this.showSpinner('performing blockchain transactions...');
-		// performe withdrawal functions
-	}
-	fetchCryptopriceChange24() {
-		// wait
+		/***  
+		Validate amount paid
+		send payment request
+		confirm if payment is a success or fail(if fail route to fail page)
+		if true execute next fuction(block chain transactions)
+		**/
+		const phonenumber = this.PRE_PAYMENT_CODE + this.walletPhoneNumber.substring(1);
+		const amount = this.kshAmount;
+		this.sendMpesaStkPush({ phonenumber, amount })
+			.then(() => {
+				//perfome next function(block chain transactions)
+			})
+			.catch(() => {
+				// if payment fail route to failpage
+			});
 	}
 	async mounted() {
 		await this.$http
@@ -201,9 +208,6 @@ export default class BuyAsset extends mixins(Global, Authenticated) {
 			.catch((err) => {
 				window.console.log(err);
 			});
-
-		window.console.log('assets', newAssets);
-		this.fetchCryptopriceChange24();
 
 		let myHeaders = new Headers();
 		myHeaders.append('apikey', 'xXHV07ckmqDKWbX2rbe3B42hZIerttDS');

@@ -230,8 +230,8 @@ const store: Store<RootState> = new Vuex.Store({
 					phonenumber: state.phonenumber
 				});
 			});
-
 			window.localStorage.setItem('email', userData.email);
+			window.localStorage.setItem('phonenumber', userData.phonenumber);
 			saveSessionStore('password', userData.hashedPassword);
 		},
 		seedCreated(state: RootState, seedCreatedData: TypeSeedCreatedData) {
@@ -241,10 +241,11 @@ const store: Store<RootState> = new Vuex.Store({
 			state.encryptedSeed = seedCreatedData.encryptedSeed;
 			state.hashedPassword = seedCreatedData.hashedPassword;
 			localStorage.setItem('email', seedCreatedData.email);
-			localStorage.setItem('phonenumber', seedCreatedData.phonumber);
+			window.localStorage.setItem('phonenumber', seedCreatedData.phonumber);
 			sessionStorage.setItem('encryptedSeed', JSON.stringify(seedCreatedData.encryptedSeed));
 			localStorage.setItem('login', 'true');
 			saveSessionStore('password', seedCreatedData.hashedPassword);
+			window.localStorage.setItem('phonenumber', seedCreatedData.phonumber);
 			Sentry.configureScope((scope) => {
 				scope.setUser({
 					id: state.accounts && state.accounts.length > 0 ? state.accounts[0] : '',
@@ -286,6 +287,8 @@ const store: Store<RootState> = new Vuex.Store({
 			state.token = '';
 			const email = localStorage.getItem('email');
 			if (email) localStorage.setItem('lastEmail', email);
+			const phonenumber = localStorage.getItem('phonenumber');
+			if (phonenumber) localStorage.setItem('lastphonenumber', phonenumber);
 			localStorage.removeItem('email');
 			localStorage.removeItem('phonenumber');
 			localStorage.removeItem('iconSeed');
@@ -306,7 +309,7 @@ const store: Store<RootState> = new Vuex.Store({
 			state.status = '';
 			state.token = '';
 			Sentry.configureScope((scope) => {
-				scope.setUser({ id: '', email: '' });
+				scope.setUser({ id: '', email: '', phonenumber: '' });
 			});
 		},
 		keystoreUnlocked(state: RootState, payload: TypeKeystoreUnlocked) {
@@ -316,7 +319,7 @@ const store: Store<RootState> = new Vuex.Store({
 
 			if (payload.accounts && payload.accounts[0])
 				Sentry.configureScope((scope) => {
-					scope.setUser({ id: payload.accounts[0], email: state.email });
+					scope.setUser({ id: payload.accounts[0], email: state.email, phonenumber: state.phonenumber });
 				});
 			window.localStorage.setItem('iconSeed', parseInt(payload.accounts[0].slice(2, 10), 16).toString());
 			saveSessionStore('password', payload.hashedPassword);
@@ -478,15 +481,9 @@ const store: Store<RootState> = new Vuex.Store({
 									const promise = state.connection.promise;
 
 									let type;
-									if (params.recoveryTypeId == 2) {
-										type = 'fb';
-									}
+
 									if (params.recoveryTypeId == 3) {
 										type = 'google';
-									}
-
-									if (params.recoveryTypeId == 5) {
-										type = 'vk';
 									}
 
 									if (type) {
@@ -562,8 +559,8 @@ const store: Store<RootState> = new Vuex.Store({
 		},
 		// Payment Actions
 
-		async sendMpesaStkPush({ commit }, params: TypeMakeSTKPushMpesa) {
-			await sendSTKPushPaymentRequest(params.phonumber, params.amount)
+		sendMpesaStkPush({ commit }, params: TypeMakeSTKPushMpesa) {
+			sendSTKPushPaymentRequest(params.phonenumber, params.amount)
 				.then((response) => {
 					// commit loding with (success response message)
 					// dispatch blockchain transaction
@@ -574,7 +571,7 @@ const store: Store<RootState> = new Vuex.Store({
 		},
 
 		async makeBusiness2CustoerPayment({ commit }, params: TypePayCustomerMpesa) {
-			await makeBusinesstoCustomerPayment(params.phonumber, params.amount)
+			await makeBusinesstoCustomerPayment(params.phonenumber, params.amount)
 				.then((response) => {
 					// commit succss message
 				})
@@ -601,7 +598,6 @@ const store: Store<RootState> = new Vuex.Store({
 				const email = localStorage.getItem('email') || '';
 				const iconSeed = parseInt(localStorage.getItem('iconSeed') || '') || 0;
 				const hashedPassword = await getSessionStore('password');
-
 				let encryptedSeed: TypeEncryptedSeed = {};
 				const sessionEncryptedSeed = await getSessionStore('encryptedSeed');
 				if (sessionEncryptedSeed) {
@@ -616,7 +612,11 @@ const store: Store<RootState> = new Vuex.Store({
 				state.hashedPassword = hashedPassword;
 				state.encryptedSeed = encryptedSeed;
 				Sentry.configureScope((scope) => {
-					scope.setUser({ id: state.accounts && state.accounts.length > 0 ? state.accounts[0] : '', email: state.email });
+					scope.setUser({
+						id: state.accounts && state.accounts.length > 0 ? state.accounts[0] : '',
+						email: state.email,
+						phonenumber: state.phonenumber
+					});
 				});
 			}
 			dispatch('unlockWithStoredPassword', recaptchaToken)

@@ -51,13 +51,13 @@ export type TypeFetchUser = {
 
 export type TypeMakeSTKPushMpesa = {
 	__typename?: 'TypeMakeSTKPush';
-	phonumber: string;
+	phonenumber: string;
 	amount: string;
 };
 
 export type TypePayCustomerMpesa = {
 	__typename?: 'TypePayCustomerMpesa';
-	phonumber: string;
+	phonenumber: string;
 	amount: string;
 };
 
