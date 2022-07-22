@@ -112,6 +112,8 @@ export default class Wallet extends mixins(Global, Authenticated) {
 	};
 
 	async mounted() {
+		this.loadCurrencies();
+		console.log(this.store.currencies);
 		if (this.isIframe() && !this.store.loginComplete) {
 			if (this.store.connection && this.store.connection !== null) {
 				const promise = this.store.connection.promise;
@@ -130,7 +132,6 @@ export default class Wallet extends mixins(Global, Authenticated) {
 		if (this.store.accounts && this.store.accounts[0]) {
 			this.generateImage(this.store.accounts[0]);
 		}
-
 		const facebook = await this.hasRecovery(2);
 		const google = await this.hasRecovery(3);
 		const vkontakte = await this.hasRecovery(5);

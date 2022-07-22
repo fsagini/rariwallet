@@ -18,7 +18,8 @@ import {
 	TypeUpdateUserPayload,
 	TypeResetRecovery,
 	TypeExportPhraseKeyVariables,
-	TypeShowPhraseKeyVariables
+	TypeShowPhraseKeyVariables,
+	TypeCurrencies
 } from '../types/global-types';
 import { mapState } from 'vuex';
 import { RootState } from '../store';
@@ -122,6 +123,10 @@ export class Global extends Vue {
 	// Map store actions
 	@Action
 	public fetchWalletFromRecovery!: (params: TypeRecoveryParams) => Promise<unknown>;
+
+	@Action
+	public loadCurrencies!: () => Promise<unknown>;
+
 
 	// Map Store Properties
 	store: RootState = this.$store.state;
