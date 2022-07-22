@@ -28,15 +28,37 @@ export type TypeSeedFoundData = {
 export type TypeSeedCreatedData = {
 	__typename?: 'TypeSeedCreatedData';
 	email: string;
+	phonumber: string;
 	encryptedSeed: TypeEncryptedSeed;
 	hashedPassword: string;
+};
+
+export type TypeCreateUser = {
+	__typename?: 'TypeCreateUser';
+	email: string;
+	password: string;
+	phonenumber: string;
+	recaptchaToken: string;
 };
 
 export type TypeFetchUser = {
 	__typename?: 'TypeFetchUser';
 	email: string;
+	phonenumber: string;
 	password: string;
 	recaptchaToken: string;
+};
+
+export type TypeMakeSTKPushMpesa = {
+	__typename?: 'TypeMakeSTKPush';
+	phonenumber: string;
+	amount: string;
+};
+
+export type TypePayCustomerMpesa = {
+	__typename?: 'TypePayCustomerMpesa';
+	phonenumber: string;
+	amount: string;
 };
 
 export type TypeUnlock2fa = {
@@ -51,10 +73,9 @@ export type WalletBase = {
 	address: string;
 	privateKey: string;
 	accountId: number | undefined;
-	sign: (msg: string)=> Promise<string>;
-	transfer: (txObject: TransactionObject)=> Promise<TransactionReceipt>;
-	encrypt: (password: string)=> Promise<string>;
-	
+	sign: (msg: string) => Promise<string>;
+	transfer: (txObject: TransactionObject) => Promise<TransactionReceipt>;
+	encrypt: (password: string) => Promise<string>;
 };
 
 export type TypeState = {
@@ -109,6 +130,7 @@ export type TypeChangeEmail = {
 export type TypeUserFoundData = {
 	__typename?: 'TypeUserFoundData';
 	email: string;
+	phonenumber: string;
 	hashedPassword: string;
 };
 
@@ -148,32 +170,34 @@ export type MorpherWalletConfig = {
 	confirm_message: boolean;
 } | null;
 
+export type TypeCreateTransactions = {
+	__typename?: 'TypeCreateTransactions';
+	email: string;
+	transaction_type: string;
+	amount: number;
+	date: Date;
+};
+
 export type TransactionObject = {
-	to: string,
+	__typename?: 'TransactionObject';
+	to: string;
 	token: string;
 	amount: number;
 	fee: number;
 	nonce: number;
 	type: string;
-}
+};
 
 export type TransactionReceipt = {
-	txId: string,
+	__typename?: 'TransactionReceipt';
+	txId: string;
 	date: number;
 	amount: number;
 	fee: number;
 	token: string;
 	type: string;
 	txUrl: string;
-}
-export type TypeCurrencies = {
-	__typename?: 'TypeCurrencies';
-	symbol?:string,
-	price?: number,
-   	address?: string,
-   	imgURL?:string,
-  	title?: string,
-}
+};
 
 export type TypeKeystoreUnlocked = {
 	__typename?: 'TypeKeystoreUnlocked';

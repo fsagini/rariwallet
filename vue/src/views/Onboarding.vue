@@ -47,7 +47,6 @@ import Component, { mixins } from 'vue-class-component';
 import { Global } from '../mixins/mixins';
 @Component
 export default class Onboarding extends mixins(Global) {
-    modal:any 
 	position=0
 	modalContent: any = [
 		{

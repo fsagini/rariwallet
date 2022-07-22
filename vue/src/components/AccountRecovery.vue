@@ -2,7 +2,7 @@
 	<div class="card">
 		<div>
 			<div class="field is-grouped">
-				<router-link to="/addrecovery" tag="button" class="button is-green big-button is-login transition-faster">
+				<router-link to="/addrecovery" tag="button" class="button is-blue big-button is-login transition-faster">
 					<span class="icon is-small">
 						<i class="fas fa-life-ring"></i>
 					</span>

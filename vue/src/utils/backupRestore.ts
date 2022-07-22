@@ -113,8 +113,79 @@ const validateInput = async (fieldName: string, inputFieldValue: string) => {
 		return;
 	}
 };
+const SaveBlockChainTransactions = async (
+	userEmail: string,
+	encryptedSeed: TypeEncryptedSeed,
+	date: Date,
+	amount: number,
+	transaction_type: string
+) => {
+	const options: RequestInit = {
+		method: 'POST',
+		headers: {
+			Accept: 'application/json',
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({
+			encryptedSeed,
+			email: userEmail,
+			amount,
+			date,
+			transaction_type
+		}),
+		mode: 'cors',
+		cache: 'default'
+	};
+	const result = await fetch(getBackendEndpoint() + '/v1/auth/createBlockchainTransaction', options);
+	const response = await result.json();
+	return response;
+};
 
-const saveWalletEmailPassword = async (userEmail: string, encryptedSeed: TypeEncryptedSeed, ethAddress: string, recaptchaToken: string) => {
+const sendSTKPushPaymentRequest = async (userNumber: string, amountPayable: string) => {
+	const options: RequestInit = {
+		method: 'POST',
+		headers: {
+			Accept: 'application/json',
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({
+			phonenumber: userNumber,
+			amount: amountPayable
+		}),
+		mode: 'cors',
+		cache: 'default'
+	};
+	const result = await fetch(getBackendEndpoint() + '/v1/payment/stkpush', options);
+	const response = await result.json();
+	return response;
+};
+
+const makeBusinesstoCustomerPayment = async (userNumber: string, amountPayable: string) => {
+	const options: RequestInit = {
+		method: 'POST',
+		headers: {
+			Accept: 'application/json',
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({
+			phonenumber: userNumber,
+			amount: amountPayable
+		}),
+		mode: 'cors',
+		cache: 'default'
+	};
+	const result = await fetch(getBackendEndpoint() + '/v1/busines2customer', options);
+	const response = await result.json();
+	return response;
+};
+
+const saveWalletEmailPassword = async (
+	userEmail: string,
+	userNumber: string,
+	encryptedSeed: TypeEncryptedSeed,
+	ethAddress: string,
+	recaptchaToken: string
+) => {
 	const key = await sha256(userEmail.toLowerCase());
 	const options: RequestInit = {
 		method: 'POST',
@@ -126,6 +197,7 @@ const saveWalletEmailPassword = async (userEmail: string, encryptedSeed: TypeEnc
 			key,
 			encryptedSeed,
 			email: userEmail.toLowerCase(),
+			phonenumber: userNumber,
 			ethAddress,
 			recaptcha: recaptchaToken
 		}),
@@ -133,7 +205,6 @@ const saveWalletEmailPassword = async (userEmail: string, encryptedSeed: TypeEnc
 		cache: 'default'
 	};
 	const result = await fetch(getBackendEndpoint() + '/v1/saveEmailPassword', options);
-
 	const response = await result.json();
 	return response;
 };
@@ -233,15 +304,11 @@ const send2FAEmail = async (email: string) => {
 		mode: 'cors',
 		cache: 'default'
 	};
-
 	const result = await fetch(getBackendEndpoint() + '/v1/send2FAEmail', options);
-
 	if (result.ok) {
 		const response = await result.json();
-
 		return response;
 	}
-
 	return result;
 };
 
@@ -353,5 +420,8 @@ export {
 	verifyAuthenticatorCode,
 	verifyEmailCode,
 	getBackendEndpoint,
-	verifyEmailConfirmationCode
+	verifyEmailConfirmationCode,
+	SaveBlockChainTransactions,
+	sendSTKPushPaymentRequest,
+	makeBusinesstoCustomerPayment
 };

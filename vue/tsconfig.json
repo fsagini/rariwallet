@@ -1,6 +1,9 @@
 {
   "compilerOptions": {
+    "noImplicitAny": false,
+    "allowJs": true,
     "target": "esnext",
+    "strictPropertyInitialization": false,
     "module": "esnext",
     "strict": true,
     "jsx": "preserve",

@@ -52,7 +52,7 @@
 			<p>⚠️ <span v-html="logonError"></span></p>
 		</div>
 
-		<button @click="login()" class="button is-green big-button is-login transition-faster mt-5" :disabled="!walletPassword">
+		<button @click="login()" class="button is-blue big-button is-login transition-faster mt-5" :disabled="!walletPassword">
 			<span class="text">{{ $t('auth.LOGIN') }}</span>
 		</button>
 		<p class="forgot-password">
@@ -77,6 +77,7 @@ export default class Unlock extends mixins(Global, Recaptcha) {
 	// Component properties
 	walletPassword = '';
 	walletEmail = this.$store.getters.walletEmail;
+	walletPhoneNumber = this.$store.getters.walletPhoneNumber;
 	iconSeed = this.$store.getters.iconSeed;
 	showRecovery = false;
 	logonError = '';
@@ -103,10 +104,8 @@ export default class Unlock extends mixins(Global, Recaptcha) {
 		}
 
 		if (this.$store.state.hashedPassword && this.$store.state.encryptedSeed.ciphertext !== undefined) {
-
 			this.showSpinner(this.$t('loader.LOADING_ACCOUNT').toString());
 
-			
 			// Check if the wallet can be unlocked using the local-storage stored password
 			this.unlockWithStoredPassword(this.recaptchaToken)
 				.then((result) => {
@@ -123,7 +122,7 @@ export default class Unlock extends mixins(Global, Recaptcha) {
 					}
 					// error
 				});
-		} else{
+		} else {
 			this.unlockUpdate();
 		}
 	}
@@ -142,8 +141,6 @@ export default class Unlock extends mixins(Global, Recaptcha) {
 		const recaptchaToken = this.recaptchaToken;
 
 		if (this.$store.state.encryptedSeed && this.$store.state.encryptedSeed.ciphertext) {
-
-
 			// Call the fetchUser store action to process the wallet logon
 			this.unlockWithPassword({ password, recaptchaToken })
 				.then(() => {
@@ -169,7 +166,6 @@ export default class Unlock extends mixins(Global, Recaptcha) {
 		} else {
 			this.loginEmail();
 		}
-
 	}
 
 	loginEmail() {
@@ -177,11 +173,12 @@ export default class Unlock extends mixins(Global, Recaptcha) {
 		this.showSpinner(this.$t('loader.LOADING_ACCOUNT').toString());
 		this.store.loginComplete = false;
 		const email = this.walletEmail;
+		const phonenumber = this.walletPhoneNumber;
 		const password = this.walletPassword;
 		const recaptchaToken = this.recaptchaToken;
 
 		// Call the fetchUser store action to process the wallet logon
-		this.fetchUser({ email, password, recaptchaToken })
+		this.fetchUser({ email, phonenumber, password, recaptchaToken })
 			.then(() => {
 				if (this.store.twoFaRequired.email || this.store.twoFaRequired.authenticator || this.store.twoFaRequired.needConfirmation) {
 					this.hideSpinner();

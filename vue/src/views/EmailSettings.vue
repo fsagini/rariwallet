@@ -1,12 +1,12 @@
 <template>
-	<div class="container">
+	<div class="wrapper">
 		<h2 class="title">{{ $t('email.EMAIL_SETTINGS_TITLE') }}</h2>
 		<h4 class="subtitle">{{ $t('email.EMAIL_SETTINGS_DESCRIPTION') }}</h4>
+		<div class="settings-container">
 		<ChangeEmail v-if="currentPage === 0" @setNewData="setNewData" :error="logonError" />
 		<Change2FAEmail v-if="currentPage === 1" @setCode="setCode" @pageBack="pageBack" :error="logonError" />
 		<div v-if="currentPage === 2">
 			<div>
-				<img src="@/assets/img/checkmark.svg" alt="Checkmark image" class="mb-3" />
 				<h2 data-cy="emailUpdatedTitle" class="title">{{ $t('email.EMAIL_UPDATED_TITLE') }}</h2>
 				<p data-cy="emailUpdatedDescription" class="subtitle">{{ $t('email.EMAIL_UPDATED_DESCRIPTION') }}</p>
 
@@ -15,6 +15,8 @@
 				</button>
 			</div>
 		</div>
+		</div>
+		
 	</div>
 </template>
 
@@ -115,5 +117,18 @@ export default class EmailSettings extends mixins(Authenticated, Global) {
 	.title {
 		margin: 0;
 	}
+}
+.settings-container{
+	background: #fff;
+	border-radius : 16px 16px 0 0;
+	width:100%;
+	padding: 1%;
+	bottom: 0;
+}
+.wrapper{
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	
 }
 </style>

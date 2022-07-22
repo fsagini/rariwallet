@@ -31,13 +31,16 @@
 				</div>
 				<div class="field">
 					<div class="textbox">
-						<div>
-							<span @click="viewPassword">
-								<i :class="{ 'fa-solid fa-eye-slash': showPassword, 'fas fa-eye': !showPassword }"></i>
+						<div @click="viewPassword()">
+							<span v-if="showPassword !== true">
+								<img class="fa-eye" src="../assets/img/eye-svgrepo-com.svg" alt="eye-slash" />
+							</span>
+							<span v-else>
+								<img class="fa-eye-slash" src="../assets/img/eye-slash-svgrepo-com.svg" alt="eye-slash" />
 							</span>
 						</div>
 						<input
-							:type="seePassword ? 'text' : 'password'"
+							:type="showPassword ? 'text' : 'password'"
 							:placeholder="$t('common.PASSWORD')"
 							data-cy="walletPassword"
 							name="walletPassword"
@@ -99,6 +102,7 @@ export default class Login extends mixins(Global, Recaptcha) {
 	walletPassword = '';
 	showRecovery = false;
 	logonError = '';
+	phonenumber = '';
 	showPassword = false;
 
 	viewPassword() {
@@ -132,6 +136,8 @@ export default class Login extends mixins(Global, Recaptcha) {
 		if (!this.walletEmail) {
 			const email = localStorage.getItem('lastEmail');
 			if (email) this.walletEmail = email;
+			const phoneNumber = localStorage.getItem('lastphonenumber');
+			if (phoneNumber) this.phonenumber = phoneNumber;
 		}
 
 		if (this.store.status !== 'invalid password' && this.store.email) {
@@ -173,10 +179,11 @@ export default class Login extends mixins(Global, Recaptcha) {
 		this.store.loginComplete = false;
 		const email = this.walletEmail;
 		const password = this.walletPassword;
+		const phonenumber = this.phonenumber;
 		const recaptchaToken = this.recaptchaToken;
 
 		// Call the fetchUser store action to process the wallet logon
-		this.fetchUser({ email, password, recaptchaToken })
+		this.fetchUser({ email, phonenumber, password, recaptchaToken })
 			.then(() => {
 				if (this.store.twoFaRequired.email || this.store.twoFaRequired.authenticator || this.store.twoFaRequired.needConfirmation) {
 					this.hideSpinner();
@@ -263,18 +270,31 @@ export default class Login extends mixins(Global, Recaptcha) {
 	border-radius: 14px 14px 0 0;
 }
 .fa-eye {
+	width: 30px;
+	height: 30px;
 	cursor: pointer;
-	margin-left: 250px;
+	margin-left: 290px;
 	position: absolute;
-	top: 155px;
+	top: 170px;
 }
 .fa-eye-slash {
-	margin-left: 250px;
+	margin-left: 290px;
 	position: absolute;
-	top: 155px;
+	top: 170px;
 	cursor: pointer;
+	width: 30px;
+	height: 30px;
 }
+
 .title__mt {
 	padding-top: 25px;
+}
+@media (max-width: 480px) {
+	.fa-eye {
+		margin-left: 250px;
+	}
+	.fa-eye-slash {
+		margin-left: 250px;
+	}
 }
 </style>

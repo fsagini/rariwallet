@@ -22,19 +22,44 @@
 				<div>
 					<div class="field title__mt">
 						<div class="textbox">
-							<input type="email" name="walletEmail" data-cy="walletEmail" :placeholder="$t('common.EMAIL')" v-model="walletEmail" />
+							<input
+								class="pl-2"
+								type="email"
+								name="walletEmail"
+								data-cy="walletEmail"
+								:placeholder="$t('common.EMAIL')"
+								v-model="walletEmail"
+							/>
 						</div>
 					</div>
 					<div class="field">
 						<div class="textbox">
-							<span @click="viewPassword" class="password">
-								<i :class="{ 'fa-solid fa-eye-slash': showPassword, 'fas fa-eye': !showPassword }"></i>
-							</span>
+							<input
+								class="pl-2"
+								type="text"
+								name="phoneNumber"
+								data-cy="phoneNumber"
+								:placeholder="$t('common.PHONE')"
+								v-model="phoneNumber"
+							/>
+						</div>
+					</div>
+					<div class="field">
+						<div class="textbox">
+							<div @click="viewPassword">
+								<span v-if="showPassword !== true">
+									<img class="fa-eye" src="../assets/img/eye-svgrepo-com.svg" alt="eye-slash" />
+								</span>
+								<span v-else>
+									<img class="fa-eye-slash" src="../assets/img/eye-slash-svgrepo-com.svg" alt="eye-slash" />
+								</span>
+							</div>
 							<input
 								:type="showPassword ? 'text' : 'password'"
 								name="walletPassword"
 								data-cy="walletPassword"
 								v-model="walletPassword"
+								class="pl-2"
 								:placeholder="$t('common.PASSWORD')"
 							/>
 							<password v-model="walletPassword" :strength-meter-only="true" :secure-length="8" style="max-width: initial" />
@@ -87,19 +112,16 @@
 					</div>
 					<div class="field">
 						<div class="textbox">
-							<span @click="viewPassword" class="confirm__password">
-								<i :class="{ 'fa-solid fa-eye-slash': showPassword, 'fas fa-eye': !showPassword }"></i>
-							</span>
 							<input
 								:placeholder="$t('common.CONFIRM_PASSWORD')"
 								:type="seePassword ? 'text' : 'password'"
 								name="walletPasswordRepeat"
+								class="pl-2"
 								data-cy="walletPasswordRepeat"
 								v-model="walletPasswordRepeat"
 							/>
 						</div>
 					</div>
-
 					<div class="error" v-if="logonError">
 						<p>⚠️ <span v-html="logonError"></span></p>
 					</div>
@@ -144,6 +166,7 @@ export default class Signup extends mixins(Global, Recaptcha) {
 	// properties
 	walletEmail = '';
 	walletPassword = '';
+	phoneNumber = '';
 	walletPasswordRepeat = '';
 	signup = false;
 	logonError = '';
@@ -155,7 +178,6 @@ export default class Signup extends mixins(Global, Recaptcha) {
 		number: '',
 		match: ''
 	};
-
 	@Watch('walletPassword')
 	handlePasswordChange(newValue: string) {
 		this.passwordChecks = this.checkPassword(newValue, false, this.passwordChecks, this.walletPasswordRepeat);
@@ -205,9 +227,10 @@ export default class Signup extends mixins(Global, Recaptcha) {
 		}
 
 		const email = this.walletEmail;
+		const phonenumber = this.phoneNumber;
 		const recaptchaToken = this.recaptchaToken;
 		this.showSpinner('Creating Wallet...');
-		this.createWallet({ email, password: this.walletPassword, recaptchaToken })
+		this.createWallet({ email, phonenumber, password: this.walletPassword, recaptchaToken })
 			.then(() => {
 				this.hideSpinner();
 				if (this.store.twoFaRequired.email || this.store.twoFaRequired.authenticator || this.store.twoFaRequired.needConfirmation) {
@@ -290,16 +313,20 @@ ul {
 	position: absolute;
 	top: 355px;
 }
-.password .fa-eye {
+.fa-eye {
+	width: 30px;
+	height: 30px;
 	cursor: pointer;
-	margin-left: 250px;
+	margin-left: 290px;
 	position: absolute;
-	top: 155px;
+	top: 245px;
 }
-.password .fa-eye-slash {
-	margin-left: 250px;
+.fa-eye-slash {
+	width: 30px;
+	height: 30px;
+	margin-left: 290px;
 	position: absolute;
-	top: 155px;
+	top: 245px;
 	cursor: pointer;
 }
 .textbox input {
@@ -323,6 +350,15 @@ li {
 	margin: 0 10px;
 }
 a {
-	color: #42b983;
+	color: #347af0;
+}
+
+@media (max-width: 480px) {
+	.fa-eye {
+		margin-left: 250px;
+	}
+	.fa-eye-slash {
+		margin-left: 250px;
+	}
 }
 </style>

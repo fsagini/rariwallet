@@ -1,10 +1,10 @@
 @charset "utf-8";
-
 @import url("https://fonts.googleapis.com/css?family=Roboto:400,500,600,700|Rubik:400,500,600,700");
 @import url('https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Titillium+Web:wght@200;300;400;700&display=swap');
 @font-face {
-	font-family: proxima-condensed;
-	src: url('assets/fonts/proxima_light/ProximaNova-Regular.otf');
+	font-family: 'Titillium Web',sans-serif;
+	src: url('assets/fonts/titilium-web/TitilliumWeb-Regular.ttf');
   }
 
 /* define variables for the interface colors */
@@ -22,9 +22,9 @@ $col_black: #333333;
 $warning_light: #faeec0;
 $warning_dark: #f9de6e;
 
-$green_ligher: #bde4d8;
-$green_lighter_focus: #65ccb3;
-$green_lighter_hover: #80d5c0;
+$green_ligher: #abcdec;
+$green_lighter_focus:#7abae9 ;
+$green_lighter_hover: #347AF0;
 
 $blue_lighter: #abcdec;
 $blue_lighter_focus: #7abae9;
@@ -38,8 +38,8 @@ $red_lighter: #e6c6bb;
 $red_lighter_focus: #e4a087;
 $red_lighter_hover: #e8ab95;
 
-$font1: proxima-condensed, "Rubik", sans-serif;
-$font2: proxima-condensed, "Roboto", sans-serif;
+$font1: Titillium Web, 'Titillium Web', sans-serif;
+$font2: Titillium Web, 'Titillium Web', sans-serif;
 $spacing_1: 15px;
 $spacing_2: 30px;
 $spacing_3: 60px;
@@ -115,11 +115,17 @@ body {
 	height: 100%;
 	border-radius: 0;
 	box-shadow: none;
+	-ms-overflow-style: none;
+	scrollbar-width: none
+	
+}
+.main_iframe::-webkit-scrollbar {
+	display: none;
 }
 
 .main {
 	@extend %centered_block;
-	max-width: 414px;
+	max-width: 400px;
 	width: 90%;
 	margin-top: 80px;
 	border: 1px solid $col_grey;
@@ -214,18 +220,17 @@ input {
 	box-shadow: inset 0 0.0625em 0.125em rgba(10, 10, 10, 0.05);
 	max-width: 100%;
 	width: 100%;
-	border: 1px solid $col_grey_light;
 	font-size: 12pt;
 	height: 46px;
 	border-radius: 4px;
-	color: #363636;
+	color:#B5BBC9;
 	margin-top: $spacing_1;
 	padding-left: 10px;
 	display: inline-block;
 	box-sizing: border-box;
 }
 input::placeholder {
-	color: $col_grey_light;
+	color: #B5BBC9;
 }
 
 input[type="checkbox"] {
@@ -421,9 +426,10 @@ input[type="checkbox"]:checked {
 .main {
 	padding-bottom: 0;
 	position: relative;
-	background-color: #B4E1F5;
+	background-color: #228CDB;
 	border-radius: 15px;
-	box-shadow: 0 8px 20px 0 rgb(0 0 0 / 15%);
+	box-shadow: #fff;
+	z-index: 1;
 }
 
 .header {
@@ -820,7 +826,7 @@ input[type="checkbox"]:checked {
 		padding: 3px 14px;
 		border-radius: 5px;
 		margin-left: auto;
-		border: 1px solid #58c08a;
+		border: 1px solid #347af0;
 		line-height: 1rem;
 		font-size: 12px;
 		font-weight: 500;
@@ -1152,6 +1158,7 @@ a {
 	border-radius: 50px;
 	height: 32px;
 	width: 32px;
+	cursor: pointer;
 
 	> div {
 		border: 0.1px solid #fff;
