@@ -248,7 +248,6 @@ export default class Portfolio extends mixins(Global, Authenticated) {
 	toggleShowAll() {
 		this.ShowAll = !this.ShowAll;
 	}
-
 	copyETHAddress(ethAddress: string): void {
 		copyToClipboard(ethAddress);
 	}
@@ -565,7 +564,6 @@ export default class Portfolio extends mixins(Global, Authenticated) {
 	border-radius: 14px 14px 0 0;
 	padding-top: 30px;
 }
-
 .portfolio__title span,
 .portfolio__header {
 	font-size: 18px;
@@ -593,7 +591,6 @@ export default class Portfolio extends mixins(Global, Authenticated) {
 	color: #fff;
 	font-size: 16px;
 }
-
 .menu__row {
 	height: 50px;
 	width: 100%;

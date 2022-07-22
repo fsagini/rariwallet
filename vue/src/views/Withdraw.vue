@@ -199,4 +199,3 @@ export default class Withdraw extends mixins(Global, Authenticated) {
 }
 </style>
 
-
