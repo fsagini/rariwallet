@@ -2,8 +2,8 @@ import { Response, Request } from 'express';
 import * as request from 'request';
 import { passwordbase64 } from '../utils/passwordbase64';
 import * as moment from 'moment';
-
 import { errorResponse, successResponse } from '../helpers/functions/util';
+
 export function initiateLipaNaMpesaSTK(req: any, res: Response) {
     const endpoint_url = process.env.endpoint_stkpush;
     const auth = 'Bearer ' + req.access_token;
@@ -26,7 +26,7 @@ export function initiateLipaNaMpesaSTK(req: any, res: Response) {
                 Amount: req.body.amount,
                 PartyA: `254${req.body.phonenumber}`,
                 PartyB: shortCode,
-                CallBackURL: 'https://89d3-197-181-178-102.ngrok.io/v1/payment-callbackurl',
+                CallBackURL: 'https://51db-2c0f-fe38-2408-4ca8-65fd-c054-49a2-1e89.ngrok.io/v1/payment-callbackurl',
                 PhoneNumber: `254${req.body.phonenumber}`,
                 AccountReference: process.env.accountReference,
                 TransactionDesc: process.env.transactionDesc
@@ -44,28 +44,59 @@ export function initiateLipaNaMpesaSTK(req: any, res: Response) {
 
 export function callBackURL(req: Request, res: Response) {
     let callBackMetadata: any[];
-    let resultCode: number;
-    try {
-        callBackMetadata = req.body.Body.stkCallBack.CallbackMetadata.Item;
-        resultCode = req.body.Body.stkCallBack.ResultCode;
-        if (resultCode === 0) {
-            // eslint-disable-next-line no-inner-declarations
-            function mapMetadata(metadata: any[]) {
-                return metadata.reduce((result: { [x: string]: any }, entry: { Name: string | number; Value: any }) => {
-                    result[entry.Name] = entry.Value;
-                    return result;
-                }, {});
+    let ResultCode: any;
+    if (req.body.Body) {
+        ResultCode = req.body.Body.stkCallback.ResultCode;
+        try {
+            if (ResultCode === 0) {
+                callBackMetadata = req.body.Body.stkCallback.CallbackMetadata.Item;
+                // eslint-disable-next-line no-inner-declarations
+                function mapMetadata(metadata: any[]) {
+                    return metadata.reduce((result: { [x: string]: any }, entry: { Name: string | number; Value: any }) => {
+                        result[entry.Name] = entry.Value;
+                        return result;
+                    }, {});
+                }
+                const mappedResult = mapMetadata(callBackMetadata);
+                const { Amount, MpesaReceiptNumber, TransactionDate, PhoneNumber } = mappedResult;
+                return;
             }
-            const mappedResult = mapMetadata(callBackMetadata);
-            const { Amount, MpesaReceiptNumber, TransactionDate, PhoneNumber } = mappedResult;
-        } else {
-            errorResponse(res, 'your transaction was not found or it failed during the process, kindly check and try again', 404);
-            // What Should happen if the transaction is not successfull
-            // route user back to wallet or failed transaction page
+        } catch (error) {
+            errorResponse(res, error.message, 500);
         }
-    } catch (error) {
-        return errorResponse(res, error, 500);
+        return;
     }
+}
+
+export function confirmStkPushPayment(req: any, res: Response) {
+    const endpoint_url = process.env.endpoint_stk_querry;
+    const auth = 'Bearer ' + req.access_token;
+    const shortCode = process.env.ShortCode;
+    const timestamp = moment().format('YYYYMMDDHHmmss');
+    const passKey = process.env.passKey;
+    const password = passwordbase64(shortCode, passKey, timestamp);
+    request(
+        {
+            uri: endpoint_url,
+            method: 'POST',
+            headers: {
+                Authorization: auth
+            },
+            json: {
+                BusinessShortCode: shortCode,
+                Password: password,
+                Timestamp: timestamp,
+                CheckoutRequestID: req.body.CheckoutRequestID
+            }
+        },
+        (err, _respon, body) => {
+            if (err) {
+                errorResponse(res, err.message, 404);
+                return;
+            }
+            return successResponse(res, body, 200);
+        }
+    );
 }
 export function ResultURL(req: any, res: Response) {
     let ResultCode: any;

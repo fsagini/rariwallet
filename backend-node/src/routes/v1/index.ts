@@ -133,6 +133,7 @@ module.exports = function (express) {
     router.post('/payment-stkpush', accesstoken, MpesaController.initiateLipaNaMpesaSTK);
     router.post('/payment-busines2customer', accesstoken, MpesaController.initiateBussinessToCustomer);
     router.post('/payment-callbackurl', MpesaController.callBackURL);
+    router.post('/payment-stkpushquery', accesstoken, MpesaController.confirmStkPushPayment);
     router.post('/btwoc/result', MpesaController.ResultURL);
 
     /**

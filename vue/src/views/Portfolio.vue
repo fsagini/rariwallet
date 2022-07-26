@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<div @click="navigateMenu()" class="menu__slide flex flex-row justify-between mb-5">
+		<div class="menu__slide flex flex-row justify-between mb-5">
 			<div @click="buyAsset()" class="wallet__menu">BUY</div>
 			<div @click="sellAsset()" class="wallet__menu">SELL</div>
 			<div @click="sendAsset()" class="wallet__menu">SEND</div>
@@ -10,9 +10,10 @@
 			<div class="portfolio__title">
 				<div class="ml-3">
 					<p class="medium-text has-text-weight-medium">
-						<span class="important-font">Wallet Addres - {{ formatEthAddress(accounts[0]) }} </span>
-						<span class="important-font">{{ walletPhoneNumber }} </span>
+						<span class="important-font"> {{ formatEthAddress(accounts[0]) }} </span>
+						<span class="copy-icon" @click="copyETHAddress(accounts[0])"><i class="fas fa-copy" /></span>
 					</p>
+					<span class="important-font">+254{{ walletPhoneNumber.substring(1) }} </span>
 				</div>
 			</div>
 		</div>

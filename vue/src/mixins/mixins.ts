@@ -1,4 +1,4 @@
-import { TypeCreateTransactions, TypeMakeSTKPushMpesa, TypePayCustomerMpesa } from './../types/global-types';
+import { TypeCreateTransactions, TypeMakeSTKPushMpesa, TypePayCustomerMpesa, TypeConfirmPayment } from './../types/global-types';
 // global mixins
 import Vue from 'vue';
 import Component from 'vue-class-component';
@@ -311,4 +311,7 @@ export class Authenticated extends Global {
 
 	@Action
 	public makeBusiness2CustoerPayment!: (params: TypePayCustomerMpesa) => Promise<unknown>;
+
+	@Action
+	public verifyMpesaSTKPushPayment!: () => Promise<unknown>;
 }

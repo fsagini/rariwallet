@@ -19,7 +19,8 @@ import {
 	verifyEmailConfirmationCode,
 	SaveBlockChainTransactions,
 	sendSTKPushPaymentRequest,
-	makeBusinesstoCustomerPayment
+	makeBusinesstoCustomerPayment,
+	verifyMpesaSTKPushPayment
 } from '../utils/backupRestore';
 import { downloadEncryptedKeystore, sortObject } from '../utils/utils';
 import { getKeystore } from '../utils/keystore';
@@ -63,7 +64,6 @@ import download from 'downloadjs';
 
 import { i18n } from '../plugins/i18n';
 import Cookie from 'js-cookie';
-
 Vue.use(Vuex);
 
 /*
@@ -72,6 +72,9 @@ Vue.use(Vuex);
 export interface RootState {
 	loading: boolean;
 	isNetworkError: boolean;
+	checkoutRequestID: string;
+	TransactionCodeId: string;
+	TransactionDesc: string;
 	status: string;
 	spinnerStatusText: string;
 	message: string;
@@ -122,6 +125,9 @@ function initialState(): RootState {
 	return {
 		loading: false,
 		isNetworkError: false,
+		checkoutRequestID: '',
+		TransactionCodeId: '',
+		TransactionDesc: '',
 		status: '',
 		spinnerStatusText: '',
 		message: '',
@@ -194,7 +200,7 @@ const store: Store<RootState> = new Vuex.Store({
 			state.spinnerStatusText = statusMessage;
 			setTimeout(() => {
 				state.loading = false;
-			}, 2000);
+			}, 10000);
 		},
 		seedFound(state: RootState, seedFoundData: TypeSeedFoundData) {
 			state.status = 'success';
@@ -557,18 +563,42 @@ const store: Store<RootState> = new Vuex.Store({
 				});
 			});
 		},
-		// Payment Actions
-
-		sendMpesaStkPush({ commit }, params: TypeMakeSTKPushMpesa) {
+		async sendMpesaStkPush({ commit }, params: TypeMakeSTKPushMpesa) {
 			sendSTKPushPaymentRequest(params.phonenumber, params.amount)
 				.then(async (response) => {
-					await commit('delayedSpinnerMessage', response.CustomerMessage);
+					const { CustomerMessage, CheckoutRequestID } = response;
+					window.console.log(response);
+					commit('delayedSpinnerMessage', CustomerMessage);
+					commit('loading', 'verifying payment...');
+					setTimeout(() => {
+						verifyMpesaSTKPushPayment(CheckoutRequestID)
+							.then((result) => {
+								const { ResultCode, ResultDesc } = result;
+								if (ResultCode === '0') {
+									commit('delayedSpinnerMessage', ResultDesc);
+									commit('loading', 'initiating blockchain transaction...');
+									// After a Series reserach here would be the best place to dispatch blockchain action.
+									// Dispatch Blockchain Transactions
+								} else if (ResultCode === '1032') {
+									commit('delayedSpinnerMessage', ResultDesc);
+									router.push('/transaction/not/found');
+								} else if (ResultCode === '2001') {
+									commit('delayedSpinnerMessage', ResultDesc);
+									router.push('/transaction/not/found');
+								} else {
+									commit('delayedSpinnerMessage', ResultDesc);
+									router.push('/transaction/not/found');
+								}
+							})
+							.catch((err) => {
+								commit('delayedSpinnerMessage', err.message);
+							});
+					}, 40000);
 				})
 				.catch((error) => {
 					commit('delayedSpinnerMessage', error.message);
 				});
 		},
-
 		async makeBusiness2CustoerPayment({ commit }, params: TypePayCustomerMpesa) {
 			await makeBusinesstoCustomerPayment(params.phonenumber, params.amount)
 				.then((response) => {
@@ -578,7 +608,6 @@ const store: Store<RootState> = new Vuex.Store({
 					commit('delayedSpinnerMessage', error.message);
 				});
 		},
-
 		//** Save Transactions */
 		createTransaction({ commit, state }, params: TypeCreateTransactions) {
 			const encryptedSeed = state.encryptedSeed;

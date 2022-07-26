@@ -9,6 +9,14 @@ export type TypeEncryptedSeed = {
 	salt?: string;
 };
 
+export type TypeConfirmPayment = {
+	__typename: 'TypeConfirmPayment';
+	checkout_request_id: string;
+	url: string;
+	body: string;
+	method: string;
+};
+
 export type Type2FARequired = {
 	__typename?: 'Type2FARequired';
 	email: boolean;

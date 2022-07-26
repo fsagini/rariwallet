@@ -1,3 +1,4 @@
+<!-- eslint-disable prettier/prettier -->
 <template>
   <div>
     <div class="pt-0">
@@ -96,7 +97,7 @@
     </div>
   </div>
 </template>
-
+<!-- eslint-disable prettier/prettier -->
 <script lang="ts">
 import Component, { mixins } from "vue-class-component";
 import { Watch } from "vue-property-decorator";
@@ -132,6 +133,8 @@ export default class BuyAsset extends mixins(Global, Authenticated) {
   finalPerfomanceData: any = [];
   walletPhoneNumber: string = this.$store.getters.walletPhoneNumber;
   rate: number;
+  paymentStatus = this.$store.getters.paymentStatus;
+  paymentMessage = this.$store.getters.paymentMessage;
   assets: any = [
     {
       id: "bitcoin",
@@ -176,6 +179,7 @@ export default class BuyAsset extends mixins(Global, Authenticated) {
   priceChange: any = [];
   coinType = this.assets[0].name;
   coinAddr = this.assets[0].addr;
+  Message = this.$store.getters.mpesaMessage;
 
   changeCoinAndUpdateCoinAddr(coin: string, addr: string) {
     this.coinType = coin;
@@ -191,26 +195,14 @@ export default class BuyAsset extends mixins(Global, Authenticated) {
     // amount of coins user will receive actions
   }
 
-  executeBuying() {
+  async executeBuying() {
     if (!this.kshAmount) {
       this.$vToastify.error("amount field cannot be empty", "EMPTY FIELD");
       return;
     }
-    /***  
-		Validate amount paid
-		send payment request
-		confirm if payment is a success or fail(if fail route to fail page)
-		if true execute next fuction(block chain transactions)
-		**/
     const phonenumber = this.walletPhoneNumber.substring(1);
     const amount = this.kshAmount;
-    this.sendMpesaStkPush({ phonenumber, amount })
-      .then(() => {
-        //perfome next function(block chain transactions)
-      })
-      .catch(() => {
-        // if payment fail route to failpage
-      });
+    await this.sendMpesaStkPush({ phonenumber, amount });
   }
   async mounted() {
     await this.$http

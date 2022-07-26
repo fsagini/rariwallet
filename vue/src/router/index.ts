@@ -22,6 +22,7 @@ import Portfolio from '../views/Portfolio.vue';
 import BuyAsset from '../views/Deposit.vue';
 import Withdraw from '../views/Withdraw.vue';
 import Transactions from '../views/Transactions.vue';
+import CancelledTransaction from '../views/CanceledTransaction.vue';
 
 Vue.use(VueRouter);
 
@@ -138,6 +139,14 @@ const routes: Array<RouteConfig> = [
 		path: '/signmsg',
 		name: 'SignMsg',
 		component: SignMsg,
+		meta: {
+			requiresAuth: true
+		}
+	},
+	{
+		path: '/transaction/not/found',
+		name: 'CancelledTransaction',
+		component: CancelledTransaction,
 		meta: {
 			requiresAuth: true
 		}

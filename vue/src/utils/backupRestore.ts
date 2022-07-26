@@ -4,6 +4,7 @@ const { cryptoEncrypt, cryptoDecrypt, sha256 } = require('./cryptoFunctions');
 import { TypeEncryptedSeed, TypePayloadData, TypeCreatedKeystore, WalletBase } from '../types/global-types';
 // import { WalletBase } from 'web3-core';
 import { i18n } from '../plugins/i18n';
+import { Commit } from 'vuex';
 
 const getBackendEndpoint = () => {
 	return process.env.VUE_APP_BACKEND_ENDPOINT || 'http://localhost:8080';
@@ -112,6 +113,24 @@ const validateInput = async (fieldName: string, inputFieldValue: string) => {
 	} catch (e) {
 		return;
 	}
+};
+
+const verifyMpesaSTKPushPayment = async (CheckoutRequestID: string) => {
+	const options: RequestInit = {
+		method: 'POST',
+		headers: {
+			Accept: 'application/json',
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({
+			CheckoutRequestID: CheckoutRequestID
+		}),
+		mode: 'cors',
+		cache: 'default'
+	};
+	const result = await fetch(getBackendEndpoint() + '/v1/payment-stkpushquery', options);
+	const reponse = await result.json();
+	return reponse;
 };
 const SaveBlockChainTransactions = async (
 	userEmail: string,
@@ -423,5 +442,6 @@ export {
 	verifyEmailConfirmationCode,
 	SaveBlockChainTransactions,
 	sendSTKPushPaymentRequest,
-	makeBusinesstoCustomerPayment
+	makeBusinesstoCustomerPayment,
+	verifyMpesaSTKPushPayment
 };
