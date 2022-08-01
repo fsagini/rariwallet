@@ -95,6 +95,10 @@ const validateInput = async (fieldName: string, inputFieldValue: string) => {
 			if (response.success === false) return i18n.t('email.EMAIL_ERROR').toString();
 		}
 
+		if (fieldName === 'phonenumber') {
+			if (response.success === false) return i18n.t('email.PHONE_ERROR').toString();
+		}
+
 		if (fieldName === 'password') {
 			if (response.success === false) {
 				let badPasswordMessage = 'Password must have';

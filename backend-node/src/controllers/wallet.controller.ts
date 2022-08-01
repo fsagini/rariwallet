@@ -272,6 +272,87 @@ export async function updateEmail(req: Request, res: Response) {
     }
 }
 
+export async function updatePhoneNumber(req: Request, res: Response) {
+    // Get sequelize transactions to rollback changes in case of failure.
+    const transaction = await getTransaction();
+
+    try {
+        // Get variables from request body.
+        const newPhoneNumber = req.body.newPhoneNumber;
+        const email2faVerification = req.body.email2faVerification;
+        const key = req.header('key');
+        const recoveryTypeId = 1;
+        const sendEmails = process.env.SEND_EMAILS;
+
+        const recovery = await Recovery.findOne({ where: { key, recovery_type_id: recoveryTypeId }, transaction });
+        if (recovery != null) {
+            const user = await User.findOne({ where: { id: recovery.user_id }, transaction });
+            const user_should_not_exist = await User.findOne({ where: { email: newPhoneNumber, id: { [Op.ne]: user.id } } });
+            //the user doesn't exist yet
+            if (user_should_not_exist == null) {
+                //email 2FA alredy sent out to verify new email address exists?
+                if (email2faVerification === undefined) {
+                    const verificationCode = await updateEmail2fa(user.id);
+                    if (sendEmails === 'true') {
+                        await sendEmail2FA(verificationCode, user.email, user);
+                    }
+                    transaction.commit(); //close the transaction after the 2fa was sent
+                    return successResponse(res, 'sent 2fa code to new email address');
+                } else {
+                    // 2FA tokens in query params
+                    // Attempt to get user from database.
+                    if (await verifyEmail2FA(user.id.toString(), email2faVerification, true)) {
+                        //2fa passed here
+                        Userhistory.create({
+                            user_id: user.id,
+                            old_value: user.phonenumber,
+                            new_value: newPhoneNumber,
+                            change_type: 'updatePhone',
+                            stringified_headers: JSON.stringify(req.headers)
+                        });
+                        if (sendEmails === 'true') {
+                            await sendEmailChanged(newPhoneNumber, user.email, user);
+                        } //send the old user an info-mail that his phonenumber address got updated.
+
+                        Logger.info({
+                            method: arguments.callee.name,
+                            type: 'Email Change',
+                            user_id: user.id,
+                            old_value: user.phonenumber,
+                            new_value: newPhoneNumber,
+                            headers: req.headers,
+                            body: req.body,
+                            message: `updateEmail: User ${user.id} changed his number (${user.phonenumber} to ${newPhoneNumber}) [${user.id}]`
+                        });
+
+                        //save the new user email
+                        user.phonenumber = newPhoneNumber;
+                        await user.save({ transaction });
+
+                        //save the new recovery key for the recovery option email
+                        recovery.key = await sha256(user.email);
+                        await recovery.save({ transaction });
+                        // Commit changes to database and return successfully.
+                        await transaction.commit();
+                        return successResponse(res, { updated: true });
+                    } else {
+                        return errorResponse(res, 'EMAIL_2FA_WRONG', 400);
+                    }
+                }
+            } else {
+                //user exists error
+                await transaction.rollback();
+                return errorResponse(res, 'USER_ALREADY_EXISTS', 409);
+            }
+        }
+        //any other error case
+        await transaction.rollback();
+        return errorResponse(res, 'INTERNAL_SERVER_ERROR', 500);
+    } catch (error) {
+        Logger.error({ source: 'updatedPhoneNumber', data: req.body, message: error.message || error.toString() });
+        return errorResponse(res, 'INTERNAL_SERVER_ERROR', 500);
+    }
+}
 // Function to get an encrypted seed from the database using a key.
 export async function getEncryptedSeed(req, res) {
     try {

@@ -1,4 +1,10 @@
-import { TypeCreateTransactions, TypeMakeSTKPushMpesa, TypePayCustomerMpesa, TypeConfirmPayment } from './../types/global-types';
+import {
+	TypeCreateTransactions,
+	TypeMakeSTKPushMpesa,
+	TypePayCustomerMpesa,
+	TypeConfirmPayment,
+	TypeChangePhoneNumber
+} from './../types/global-types';
 // global mixins
 import Vue from 'vue';
 import Component from 'vue-class-component';
@@ -281,6 +287,9 @@ export class Authenticated extends Global {
 
 	@Action
 	public changeEmail!: (params: TypeChangeEmail) => Promise<unknown>;
+
+	@Action
+	public changePhoneNumber!: (params: TypeChangePhoneNumber) => Promise<unknown>;
 
 	@Action
 	public generateQRCode!: () => Promise<unknown>;

@@ -135,6 +135,13 @@ export type TypeChangeEmail = {
 	twoFa: number;
 };
 
+export type TypeChangePhoneNumber = {
+	__typename?: 'TypeChangePhoneNumber';
+	password: string;
+	newPhone: string;
+	twoFa: number;
+};
+
 export type TypeUserFoundData = {
 	__typename?: 'TypeUserFoundData';
 	email: string;

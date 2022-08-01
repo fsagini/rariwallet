@@ -115,6 +115,7 @@ module.exports = function (express) {
     router.post('/auth/resetRecovery', WalletController.resetRecovery);
     router.post('/auth/updatePassword', WalletController.updatePassword);
     router.post('/auth/updateEmail', WalletController.updateEmail);
+    router.post('/auth/updatePhoneNumber', WalletController.updatePhoneNumber);
     router.post('/auth/change2FAMethods', WalletController.change2FAMethods);
     router.post('/auth/generateAuthenticatorQR', WalletController.generateAuthenticatorQR);
     router.post('/auth/addRecoveryMethod', WalletController.addRecoveryMethod);

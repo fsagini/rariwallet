@@ -23,6 +23,7 @@ import BuyAsset from '../views/Deposit.vue';
 import Withdraw from '../views/Withdraw.vue';
 import Transactions from '../views/Transactions.vue';
 import CancelledTransaction from '../views/CanceledTransaction.vue';
+import PhoneNumberSettings from '../views/PhoneNumberSettings.vue';
 
 Vue.use(VueRouter);
 
@@ -49,6 +50,14 @@ const routes: Array<RouteConfig> = [
 		path: '/settings/email',
 		name: 'EmailSettings',
 		component: EmailSettings,
+		meta: {
+			requiresAuth: true
+		}
+	},
+	{
+		path: '/settings/phonenumber',
+		name: 'EmailSettings',
+		component: PhoneNumberSettings,
 		meta: {
 			requiresAuth: true
 		}

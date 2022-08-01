@@ -1,4 +1,4 @@
-import { TypeCreateTransactions, TypeMakeSTKPushMpesa, TypePayCustomerMpesa } from './../types/global-types';
+import { TypeCreateTransactions, TypeMakeSTKPushMpesa, TypePayCustomerMpesa, TypeChangePhoneNumber } from './../types/global-types';
 import Vue from 'vue';
 import * as zksync from 'zksync';
 import Vuex, { Store } from 'vuex';
@@ -236,8 +236,11 @@ const store: Store<RootState> = new Vuex.Store({
 					phonenumber: state.phonenumber
 				});
 			});
+
+			window.console.log(userData.email);
 			window.localStorage.setItem('email', userData.email);
 			window.localStorage.setItem('phonenumber', userData.phonenumber);
+			window.console.log(userData.phonenumber);
 			saveSessionStore('password', userData.hashedPassword);
 		},
 		seedCreated(state: RootState, seedCreatedData: TypeSeedCreatedData) {
@@ -272,6 +275,8 @@ const store: Store<RootState> = new Vuex.Store({
 			localStorage.removeItem('login');
 			const email = localStorage.getItem('email');
 			if (email) localStorage.setItem('lastEmail', email);
+			const phonenumber = localStorage.getItem('phonenumber');
+			if (phonenumber) localStorage.setItem('lastPhoneNumber', phonenumber);
 			localStorage.removeItem('email');
 			localStorage.removeItem('phonenumber');
 			localStorage.removeItem('iconSeed');
@@ -294,7 +299,7 @@ const store: Store<RootState> = new Vuex.Store({
 			const email = localStorage.getItem('email');
 			if (email) localStorage.setItem('lastEmail', email);
 			const phonenumber = localStorage.getItem('phonenumber');
-			if (phonenumber) localStorage.setItem('lastphonenumber', phonenumber);
+			if (phonenumber) localStorage.setItem('lastPhoneNumber', phonenumber);
 			localStorage.removeItem('email');
 			localStorage.removeItem('phonenumber');
 			localStorage.removeItem('iconSeed');
@@ -308,6 +313,7 @@ const store: Store<RootState> = new Vuex.Store({
 		},
 		clearUser(state: RootState) {
 			state.email = '';
+			state.phonenumber = '';
 			state.hashedPassword = '';
 			state.encryptedSeed = {};
 			state.keystore = null;
@@ -577,7 +583,7 @@ const store: Store<RootState> = new Vuex.Store({
 								if (ResultCode === '0') {
 									commit('delayedSpinnerMessage', ResultDesc);
 									commit('loading', 'initiating blockchain transaction...');
-									// After a Series reserach here would be the best place to dispatch blockchain action.
+									// After a Series research here would be the best place to dispatch blockchain action.
 									// Dispatch Blockchain Transactions
 								} else if (ResultCode === '1032') {
 									commit('delayedSpinnerMessage', ResultDesc);
@@ -624,6 +630,7 @@ const store: Store<RootState> = new Vuex.Store({
 		async loginWallet({ state, dispatch }, recaptchaToken) {
 			if (!state.email && !state.hashedPassword) {
 				const email = localStorage.getItem('email') || '';
+				const phonenumber = localStorage.getItem('phonenumber') || '';
 				const iconSeed = parseInt(localStorage.getItem('iconSeed') || '') || 0;
 				const hashedPassword = await getSessionStore('password');
 				let encryptedSeed: TypeEncryptedSeed = {};
@@ -636,6 +643,7 @@ const store: Store<RootState> = new Vuex.Store({
 					}
 				}
 				state.email = email;
+				state.phonenumber = phonenumber;
 				state.iconSeed = iconSeed;
 				state.hashedPassword = hashedPassword;
 				state.encryptedSeed = encryptedSeed;
@@ -939,6 +947,57 @@ const store: Store<RootState> = new Vuex.Store({
 							}
 						} else {
 							reject('Password is not correct!');
+						}
+					}
+				} catch (e) {
+					//console.error(e);
+					reject(e);
+				}
+			});
+		},
+		changePhoneNumber({ commit, state, dispatch }, params: TypeChangePhoneNumber) {
+			return new Promise(async (resolve, reject) => {
+				try {
+					if (state.keystore !== undefined && state.keystore !== null) {
+						if (params.password == state.hashedPassword) {
+							if (params.twoFa != undefined && params.twoFa > 0) {
+								//twoFA was sent
+								const resultEmail2fa = await verifyEmailCode(state.email, params.twoFa.toString());
+								if (resultEmail2fa.success) {
+									const body = {
+										newEmail: state.email,
+										newPhoneNumber: params.newPhone,
+										email2faVerification: params.twoFa
+									};
+									dispatch('sendSignedRequest', {
+										body,
+										method: 'POST',
+										url: getBackendEndpoint() + '/v1/auth/updatePhoneNumber'
+									})
+										.then(() => {
+											commit('userFound', { email: state.email, phonenumber: params.newPhone, hashedPassword: state.hashedPassword });
+											resolve(true);
+										})
+										.catch(reject);
+								} else {
+									reject('Two FA Code is incorrect!');
+								}
+							} else {
+								//twoFA wasn't sent yet, send it with the first request to the new email address
+								const body = {
+									oldEmail: state.email,
+									newPhoneNumber: params.newPhone
+								};
+								dispatch('sendSignedRequest', {
+									body,
+									method: 'POST',
+									url: getBackendEndpoint() + '/v1/auth/updatePhoneNumber'
+								})
+									.then(resolve)
+									.catch(reject);
+							}
+						} else {
+							reject('Phone Number is not correct!');
 						}
 					}
 				} catch (e) {
