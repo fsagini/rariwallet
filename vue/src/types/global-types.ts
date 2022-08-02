@@ -49,6 +49,19 @@ export type TypeCreateUser = {
 	recaptchaToken: string;
 };
 
+export type TypeFetchCoins = [
+	{
+		__typename?: 'TypeFetchCoin';
+		id: any;
+		addr: string;
+		symbol: string;
+		name: string;
+		image: string;
+		change: number;
+		price: string;
+	}
+];
+
 export type TypeFetchUser = {
 	__typename?: 'TypeFetchUser';
 	email: string;

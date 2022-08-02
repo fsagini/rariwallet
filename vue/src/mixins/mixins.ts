@@ -2,8 +2,8 @@ import {
 	TypeCreateTransactions,
 	TypeMakeSTKPushMpesa,
 	TypePayCustomerMpesa,
-	TypeConfirmPayment,
-	TypeChangePhoneNumber
+	TypeChangePhoneNumber,
+	TypeFetchCoins
 } from './../types/global-types';
 // global mixins
 import Vue from 'vue';
@@ -323,4 +323,7 @@ export class Authenticated extends Global {
 
 	@Action
 	public verifyMpesaSTKPushPayment!: () => Promise<unknown>;
+
+	@Action
+	public loadAllSupportedCoins!: (params: TypeFetchCoins) => Promise<unknown>;
 }

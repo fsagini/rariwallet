@@ -55,7 +55,7 @@
         <div class="row__container">
           <div
             class="single__asset"
-            v-for="asset in assets"
+            v-for="asset in transformedAssets"
             :key="asset.addr"
             @click="changeCoinAndUpdateCoinAddr(asset.name, asset.addr)"
           >
@@ -125,7 +125,6 @@ SwiperCore.use([Autoplay, Navigation]);
 })
 export default class BuyAsset extends mixins(Global, Authenticated) {
   kshAmount: string;
-  transformedAssets: any = [];
   transactionAmount = 0;
   coinsToReceive = 0.0;
   position = 0;
@@ -135,52 +134,10 @@ export default class BuyAsset extends mixins(Global, Authenticated) {
   rate: number;
   paymentStatus = this.$store.getters.paymentStatus;
   paymentMessage = this.$store.getters.paymentMessage;
-  assets: any = [
-    {
-      id: "bitcoin",
-      symbol: "BTC",
-      name: "Bitcoin",
-      img:
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Bitcoin.svg/1200px-Bitcoin.svg.png",
-      addr: "0xECe365B379E1dD183B20fc5f022230C044d51404",
-    },
-    {
-      id: "ethereum",
-      symbol: "ETH",
-      name: "Ethereum",
-      img:
-        "https://www.pngkey.com/png/full/264-2645294_download-svg-download-png-ethereum-png.png",
-      addr: "0x8A753747A1Fa494EC906cE90E9f37563A8AF630e",
-    },
-    {
-      id: "usd-coin",
-      symbol: "USDC",
-      name: "Usdc",
-      img: "https://seeklogo.com/images/U/usd-coin-usdc-logo-CB4C5B1C51-seeklogo.com.png",
-      addr: "0xa24de01df22b63d23Ebc1882a5E3d4ec0d907bFB",
-      bal: "0.06594",
-    },
-    {
-      id: "binancecoin",
-      symbol: "BNB",
-      name: "Binance",
-      img:
-        "https://seeklogo.com/images/B/binance-coin-bnb-logo-97F9D55608-seeklogo.com.png",
-      addr: "0xcf0f51ca2cDAecb464eeE4227f5295F2384F84ED",
-    },
-    {
-      id: "dai",
-      symbol: "DAI",
-      name: "Dai",
-      img: "https://cryptologos.cc/logos/multi-collateral-dai-dai-logo.png",
-      addr: "0x2bA49Aaa16E6afD2a993473cfB70Fa8559B523cF",
-    },
-  ];
-  priceChange: any = [];
-  coinType = this.assets[0].name;
-  coinAddr = this.assets[0].addr;
-  Message = this.$store.getters.mpesaMessage;
-
+  cryptoCoins = this.store.walletCoins;
+  coinType = "BTC";
+  coinAddr = "x56d5656775";
+  transformedAssets = JSON.parse(JSON.stringify(this.cryptoCoins));
   changeCoinAndUpdateCoinAddr(coin: string, addr: string) {
     this.coinType = coin;
     this.coinAddr = addr;
@@ -204,64 +161,9 @@ export default class BuyAsset extends mixins(Global, Authenticated) {
     const amount = this.kshAmount;
     await this.sendMpesaStkPush({ phonenumber, amount });
   }
-  async mounted() {
-    await this.$http
-      .get(
-        "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1&sparkline=false"
-      )
-      .then(async (response) => {
-        let ids = ["bitcoin", "ethereum", "dai", "usd-coin", "binancecoin"];
-        let { data } = response;
-        await data.map((coin: any) => {
-          this.coinPerfomance.push({
-            id: coin.id,
-            change: coin.price_change_percentage_24h,
-          });
-        });
-        const coinPerfArray = JSON.parse(JSON.stringify(this.coinPerfomance));
-        this.priceChange = coinPerfArray.filter((coin: { id: string }) =>
-          ids.includes(coin.id)
-        );
-        const priceChangeObj = JSON.parse(JSON.stringify(this.priceChange));
-        this.finalPerfomanceData = this.assets.map((el: { id: any }) => ({
-          ...el,
-          change: priceChangeObj.find((pc: { id: any }) => pc.id === el.id)?.change,
-        }));
-        newAssets = JSON.parse(JSON.stringify(this.finalPerfomanceData));
-      })
-      .catch((err) => {
-        window.console.log(err);
-      });
-
-    let myHeaders = new Headers();
-    myHeaders.append("apikey", "xXHV07ckmqDKWbX2rbe3B42hZIerttDS");
-    await fetch("https://api.apilayer.com/fixer/latest?symbols=KES&base=USD", {
-      method: "GET",
-      redirect: "follow",
-      headers: myHeaders,
-    })
-      .then((response) => response.text())
-      .then((result) => {
-        let kerate: any = JSON.parse(result);
-        this.rate = kerate.rates?.KES.toFixed(2);
-        window.console.log("rate", this.rate);
-      });
-
-    for (let i = 0; i < newAssets.length; i++) {
-      coinValue = await getPrice(newAssets[i].addr);
-      this.transformedAssets.push({
-        id: newAssets[i].id,
-        symbol: newAssets[i].symbol,
-        name: newAssets[i].name,
-        img: newAssets[i].img,
-        addr: newAssets[i].addr,
-        daychange: newAssets[i].change.toFixed(2),
-        value: numberWithCommas(coinValue),
-      });
-    }
-  }
 }
 </script>
+
 <style scoped>
 .figma {
   background: #fff;

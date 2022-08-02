@@ -1,4 +1,10 @@
-import { TypeCreateTransactions, TypeMakeSTKPushMpesa, TypePayCustomerMpesa, TypeChangePhoneNumber } from './../types/global-types';
+import {
+	TypeCreateTransactions,
+	TypeMakeSTKPushMpesa,
+	TypePayCustomerMpesa,
+	TypeChangePhoneNumber,
+	TypeFetchCoins
+} from './../types/global-types';
 import Vue from 'vue';
 import * as zksync from 'zksync';
 import Vuex, { Store } from 'vuex';
@@ -64,6 +70,7 @@ import download from 'downloadjs';
 
 import { i18n } from '../plugins/i18n';
 import Cookie from 'js-cookie';
+import { fetchCryptoList } from '@/utils/cryptoListFetching';
 Vue.use(Vuex);
 
 /*
@@ -86,6 +93,7 @@ export interface RootState {
 	encryptedWallet: string;
 	keystore: WalletBase | null;
 	accounts: Array<string>;
+	walletCoins: Array<any>;
 	token: string;
 	twoFaRequired: Type2FARequired;
 	connection: Connection<CallSender> | null;
@@ -112,6 +120,7 @@ export interface RootState {
 /**
  * initialize the store
  */
+
 function initialState(): RootState {
 	const email = localStorage.getItem('email') || '';
 	const phonenumber = localStorage.getItem('phonenumber') || '';
@@ -152,6 +161,7 @@ function initialState(): RootState {
 		openPage: '',
 		loginComplete: false,
 		recoveryMethods: [],
+		walletCoins: [],
 		seedExported: false,
 		keystoreExported: false,
 		seedPhrase: '',
@@ -379,7 +389,7 @@ const store: Store<RootState> = new Vuex.Store({
 				try {
 					encryptedSeed = JSON.parse(String(sessionEncryptedSeed));
 					if (encryptedSeed && encryptedSeed.ciphertext) {
-						await commit('seedFound', { encryptedSeed });
+						commit('seedFound', { encryptedSeed });
 					}
 				} catch (ex) {
 					encryptedSeed = {};
@@ -388,8 +398,9 @@ const store: Store<RootState> = new Vuex.Store({
 		},
 		/**
 		 * Fetch the user data from the database and attempt to unlock the wallet using the mail encrypted seed
-		 */
-		async fetchUser({ commit, rootState }, params: TypeFetchUser) {
+		 ***/
+
+		async fetchUser({ commit, rootState, dispatch }, params: TypeFetchUser) {
 			commit('updateUnlocking', true);
 			const email: string = params.email;
 			const phonenumber = params.phonenumber;
@@ -406,7 +417,7 @@ const store: Store<RootState> = new Vuex.Store({
 								commit('ipCountry', payload.ip_country);
 								commit('userFound', { email, phonenumber, hashedPassword });
 								commit('updatePayload', payload);
-
+								dispatch('loadAllSupportedCoins');
 								if (payload.email || payload.needConfirmation) {
 									send2FAEmail(email)
 										.then(() => {
@@ -445,6 +456,11 @@ const store: Store<RootState> = new Vuex.Store({
 						commit('updateUnlocking', false);
 						reject(new Error('error'));
 					});
+			});
+		},
+		async loadAllSupportedCoins({ commit, state }, params: TypeFetchCoins) {
+			await fetchCryptoList(params, commit).then((value) => {
+				state.walletCoins = value;
 			});
 		},
 		fetchWalletFromRecovery({ state, commit }, params: TypeRecoveryParams) {
