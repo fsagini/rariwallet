@@ -39,7 +39,7 @@
     </div>
   </div>
 </template>
-
+<!-- eslint-disable prettier/prettier -->
 <script lang="ts">
 import Component, { mixins } from "vue-class-component";
 import ChangeEmail from "../components/ChangeEmail.vue";
