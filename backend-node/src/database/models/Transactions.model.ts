@@ -13,17 +13,17 @@ export class Transactions extends Model {
         type: DataType.INTEGER,
         references: {
             model: 'User',
-            key: 'id'
+            key: 'email'
         },
         onDelete: 'cascade'
     })
-    user_id: any;
+    user_email: any;
 
     @Unique
     @Column({
         type: DataType.TEXT
     })
-    email: any;
+    transaction_id: string;
 
     @Column({
         type: DataType.FLOAT
@@ -31,9 +31,18 @@ export class Transactions extends Model {
     amount: any;
 
     @Column({
+        type: DataType.FLOAT
+    })
+    coins: number | string;
+
+    @Column({
         type: DataType.DATE
     })
-    date: Date;
+    date: string;
+    @Column({
+        type: DataType.STRING
+    })
+    coin_type: any;
     @Column({
         type: DataType.STRING
     })

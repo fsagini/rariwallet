@@ -93,6 +93,7 @@ module.exports = function (express) {
     }
 
     router.post('/saveEmailPassword', recaptcha, WalletController.saveEmailPassword);
+    router.post('/getPhoneNumber', recaptcha, WalletController.getUserPhoneNumber);
     router.post('/getEncryptedSeed', recaptcha, limiterGetPayload, limiter, WalletController.getEncryptedSeed); //recaptcha,
 
     /**

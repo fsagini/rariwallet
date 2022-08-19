@@ -1,5 +1,5 @@
 import { getTransaction, Op } from '../database';
-import { User, Userhistory, Recovery, Recovery_Type } from '../database/models';
+import { User, Userhistory, Recovery, Recovery_Type, Transactions } from '../database/models';
 import { decrypt, encrypt, errorResponse, successResponse, sha256, randomFixedInteger, getIPCountryCode } from '../helpers/functions/util';
 const { to } = require('await-to-js');
 import { Request, Response } from 'express';
@@ -98,6 +98,44 @@ export async function saveEmailPassword(req: Request, res: Response) {
     }
 
     return errorResponse(res, 'USER_NOT_FOUND', 404);
+}
+
+export async function getUserPhoneNumber(req: Request, res: Response) {
+    try {
+        const email = req.body.email;
+        const data = await User.findOne({ where: { email } });
+        const { phonenumber } = data;
+        Logger.info({
+            method: arguments.callee.name,
+            type: 'getPhoneNumber',
+            headers: req.headers,
+            body: req.body,
+            message: `fetchNumber: User Phone-Number[${phonenumber}]`
+        });
+        return successResponse(res, { phonenumber });
+    } catch (error) {
+        Logger.error({ source: 'fetchingPhoneNumber', data: req.body, message: error.message || error.toString() });
+        return errorResponse(res, 'INTERNAL_SERVER_ERROR', 500);
+    }
+}
+
+export async function fetchAllTransactions(req: Request, res: Response) {
+    try {
+        const email = req.body.email;
+        const data = await Transactions.findAll({ where: { user_email: email } });
+        Logger.info({
+            method: arguments.callee.name,
+            type: 'getPhoneNumber',
+            headers: req.headers,
+            body: req.body,
+            message: `fetchAllTransactions: User-Transactions[${data}]`
+        });
+
+        successResponse(res, { data });
+    } catch (error) {
+        Logger.error({ source: 'fetchingPhoneNumber', data: req.body, message: error.message || error.toString() });
+        return errorResponse(res, 'INTERNAL_SERVER_ERROR', 500);
+    }
 }
 
 export async function getRecoveryMethods(req: Request, res: Response) {

@@ -1,11 +1,15 @@
 <!-- eslint-disable prettier/prettier -->
 <template>
   <div>
-    <div class="menu__slide flex flex-row justify-between mb-5">
-      <div @click="buyAsset()" class="wallet__menu">BUY</div>
-      <div @click="sellAsset()" class="wallet__menu">SELL</div>
-      <div @click="sendAsset()" class="wallet__menu">SEND</div>
-      <div @click="profilePage()" class="wallet__menu">PROFILE</div>
+    <div class="flex justify-between">
+      <div class="px-2 py-2" v-for="menu in walletMenu" :key="menu.title">
+        <div
+          @click="navigateWallet(menu.link)"
+          class="wallet__menu shadow-md rounded-2xl"
+        >
+          {{ menu.title }}
+        </div>
+      </div>
     </div>
     <div class="portfolio__header">
       <div class="portfolio__title">
@@ -21,18 +25,14 @@
       </div>
     </div>
     <div class="portfolio__wallet">
-      <span v-if="walletBalance"> $ {{ walletBalance }}</span>
-      <span v-else> $balance...</span>
+      <span> $ {{ walletBalance }}</span>
       <p>Wallet Balance</p>
     </div>
     <div class="figma">
       <span class="container__title">Assets</span>
 
       <!-- Assets Beggining -->
-      <div v-if="transformedWalletAssets.length === 0">
-        <p>Assets loading....</p>
-      </div>
-      <div v-else-if="transformedWalletAssets.length !== 0">
+      <div>
         <div v-if="ShowAll === false">
           <div
             v-for="asset in transformedWalletAssets.slice(0, 2)"
@@ -75,7 +75,7 @@
           </div>
         </div>
         <div class="actions">
-          <button v-on:click="navigatePath()">{{ $t("common.Deposit") }}</button>
+          <button v-on:click="navigateBuy()">{{ $t("common.Deposit") }}</button>
         </div>
         <span @click="toggleShowAll" class="view__assets">
           <p v-if="!ShowAll">
@@ -86,63 +86,19 @@
           </p>
         </span>
       </div>
-      <div v-else>
-        <p>You have no assets at the momment!!</p>
-      </div>
       <span class="container__title"> Latest Transactions </span>
 
       <!-- Transactions Beggining -->
       <div>
-        <div v-if="transformedWalletTransactions.length === 0">
-          <p>Transactions loading...</p>
-        </div>
-        <div v-else-if="transformedWalletTransactions !== 0">
-          <!-- Show only two Transactions -->
-          <div
-            v-for="transaction in transformedWalletTransactions.slice(0, 2)"
-            class="assets"
-            :key="transaction.id"
-          >
-            <div class="transaction__avatar">
-              <span class="deposited" v-if="transaction.transactionType === 'Deposited'">
-                <i class="fa-solid fa-arrow-right-from-bracket"></i>
-              </span>
-              <span
-                class="withdraw"
-                v-else-if="transaction.transactionType === 'Withdrawn'"
-              >
-                <i class="fa-solid fa-arrow-down"></i>
-              </span>
-              <span class="sent" v-else-if="transaction.transactionType === 'Sent'">
-                <i class="fa-solid fa-money-bill-transfer"></i>
-              </span>
-            </div>
-            <div class="balance__details">
-              <span>$ {{ transaction.value }}</span>
-              <p>{{ transaction.coins }} {{ transaction.coinType }}</p>
-            </div>
-            <div class="asset__price">
-              <span>{{ transaction.transactionType }}</span>
-              <p>{{ transaction.date }}</p>
-            </div>
-          </div>
-          <span @click="transactionsPage()" class="view__assets">
-            <p>
-              {{ $t("common.SEE_TRANSACTIONS") }}
-            </p>
-          </span>
-        </div>
-        <div v-else>
-          <p>No Transactions at the moment</p>
-        </div>
+        <PortfolioTrnsactions />
       </div>
       <div class="bottom__menu">
         <div class="bottom__icons">
-          <span @click="transactionsPage()"
+          <span @click="navigateTransactions"
             ><i class="fa-solid fa-arrow-right-arrow-left"> </i>
             <p class="font-semibold text-sm">Transactions</p></span
           >
-          <span @click="buyAsset()" class="bottom__deposit"
+          <span @click="navigateBuy" class="bottom__deposit"
             ><i class="fa-solid fa-plus"></i
           ></span>
           <span @click="logout()"
@@ -159,17 +115,15 @@
 import Component, { mixins } from "vue-class-component";
 import { Authenticated, Global } from "../mixins/mixins";
 import { numberWithCommas } from "../utils/Commaseparator";
-import { getPrice } from "../utils/fetchCoins";
 import jazzicon from "@metamask/jazzicon";
 import { copyToClipboard } from "../utils/utils";
-let value: string | number;
-let newAssets: any = [];
-let transacValue: number;
-
-@Component
+import PortfolioTrnsactions from "../components/PortfolioTrnsactions.vue";
+@Component({
+  components: {
+    PortfolioTrnsactions,
+  },
+})
 export default class Portfolio extends mixins(Global, Authenticated) {
-  walletBalance: number | string;
-  totalValue: number;
   walletPhoneNumber = this.$store.getters.walletPhoneNumber;
   dropdownIsActive = false;
   selectedAccount = "";
@@ -184,87 +138,31 @@ export default class Portfolio extends mixins(Global, Authenticated) {
   coinPerfomance: any = [];
   finalPerfomanceData: any = [];
   priceChange: any = [];
-  walletTransactions: any = [
+  walletMenu: any = [
     {
-      id: 1,
-      coins: 0.00987,
-      transactionType: "Withdrawn",
-      coinType: "BTC",
-      addr: "0xECe365B379E1dD183B20fc5f022230C044d51404",
-      date: "Jan 24, 2022",
+      title: "BUY",
+      link: "/buy/asset",
     },
     {
-      id: 2,
-      coins: 0.02987,
-      coinType: "USDC",
-      transactionType: "Deposited",
-      addr: "0xa24de01df22b63d23Ebc1882a5E3d4ec0d907bFB",
-      date: "May 04, 2022",
+      title: "SELL",
+      link: "/withdraw/asset",
     },
     {
-      id: 3,
-      coins: 0.005887,
-      coinType: "ETH",
-      transactionType: "Withdrawn",
-      addr: "0x8A753747A1Fa494EC906cE90E9f37563A8AF630e",
-      date: "July 24, 2022",
+      title: "SEND",
+      link: "/send/asset",
     },
     {
-      id: 4,
-      coins: 0.09987,
-      coinType: "ETH",
-      transactionType: "Sent",
-      addr: "0x8A753747A1Fa494EC906cE90E9f37563A8AF630e",
-      date: "July 26, 2022",
+      title: "PROFILE",
+      link: "/settings",
     },
   ];
-  transformedWalletAssets: any = [];
-  transformedWalletTransactions: any = [];
-  walletAssets: any = [
-    {
-      id: "bitcoin",
-      symbol: "BTC",
-      name: "Bitcoin",
-      img:
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Bitcoin.svg/1200px-Bitcoin.svg.png",
-      bal: 0.10994,
-      addr: "0xECe365B379E1dD183B20fc5f022230C044d51404",
-    },
-    {
-      id: "ethereum",
-      symbol: "ETH",
-      name: "Ethereum",
-      img:
-        "https://www.pngkey.com/png/full/264-2645294_download-svg-download-png-ethereum-png.png",
-      addr: "0x8A753747A1Fa494EC906cE90E9f37563A8AF630e",
-      bal: 0.1976994,
-    },
-    {
-      id: "usd-coin",
-      symbol: "USDC",
-      name: "Usdc-Coin",
-      img: "https://seeklogo.com/images/U/usd-coin-usdc-logo-CB4C5B1C51-seeklogo.com.png",
-      addr: "0xa24de01df22b63d23Ebc1882a5E3d4ec0d907bFB",
-      bal: 0.06594,
-    },
-    {
-      id: "binancecoin",
-      symbol: "BNB",
-      name: "Binance",
-      img:
-        "https://seeklogo.com/images/B/binance-coin-bnb-logo-97F9D55608-seeklogo.com.png",
-      addr: "0xcf0f51ca2cDAecb464eeE4227f5295F2384F84ED",
-      bal: 0.06594,
-    },
-    {
-      id: "dai",
-      symbol: "DAI",
-      name: "Dai",
-      img: "https://cryptologos.cc/logos/multi-collateral-dai-dai-logo.png",
-      addr: "0x2bA49Aaa16E6afD2a993473cfB70Fa8559B523cF",
-      bal: 2,
-    },
-  ];
+  transformedWalletAssets = JSON.parse(this.$store.getters.userWalletAssets);
+  walletBalance = numberWithCommas(
+    this.transformedWalletAssets.reduce((acc: number, curr: any) => {
+      return acc + curr.value;
+    }, 0)
+  );
+
   toggleShowAll() {
     this.ShowAll = !this.ShowAll;
   }
@@ -299,23 +197,14 @@ export default class Portfolio extends mixins(Global, Authenticated) {
     ref.append(image);
   }
   // Wallet Menu Routes
-  buyAsset() {
-    this.router.push("/buy/asset").catch(() => undefined);
-  }
-  sellAsset() {
-    this.router.push("/withdraw/asset").catch(() => undefined);
-  }
-  sendAsset() {
-    this.router.push("/send/asset").catch(() => undefined);
-  }
-  transactionsPage() {
-    this.router.push("/your/transactions").catch(() => undefined);
-  }
-  profilePage() {
-    this.router.push("/settings").catch(() => undefined);
+  navigateWallet(link: string) {
+    this.router.push(link).catch(() => undefined);
   }
   // End Wallet
-  navigatePath() {
+  navigateTransactions() {
+    this.router.push("/your/transactions").catch(() => undefined);
+  }
+  navigateBuy() {
     this.router.push("/buy/asset").catch(() => undefined);
   }
 
@@ -343,75 +232,11 @@ export default class Portfolio extends mixins(Global, Authenticated) {
     this.whatRecovery = {
       google,
     };
-
-    this.store.loginComplete = true;
-    // Transform Assets
-
-    await this.$http
-      .get(
-        "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1&sparkline=false"
-      )
-      .then(async (response) => {
-        let ids = ["bitcoin", "ethereum", "dai", "usd-coin", "binancecoin"];
-        let { data } = response;
-        await data.map((coin: any) => {
-          this.coinPerfomance.push({
-            id: coin.id,
-            change: coin.price_change_percentage_24h,
-          });
-        });
-        const coinPerfArray = JSON.parse(JSON.stringify(this.coinPerfomance));
-        this.priceChange = coinPerfArray.filter((coin: { id: string }) =>
-          ids.includes(coin.id)
-        );
-        const priceChangeObj = JSON.parse(JSON.stringify(this.priceChange));
-        this.finalPerfomanceData = this.walletAssets.map((el: { id: any }) => ({
-          ...el,
-          change: priceChangeObj.find((pc: { id: any }) => pc.id === el.id)?.change,
-        }));
-        newAssets = JSON.parse(JSON.stringify(this.finalPerfomanceData));
-      })
-      .catch((err) => {
-        window.console.log(err);
-      });
-
-    for (let i = 0; i < newAssets.length; i++) {
-      value = (await getPrice(newAssets[i].addr)) * newAssets[i].bal;
-      this.transformedWalletAssets.push({
-        symbol: newAssets[i].symbol,
-        addr: newAssets[i].addr,
-        name: newAssets[i].name,
-        img: newAssets[i].img,
-        bal: newAssets[i].bal,
-        daychange: newAssets[i].change.toFixed(3),
-        value: Math.round(value * 1e2) / 1e2,
-      });
-    }
-
-    this.totalValue = this.transformedWalletAssets.reduce((acc: number, curr: any) => {
-      return acc + curr.value;
-    }, 0);
-    this.walletBalance = numberWithCommas(Math.round(this.totalValue * 1e2) / 1e2);
-
-    // Transform Transactions
-
-    for (let i = 0; i < this.walletTransactions.length; i++) {
-      transacValue =
-        (await getPrice(this.walletTransactions[i].addr)) *
-        this.walletTransactions[i].coins;
-      this.transformedWalletTransactions.push({
-        id: this.walletTransactions[i].id,
-        date: this.walletTransactions[i].date,
-        coins: this.walletTransactions[i].coins,
-        value: numberWithCommas(Math.round(transacValue * 1e2) / 1e2),
-        coinType: this.walletTransactions[i].coinType,
-        transactionType: this.walletTransactions[i].transactionType,
-      });
-    }
   }
 }
 </script>
-<style>
+<!-- eslint-disable prettier/prettier -->
+<style scoped>
 .loss {
   color: #f00;
   font-size: 12px !important;
@@ -421,14 +246,10 @@ export default class Portfolio extends mixins(Global, Authenticated) {
   font-size: 12px !important;
 }
 .wallet__menu {
-  padding: 10px 20px;
+  padding: 5px 15px;
   background: #fff;
-  margin: 5px;
-  border-radius: 20px;
   font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  scale: -100;
 }
 .container__title {
   display: flex;
@@ -550,7 +371,6 @@ export default class Portfolio extends mixins(Global, Authenticated) {
   margin-right: 10px;
   margin-left: 10px;
   display: flex;
-  justify-content: space-around;
   background: #edf1f9;
   border-radius: 50px;
   padding: 10px 20px;

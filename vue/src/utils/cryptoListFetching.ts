@@ -12,7 +12,6 @@ const getCoinGeckoApi = () => {
 };
 
 const fetchCryptoList = async (rari_supported_coins: Array<any>, commit: Commit) => {
-	let rate: any;
 	let coins_supported_data: Array<any>;
 	let percentage_change_final_data: Array<any>;
 
@@ -74,7 +73,8 @@ const fetchCryptoList = async (rari_supported_coins: Array<any>, commit: Commit)
 			commit('loading', error.message);
 			window.console.log(error);
 		});
-	return rari_supported_coins;
+	const result = await JSON.parse(JSON.stringify(rari_supported_coins));
+	return result;
 };
 
 export { fetchCryptoList };

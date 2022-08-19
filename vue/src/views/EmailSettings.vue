@@ -132,7 +132,7 @@ export default class EmailSettings extends mixins(Authenticated, Global) {
   }
 }
 </script>
-
+<!-- eslint-disable prettier/prettier -->
 <style lang="scss" scoped>
 .title-container {
   display: flex;

@@ -114,7 +114,7 @@
           >
             <div class="data">
               <p class="span__text">{{ $t("common.PHONE") }}</p>
-              <p>{{ store.phonenumber }}</p>
+              <p>254{{ store.phonenumber.substring(1) }}</p>
             </div>
             <div class="link">
               <div
@@ -278,7 +278,7 @@ a {
   border: none;
   flex-direction: column;
   align-items: center;
-  height: 44.2vh;
+  height: 48.2vh;
 }
 @media screen and(max-width: 480px ) {
   .settings-container {

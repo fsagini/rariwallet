@@ -136,10 +136,30 @@ const verifyMpesaSTKPushPayment = async (CheckoutRequestID: string) => {
 	const reponse = await result.json();
 	return reponse;
 };
+
+const getUserPhoneFromDB = async (email: string) => {
+	const options: RequestInit = {
+		method: 'POST',
+		headers: {
+			Accept: 'application/json',
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({
+			email: email
+		}),
+		mode: 'cors',
+		cache: 'default'
+	};
+	const result = await fetch(getBackendEndpoint() + '/v1/getPhoneNumber', options);
+	const reponse = await result.json();
+	return reponse;
+};
+
 const SaveBlockChainTransactions = async (
-	userEmail: string,
-	encryptedSeed: TypeEncryptedSeed,
-	date: Date,
+	transaction_id: string,
+	date: string,
+	coins: number | string,
+	coin_type: string,
 	amount: number,
 	transaction_type: string
 ) => {
@@ -150,11 +170,12 @@ const SaveBlockChainTransactions = async (
 			'Content-Type': 'application/json'
 		},
 		body: JSON.stringify({
-			encryptedSeed,
-			email: userEmail,
+			transaction_id,
 			amount,
 			date,
-			transaction_type
+			transaction_type,
+			coin_type,
+			coins
 		}),
 		mode: 'cors',
 		cache: 'default'
@@ -447,5 +468,6 @@ export {
 	SaveBlockChainTransactions,
 	sendSTKPushPaymentRequest,
 	makeBusinesstoCustomerPayment,
-	verifyMpesaSTKPushPayment
+	verifyMpesaSTKPushPayment,
+	getUserPhoneFromDB
 };

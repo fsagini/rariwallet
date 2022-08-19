@@ -7,7 +7,7 @@
         </button>
       </div>
       <div>
-        <img class="w-[150px] h-[150px]" src="../assets/img/export_wallet.png" alt="" />
+        <img class="w-[100px] h-[100px]" src="../assets/img/export_wallet.png" alt="" />
       </div>
       <h2 class="title ml-3 text-white">{{ $t("export.EXPORT_WALLET_TITLE") }}</h2>
 

@@ -62,6 +62,20 @@ export type TypeFetchCoins = [
 	}
 ];
 
+export type TypeFetchUserWalletAssets = [
+	{
+		__typename?: 'TypeFetchUserWalletAssets';
+		id: any;
+		addr: string;
+		symbol: string;
+		name: string;
+		image: string;
+		daychange: number;
+		bal: number;
+		value: string;
+	}
+];
+
 export type TypeFetchUser = {
 	__typename?: 'TypeFetchUser';
 	email: string;
@@ -162,6 +176,11 @@ export type TypeUserFoundData = {
 	hashedPassword: string;
 };
 
+export type TypeUserPhoneNumber = {
+	__typename?: 'TypeUserPhoneNumber';
+	email: string;
+};
+
 export type TypePayloadData = {
 	__typename?: 'TypePayloadData';
 	email: boolean;
@@ -200,10 +219,12 @@ export type MorpherWalletConfig = {
 
 export type TypeCreateTransactions = {
 	__typename?: 'TypeCreateTransactions';
-	email: string;
+	transaction_id: string;
+	amount: any;
+	coins: number | string;
+	coin_type: string;
 	transaction_type: string;
-	amount: number;
-	date: Date;
+	date: string;
 };
 
 export type TransactionObject = {

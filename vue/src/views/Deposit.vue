@@ -28,13 +28,13 @@
             <span>{{ asset.symbol }}</span>
           </div>
           <div class="value">
-            <span>${{ asset.value }}</span>
+            <span>${{ asset.price }}</span>
           </div>
           <div
             class="perfomance"
-            :class="{ loss: asset.daychange < 0, profit: asset.daychange > 0 }"
+            :class="{ loss: asset.change < 0, profit: asset.change > 0 }"
           >
-            {{ asset.daychange > 0 ? "+" + asset.daychange : asset.daychange }}%
+            {{ asset.change > 0 ? "+" + asset.change : asset.change }}%
           </div>
         </swiper-slide>
       </swiper>
@@ -52,19 +52,13 @@
           >currency-exchange loading...</span
         >
         <div class="pt-2 font-medium text-gray-500">Choose Crypto to Buy</div>
-        <div class="row__container">
-          <div
-            class="single__asset"
-            v-for="asset in transformedAssets"
-            :key="asset.addr"
-            @click="changeCoinAndUpdateCoinAddr(asset.name, asset.addr)"
-          >
-            <div class="asset__img">
-              <img :src="asset.img" alt="" />
-            </div>
-            <div class="asset_name">
-              <span>{{ asset.name }}</span>
-            </div>
+        <div class="flex overflow-x-scroll scrollbar-hide">
+          <div v-for="asset in transformedAssets" :key="asset.addr" class="px-2 py-3">
+            <span
+              @click="changeCoinAndUpdateCoinAddr(asset.name, asset.addr)"
+              class="single__asset rounded-2xl cursor-pointer shadow-md"
+              >{{ asset.name }}</span
+            >
           </div>
         </div>
         <div class="m-4 py-4">
@@ -87,7 +81,9 @@
               >
             </div>
             <div class="actions">
-              <button :disabled="transformedAssets.length === 0">
+              <button
+                :disabled="JSON.parse($store.getters.cryptoWalletAssets).length === 0"
+              >
                 Buy {{ coinType }}
               </button>
             </div>
@@ -102,14 +98,10 @@
 import Component, { mixins } from "vue-class-component";
 import { Watch } from "vue-property-decorator";
 import { Authenticated, Global } from "../mixins/mixins";
-import { numberWithCommas } from "../utils/Commaseparator";
-import { getPrice } from "../utils/fetchCoins";
 import { Navigation, Autoplay } from "swiper";
 import { Swiper, SwiperCore, SwiperSlide } from "swiper-vue2";
 import "swiper/swiper-bundle.css";
 import VueAxios from "vue-axios";
-let coinValue: number;
-let newAssets: any = [];
 declare module "vue/types/vue" {
   interface Vue {
     http: typeof VueAxios;
@@ -132,12 +124,10 @@ export default class BuyAsset extends mixins(Global, Authenticated) {
   finalPerfomanceData: any = [];
   walletPhoneNumber: string = this.$store.getters.walletPhoneNumber;
   rate: number;
-  paymentStatus = this.$store.getters.paymentStatus;
-  paymentMessage = this.$store.getters.paymentMessage;
-  cryptoCoins = this.store.walletCoins;
-  coinType = "BTC";
-  coinAddr = "x56d5656775";
-  transformedAssets = JSON.parse(JSON.stringify(this.cryptoCoins));
+  transformedAssets = JSON.parse(this.$store.getters.cryptoWalletAssets);
+  coinType = this.transformedAssets[0].name;
+  coinAddr = this.transformedAssets[0].addr;
+
   changeCoinAndUpdateCoinAddr(coin: string, addr: string) {
     this.coinType = coin;
     this.coinAddr = addr;
@@ -163,18 +153,14 @@ export default class BuyAsset extends mixins(Global, Authenticated) {
   }
 }
 </script>
-
+<!-- eslint-disable prettier/prettier -->
 <style scoped>
 .figma {
   background: #fff;
   border-radius: 14px 14px 0 0;
   height: 65vh;
 }
-@media (max-width: 480px) {
-  .figma {
-    height: 56vh;
-  }
-}
+
 .fa-angles-left {
   display: flex;
   justify-content: center;
@@ -234,10 +220,7 @@ export default class BuyAsset extends mixins(Global, Authenticated) {
   display: flex;
   overflow-x: scroll;
 }
-.row__container {
-  display: flex;
-  overflow-x: scroll;
-}
+
 .row__container::-webkit-scrollbar {
   display: none;
 }
@@ -288,14 +271,9 @@ p {
   cursor: pointer;
 }
 .single__asset {
-  display: flex;
-  flex-direction: row;
   padding: 10px 30px;
   justify-content: space-between;
-  background: rgb(230, 227, 227);
-  margin: 10px;
-  border-radius: 24px;
-  cursor: pointer;
+  background: #f1f5fb;
 }
 .row__container :active {
   content: "";
@@ -329,6 +307,9 @@ p {
   font-weight: 600;
   font-size: 16px;
 }
+@media (max-width: 480px) {
+  .figma {
+    height: 56vh;
+  }
+}
 </style>
-
-6cf69c723da743ddbdd6ecefbb1d16e4

@@ -119,13 +119,11 @@ body {
 	scrollbar-width: none
 	
 }
-.main_iframe::-webkit-scrollbar {
-	display: none;
-}
+
 
 .main {
 	@extend %centered_block;
-	max-width: 400px;
+	max-width: 380px;
 	width: 90%;
 	margin-top: 80px;
 	border: 1px solid $col_grey;

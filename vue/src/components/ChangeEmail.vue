@@ -1,3 +1,4 @@
+<!-- eslint-disable prettier/prettier -->
 <template>
   <div>
     <div>
@@ -64,7 +65,7 @@
     </div>
   </div>
 </template>
-
+<!-- eslint-disable prettier/prettier -->
 <script lang="ts">
 import { validateInput } from "../utils/backupRestore";
 import { sha256 } from "../utils/cryptoFunctions";
