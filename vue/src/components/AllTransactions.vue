@@ -6,23 +6,40 @@
       :key="transaction.id"
       class="assets__trnsactions"
     >
-      <div v-if="transaction.transactionType === 'Deposited'" class="deposited">
-        <i class="fa-solid fa-arrow-down"></i>
-      </div>
-      <div v-if="transaction.transactionType === 'Sent'" class="sent">
-        <i class="fa-solid fa-arrow-down"></i>
-      </div>
-      <div v-if="transaction.transactionType === 'Withdrawn'" class="withdraw">
-        <i class="fa-solid fa-arrow-down"></i>
-      </div>
-      <div>
-        <p class="flex font-bold">${{ transaction.value }}</p>
-        <p>{{ transaction.coins }} {{ transaction.coinType }}</p>
-      </div>
-      <div>
-        <p class="font-bold text-red-500">{{ transaction.transactionType }}</p>
-        <p>{{ transaction.date }}</p>
-      </div>
+      <router-link
+        class="flex space-x-8"
+        :to="{
+          name: 'SingleTransaction',
+          params: {
+            id: transaction.id,
+            coin: transaction.coinType,
+            type: transaction.transactionType,
+            date: transaction.date,
+            amount: transaction.coins,
+            dollarsAmount: transaction.value,
+            to: transaction.to,
+            from: transaction.from,
+          },
+        }"
+      >
+        <div v-if="transaction.transactionType === 'Deposited'" class="deposited">
+          <i class="fa-solid fa-arrow-down"></i>
+        </div>
+        <div v-if="transaction.transactionType === 'Sent'" class="sent">
+          <i class="fa-solid fa-arrow-down"></i>
+        </div>
+        <div v-if="transaction.transactionType === 'Withdrawn'" class="withdraw">
+          <i class="fa-solid fa-arrow-down"></i>
+        </div>
+        <div>
+          <p class="flex font-bold">${{ transaction.value }}</p>
+          <p>{{ transaction.coins }} {{ transaction.coinType }}</p>
+        </div>
+        <div>
+          <p class="font-bold text-red-500">{{ transaction.transactionType }}</p>
+          <p>{{ transaction.date }}</p>
+        </div>
+      </router-link>
     </div>
   </div>
 </template>
@@ -37,40 +54,48 @@ export default class AllTransactions extends mixins(Authenticated) {
   @Prop()
   transactions: Array<any> = [
     {
-      id: "tyu567885567",
+      id: "3M8w2knJKsr3jqMatYiyuraxVvZA",
       coins: 0.00987,
       transactionType: "Withdrawn",
       coinType: "BTC",
       addr: "0xECe365B379E1dD183B20fc5f022230C044d51404",
       date: "Jan 24, 2022",
       value: 400,
+      from: "0x55ff7c1ed138586b3c01eae47be1cff62583ca7f",
+      to: "MPESA",
     },
     {
-      id: "6778yuui8",
+      id: "S38w2knJKsrgyuqMatYiyuraxVvZA",
       coins: 0.02987,
       coinType: "USDC",
       transactionType: "Deposited",
       addr: "0xa24de01df22b63d23Ebc1882a5E3d4ec0d907bFB",
       date: "Aug 24, 2022",
       value: 500,
+      from: "0x55ff7c1ed138586b3c01eae47be1cff62583ca7f",
+      to: "bo66ff7c1ed138586b3c01eae47be1cff62583ca7f",
     },
     {
-      id: "45yjkkij7890",
+      id: "678w2knJKsr3jqMatYiyuraxVvZA",
       coins: 0.005887,
       coinType: "ETH",
       transactionType: "Withdrawn",
       addr: "0x8A753747A1Fa494EC906cE90E9f37563A8AF630e",
       date: "Dec 24, 2022",
       value: 300,
+      from: "0x55ff7c1ed138586b3c01eae47be1cff62583ca7f",
+      to: "MPESA",
     },
     {
-      id: "345fg678fghh",
+      id: "RT68w2knJKsr3jqMatYiyuraxVvZA",
       coins: 0.09987,
       coinType: "ETH",
       transactionType: "Sent",
       addr: "0x8A753747A1Fa494EC906cE90E9f37563A8AF630e",
       date: "Dec 24, 2022",
       value: 678,
+      from: "0x55ff7c1ed138586b3c01eae47be1cff62583ca7f",
+      to: "bo66ff7c1ed138586b3c01eae47be1cff62583ca7f",
     },
   ];
 }
@@ -118,3 +143,5 @@ export default class AllTransactions extends mixins(Authenticated) {
   color: green;
 }
 </style>
+
+3M8w2knJKsr3jqMatYiyuraxVvZA

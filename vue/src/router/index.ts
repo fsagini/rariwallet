@@ -23,6 +23,7 @@ import Withdraw from '../views/Withdraw.vue';
 import WalletTransactions from '../views/WalletTransactions.vue';
 import CancelledTransaction from '../views/CanceledTransaction.vue';
 import PhoneNumberSettings from '../views/PhoneNumberSettings.vue';
+import SingleTransaction from '../views/SingleTransaction.vue';
 
 Vue.use(VueRouter);
 
@@ -128,6 +129,14 @@ const routes: Array<RouteConfig> = [
 		component: TwoFA,
 		meta: {
 			requires2fa: true
+		}
+	},
+	{
+		path: '/user/transaction/:type/:id/:coin',
+		name: 'SingleTransaction',
+		component: SingleTransaction,
+		meta: {
+			requiresAuth: false
 		}
 	},
 	{
