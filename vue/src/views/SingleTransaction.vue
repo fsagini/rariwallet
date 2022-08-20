@@ -21,7 +21,7 @@
           </div>
           <div>
             <p class="flex text-gray-400">Time</p>
-            <p class="text-lg">11:10 PM</p>
+            <p class="text-lg">{{ time }}</p>
           </div>
         </div>
         <div class="border-gray-400 border-[1px] w-full mt-3 ml-5" />
@@ -83,6 +83,7 @@ export default class SingleTransaction extends mixins(Global, Authenticated) {
   dollars_amount = localStorage.getItem("dollars_amount");
   unformated_from_user = localStorage.getItem("unformated_from_user");
   unformated_to_user = localStorage.getItem("unformated_to_user");
+  time = localStorage.getItem("time");
 
   redirectUser() {
     this.router.push("/your/transactions").catch(() => undefined);
@@ -98,6 +99,7 @@ export default class SingleTransaction extends mixins(Global, Authenticated) {
     window.localStorage.setItem("dollars_amount", this.$route.params.dollarsAmount);
     window.localStorage.setItem("unformated_from_user", this.$route.params.from);
     window.localStorage.setItem("unformated_to_user", this.$route.params.to);
+    window.localStorage.setItem("time", this.$route.params.time);
   }
 }
 </script>

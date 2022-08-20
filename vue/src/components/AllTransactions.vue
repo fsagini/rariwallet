@@ -19,6 +19,7 @@
             dollarsAmount: transaction.value,
             to: transaction.to,
             from: transaction.from,
+            time: transaction.time,
           },
         }"
       >
@@ -63,6 +64,7 @@ export default class AllTransactions extends mixins(Authenticated) {
       value: 400,
       from: "0x55ff7c1ed138586b3c01eae47be1cff62583ca7f",
       to: "MPESA",
+      time: "12:10 PM",
     },
     {
       id: "S38w2knJKsrgyuqMatYiyuraxVvZA",
@@ -74,6 +76,7 @@ export default class AllTransactions extends mixins(Authenticated) {
       value: 500,
       from: "0x55ff7c1ed138586b3c01eae47be1cff62583ca7f",
       to: "bo66ff7c1ed138586b3c01eae47be1cff62583ca7f",
+      time: "11:45 AM",
     },
     {
       id: "678w2knJKsr3jqMatYiyuraxVvZA",
@@ -85,6 +88,7 @@ export default class AllTransactions extends mixins(Authenticated) {
       value: 300,
       from: "0x55ff7c1ed138586b3c01eae47be1cff62583ca7f",
       to: "MPESA",
+      time: "5:46 PM",
     },
     {
       id: "RT68w2knJKsr3jqMatYiyuraxVvZA",
@@ -96,6 +100,7 @@ export default class AllTransactions extends mixins(Authenticated) {
       value: 678,
       from: "0x55ff7c1ed138586b3c01eae47be1cff62583ca7f",
       to: "bo66ff7c1ed138586b3c01eae47be1cff62583ca7f",
+      time: "1:56 PM",
     },
   ];
 }
