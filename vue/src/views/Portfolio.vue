@@ -24,88 +24,99 @@
         </div>
       </div>
     </div>
-    <div class="portfolio__wallet">
+    <div class="portfolio__wallet pb-2">
       <span> $ {{ walletBalance }}</span>
       <p>Wallet Balance</p>
     </div>
-    <div class="figma">
-      <span class="container__title">Assets</span>
+    <div>
+      <div class="pb-5" v-if="transformedWalletAssets.length === 0">
+        <NoUserAssets />
+      </div>
+      <div v-else>
+        <div class="figma">
+          <span class="container__title">Assets</span>
 
-      <!-- Assets Beggining -->
-      <div>
-        <div v-if="ShowAll === false">
-          <div
-            v-for="asset in transformedWalletAssets.slice(0, 2)"
-            class="assets"
-            :key="asset.addr"
-          >
-            <div class="asset__image">
-              <img :src="asset.img" :alt="asset.symbol" />
+          <!-- Assets Beggining -->
+          <div>
+            <div v-if="ShowAll === false">
+              <div
+                v-for="asset in transformedWalletAssets.slice(0, 2)"
+                class="assets"
+                :key="asset.addr"
+              >
+                <div class="asset__image">
+                  <img :src="asset.img" :alt="asset.symbol" />
+                </div>
+                <div class="balance__details">
+                  <span style="flex: 1">{{ asset.name }} ({{ asset.symbol }})</span>
+                  <p>{{ asset.bal }} {{ asset.symbol }}</p>
+                </div>
+                <!-- coin price increase or decrease dynamic rendering will be added  -->
+                <div class="asset__price">
+                  <span>$ {{ asset.value }}</span>
+                  <p :class="{ loss: asset.daychange < 0, profit: asset.daychange > 0 }">
+                    {{ asset.daychange > 0 ? "+" + asset.daychange : asset.daychange }}%
+                  </p>
+                </div>
+              </div>
             </div>
-            <div class="balance__details">
-              <span style="flex: 1">{{ asset.name }} ({{ asset.symbol }})</span>
-              <p>{{ asset.bal }} {{ asset.symbol }}</p>
+            <div v-else>
+              <div
+                v-for="asset in transformedWalletAssets"
+                class="assets"
+                :key="asset.addr"
+              >
+                <div class="asset__image">
+                  <img :src="asset.img" :alt="asset.symbol" />
+                </div>
+                <div class="balance__details">
+                  <span>{{ asset.name }} ({{ asset.symbol }})</span>
+                  <p>{{ asset.bal }} {{ asset.symbol }}</p>
+                </div>
+
+                <!-- coin price increase or decrease dynamic rendering will be added  -->
+                <div class="asset__price">
+                  <span>$ {{ asset.value }}</span>
+                  <p :class="{ loss: asset.daychange < 0, profit: asset.daychange > 0 }">
+                    {{ asset.daychange > 0 ? "+" + asset.daychange : asset.daychange }}%
+                  </p>
+                </div>
+              </div>
             </div>
-            <!-- coin price increase or decrease dynamic rendering will be added  -->
-            <div class="asset__price">
-              <span>$ {{ asset.value }}</span>
-              <p :class="{ loss: asset.daychange < 0, profit: asset.daychange > 0 }">
-                {{ asset.daychange > 0 ? "+" + asset.daychange : asset.daychange }}%
+            <div class="actions">
+              <button v-on:click="navigateBuy()">{{ $t("common.Deposit") }}</button>
+            </div>
+            <span @click="toggleShowAll" class="view__assets">
+              <p v-if="!ShowAll">
+                {{ $t("common.SEE_ASSETS") }}
               </p>
-            </div>
+              <p v-if="ShowAll">
+                {{ $t("common.HIDE_ASSETS") }}
+              </p>
+            </span>
+          </div>
+          <span class="container__title"> Latest Transactions </span>
+
+          <!-- Transactions Beggining -->
+          <div>
+            <PortfolioTrnsactions />
           </div>
         </div>
-        <div v-else>
-          <div v-for="asset in transformedWalletAssets" class="assets" :key="asset.addr">
-            <div class="asset__image">
-              <img :src="asset.img" :alt="asset.symbol" />
-            </div>
-            <div class="balance__details">
-              <span>{{ asset.name }} ({{ asset.symbol }})</span>
-              <p>{{ asset.bal }} {{ asset.symbol }}</p>
-            </div>
-
-            <!-- coin price increase or decrease dynamic rendering will be added  -->
-            <div class="asset__price">
-              <span>$ {{ asset.value }}</span>
-              <p :class="{ loss: asset.daychange < 0, profit: asset.daychange > 0 }">
-                {{ asset.daychange > 0 ? "+" + asset.daychange : asset.daychange }}%
-              </p>
-            </div>
-          </div>
-        </div>
-        <div class="actions">
-          <button v-on:click="navigateBuy()">{{ $t("common.Deposit") }}</button>
-        </div>
-        <span @click="toggleShowAll" class="view__assets">
-          <p v-if="!ShowAll">
-            {{ $t("common.SEE_ASSETS") }}
-          </p>
-          <p v-if="ShowAll">
-            {{ $t("common.HIDE_ASSETS") }}
-          </p>
-        </span>
       </div>
-      <span class="container__title"> Latest Transactions </span>
-
-      <!-- Transactions Beggining -->
-      <div>
-        <PortfolioTrnsactions />
-      </div>
-      <div class="bottom__menu">
-        <div class="bottom__icons">
-          <span @click="navigateTransactions"
-            ><i class="fa-solid fa-arrow-right-arrow-left"> </i>
-            <p class="font-semibold text-sm">Transactions</p></span
-          >
-          <span @click="navigateBuy" class="bottom__deposit"
-            ><i class="fa-solid fa-plus"></i
-          ></span>
-          <span @click="logout()"
-            ><i class="fa-solid fa-cube"></i>
-            <p class="font-semibold text-sm">Sign-out</p></span
-          >
-        </div>
+    </div>
+    <div class="bottom__menu">
+      <div class="bottom__icons">
+        <span @click="navigateTransactions"
+          ><i class="fa-solid fa-arrow-right-arrow-left"> </i>
+          <p class="font-semibold text-sm">Transactions</p></span
+        >
+        <span @click="navigateBuy" class="bottom__deposit"
+          ><i class="fa-solid fa-plus"></i
+        ></span>
+        <span @click="logout()"
+          ><i class="fa-solid fa-cube"></i>
+          <p class="font-semibold text-sm">Sign-out</p></span
+        >
       </div>
     </div>
   </div>
@@ -118,9 +129,11 @@ import { numberWithCommas } from "../utils/Commaseparator";
 import jazzicon from "@metamask/jazzicon";
 import { copyToClipboard } from "../utils/utils";
 import PortfolioTrnsactions from "../components/PortfolioTrnsactions.vue";
+import NoUserAssets from "../components/NoUserAssets.vue";
 @Component({
   components: {
     PortfolioTrnsactions,
+    NoUserAssets,
   },
 })
 export default class Portfolio extends mixins(Global, Authenticated) {
@@ -156,11 +169,13 @@ export default class Portfolio extends mixins(Global, Authenticated) {
       link: "/settings",
     },
   ];
-  transformedWalletAssets = JSON.parse(this.$store.getters.userWalletAssets);
+  transformedWalletAssets: Array<any> = JSON.parse(this.$store.getters.userWalletAssets);
   walletBalance = numberWithCommas(
-    this.transformedWalletAssets.reduce((acc: number, curr: any) => {
-      return acc + curr.value;
-    }, 0)
+    this.transformedWalletAssets
+      .reduce((acc: number, curr: any) => {
+        return acc + curr.value;
+      }, 0)
+      .toFixed(2)
   );
 
   toggleShowAll() {
@@ -197,8 +212,19 @@ export default class Portfolio extends mixins(Global, Authenticated) {
     ref.append(image);
   }
   // Wallet Menu Routes
-  navigateWallet(link: string) {
-    this.router.push(link).catch(() => undefined);
+  async navigateWallet(link: string) {
+    try {
+      if (
+        this.transformedWalletAssets.length == 0 &&
+        (link === "/withdraw/asset" || link === "/send/asset")
+      ) {
+        return this.$vToastify.warning("You don't have digital assets at the moment");
+      } else {
+        return this.router.push(link);
+      }
+    } catch (error) {
+      return undefined;
+    }
   }
   // End Wallet
   navigateTransactions() {
@@ -408,8 +434,9 @@ export default class Portfolio extends mixins(Global, Authenticated) {
 }
 .figma {
   background: #fff;
-  border-radius: 14px 14px 0 0;
-  padding-top: 30px;
+  border-radius: 14px 14px 14px 14px;
+  padding-top: 10px;
+  height: 100%;
 }
 
 .portfolio__title span,
@@ -426,9 +453,6 @@ export default class Portfolio extends mixins(Global, Authenticated) {
   font-size: 32px;
   color: #fff;
   cursor: pointer;
-}
-.portfolio__wallet {
-  padding-bottom: 30px;
 }
 .portfolio__wallet span {
   font-size: 33px;
@@ -477,7 +501,7 @@ export default class Portfolio extends mixins(Global, Authenticated) {
 .menu__slide::-webkit-scrollbar {
   display: none;
 }
-@media screen and(max-width:480) {
+@media (max-width: 480) {
   .bottom__menu {
     height: 24.3vh;
   }

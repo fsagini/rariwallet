@@ -60,7 +60,12 @@ const userAssetsFetching = async (user_assets: Array<any>, commit: Commit) => {
 			window.console.log(error);
 		});
 	const result = await JSON.parse(JSON.stringify(user_assets));
-	return result;
+
+	if (assets.length === 0) {
+		return [];
+	} else {
+		return result;
+	}
 };
 
 export { userAssetsFetching };

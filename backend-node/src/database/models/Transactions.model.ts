@@ -1,4 +1,4 @@
-import { AutoIncrement, Column, DataType, ForeignKey, Model, PrimaryKey, Table, Unique } from 'sequelize-typescript';
+import { AutoIncrement, BelongsTo, Column, DataType, ForeignKey, Model, PrimaryKey, Table, Unique } from 'sequelize-typescript';
 import { User } from './User.model';
 
 @Table({ timestamps: true })
@@ -13,38 +13,58 @@ export class Transactions extends Model {
         type: DataType.INTEGER,
         references: {
             model: 'User',
-            key: 'email'
+            key: 'id'
         },
         onDelete: 'cascade'
     })
-    user_email: any;
+    user_id: any;
 
     @Unique
     @Column({
-        type: DataType.TEXT
+        type: DataType.STRING
     })
     transaction_id: string;
 
     @Column({
         type: DataType.FLOAT
     })
-    amount: any;
+    coins: any;
 
-    @Column({
-        type: DataType.FLOAT
-    })
-    coins: number | string;
-
-    @Column({
-        type: DataType.DATE
-    })
-    date: string;
     @Column({
         type: DataType.STRING
     })
-    coin_type: any;
+    transaction_type: string;
+
     @Column({
         type: DataType.STRING
     })
-    transaction_type: any;
+    coin_type: string;
+
+    @Column({
+        type: DataType.TEXT
+    })
+    date: any;
+
+    @Column({
+        type: DataType.NUMBER
+    })
+    value: any;
+
+    @Column({
+        type: DataType.STRING
+    })
+    transaction_from: string;
+
+    @Column({
+        type: DataType.STRING
+    })
+    transaction_to: string;
+
+    @Column({
+        type: DataType.TEXT
+    })
+    time: any;
+
+    @BelongsTo(() => User)
+    user: User;
 }

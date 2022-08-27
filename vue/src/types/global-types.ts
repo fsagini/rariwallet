@@ -76,6 +76,21 @@ export type TypeFetchUserWalletAssets = [
 	}
 ];
 
+export type TypeFetchWalletTransactions = [
+	{
+		__typename?: 'TypeFetchWalletTransactions';
+		transaction_id: string;
+		coins: any;
+		transaction_type: string;
+		coin_tpe: string;
+		date: any;
+		value: any;
+		from: string;
+		to: string;
+		time: any;
+	}
+];
+
 export type TypeFetchUser = {
 	__typename?: 'TypeFetchUser';
 	email: string;
@@ -220,11 +235,14 @@ export type MorpherWalletConfig = {
 export type TypeCreateTransactions = {
 	__typename?: 'TypeCreateTransactions';
 	transaction_id: string;
-	amount: any;
-	coins: number | string;
-	coin_type: string;
+	coins: any;
 	transaction_type: string;
-	date: string;
+	coin_type: string;
+	date: any;
+	value: any;
+	from: string;
+	to: string;
+	time: any;
 };
 
 export type TransactionObject = {

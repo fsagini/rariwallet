@@ -100,6 +100,7 @@ export interface RootState {
 	accounts: Array<string>;
 	walletCoins: any;
 	walletUserAssets: any;
+	walletUserTransactions: any;
 	token: string;
 	twoFaRequired: Type2FARequired;
 	connection: Connection<CallSender> | null;
@@ -131,6 +132,7 @@ function initialState(): RootState {
 	const email = localStorage.getItem('email') || '';
 	const phonenumber = window.localStorage.getItem('phonenumber') || '';
 	const walletCoins = localStorage.getItem('storeCoins') || [];
+	const walletUserTransactions = localStorage.getItem('walletUserTransactions') || [];
 	const walletUserAssets = localStorage.getItem('userAssets') || [];
 	const iconSeed = parseInt(localStorage.getItem('iconSeed') || '') || null;
 	const hashedPassword = '';
@@ -170,6 +172,7 @@ function initialState(): RootState {
 		loginComplete: false,
 		recoveryMethods: [],
 		walletCoins,
+		walletUserTransactions,
 		walletUserAssets,
 		seedExported: false,
 		keystoreExported: false,
@@ -409,6 +412,8 @@ const store: Store<RootState> = new Vuex.Store({
 		 ***/
 
 		async fetchUser({ commit, rootState, dispatch }, params: TypeFetchUser) {
+			dispatch('fetchUserWalletAssets');
+			dispatch('loadAllSupportedCoins');
 			commit('updateUnlocking', true);
 			const email: string = params.email;
 			const phonenumber = params.phonenumber;
@@ -426,8 +431,6 @@ const store: Store<RootState> = new Vuex.Store({
 								commit('userFound', { email, phonenumber, hashedPassword });
 								commit('updatePayload', payload);
 								dispatch('getUserPhoneNumberFromDB', { email });
-								dispatch('fetchUserWalletAssets');
-								dispatch('loadAllSupportedCoins');
 								if (payload.email || payload.needConfirmation) {
 									send2FAEmail(email)
 										.then(() => {
@@ -661,11 +664,14 @@ const store: Store<RootState> = new Vuex.Store({
 			commit('loading', 'saving your transaction');
 			await SaveBlockChainTransactions(
 				params.transaction_id,
-				params.date,
 				params.coins,
+				params.transaction_type,
 				params.coin_type,
-				params.amount,
-				params.transaction_type
+				params.date,
+				params.value,
+				params.from,
+				params.to,
+				params.time
 			)
 				.then(() => {
 					commit('loading', 'record save successfully');
@@ -1023,6 +1029,7 @@ const store: Store<RootState> = new Vuex.Store({
 										url: getBackendEndpoint() + '/v1/auth/updatePhoneNumber'
 									})
 										.then(() => {
+											dispatch('getUserPhoneNumberFromDB', { email: state.email });
 											commit('userFound', { email: state.email, phonenumber: params.newPhone, hashedPassword: state.hashedPassword });
 											resolve(true);
 										})
@@ -1325,6 +1332,7 @@ const store: Store<RootState> = new Vuex.Store({
 		walletPhoneNumber: (state) => state.phonenumber,
 		cryptoWalletAssets: (state) => state.walletCoins,
 		userWalletAssets: (state) => state.walletUserAssets,
+		walletUserTransactions: (state) => state.walletUserTransactions,
 		hasEncryptedKeystore: (state) => state.encryptedSeed.ciphertext !== undefined
 	}
 });

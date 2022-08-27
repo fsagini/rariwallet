@@ -45,6 +45,7 @@ import changePhoneNumber from "../components/ChangePhoneNumber.vue";
 import Change2FAEmail from "../components/Change2FAEmail.vue";
 import { Authenticated, Global } from "../mixins/mixins";
 import { getDictionaryValue } from "../utils/dictionary";
+import { verifyEmailCode } from "@/utils/backupRestore";
 
 @Component({
   components: {
@@ -61,11 +62,16 @@ export default class PhoneNumberSettings extends mixins(Authenticated, Global) {
   logonError = "";
 
   async submitChange() {
-    return this.changePhoneNumber({
-      newPhone: this.newPhone,
-      password: this.password,
-      twoFa: this.twoFa,
-    });
+    const result2FAEMAIL = await verifyEmailCode(this.store.email, this.twoFa);
+    if (result2FAEMAIL.success) {
+      return this.changePhoneNumber({
+        newPhone: this.newPhone,
+        password: this.password,
+        twoFa: this.twoFa,
+      });
+    } else {
+      this.$vToastify.error("Two FA Code is incorrect!", "ERROR");
+    }
   }
   async setNewData(data: any) {
     if (!data.phone || !data.password) return;

@@ -1,9 +1,9 @@
 <template>
   <div class="">
-    <div class="email__img">
-      <img src="@/assets/img/email_verification.png" alt="Email 2FA image" />
-    </div>
     <div class="white__container container">
+      <!-- <div class="email__img">
+        <img src="@/assets/img/email_verification.png" alt="Email 2FA image" />
+      </div> -->
       <h2 data-cy="emailConfirmationTitle" class="pt-10 title mt-3">
         {{ $t("2fa.EMAIL_CONFIRMATION_TITLE") }}
       </h2>
@@ -90,7 +90,7 @@ export default class Change2FAEmail extends mixins(Authenticated) {
 .white__container {
   background: #fff;
   border-radius: 14px 14px 0 0;
-  height: 41.9vh;
+  height: 47.9vh;
 }
 .email__img {
   margin-left: 50px;

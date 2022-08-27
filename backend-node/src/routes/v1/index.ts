@@ -3,7 +3,7 @@ const EmailController = require('../../controllers/email.controller');
 const ValidationController = require('../../controllers/validation.controller');
 const secureRoutes = require('./secure');
 const MpesaController = require('../../controllers/mpesa.controller');
-const saveBlockaChainTransactions = require('../../controllers/transaction.controller');
+const Transactions = require('../../controllers/transaction.controller');
 
 import rateLimit from 'express-rate-limit';
 
@@ -124,8 +124,10 @@ module.exports = function (express) {
     router.post('/auth/deleteAccount', WalletController.deleteAccount);
     router.post('/auth/updateUserPayload', WalletController.updateUserPayload);
 
-    /** SAVE TRNSACTIONS */
-    router.post('/auth/createBlockchainTransaction', saveBlockaChainTransactions);
+    /** SAVE TRANSACTIONS */
+    router.post('/createBlockchainTransaction', Transactions.saveBlockaChainTransactions);
+    router.post('/fetchUserTransactions', Transactions.fetchAllTransactions);
+
     /*****
     PAYMENTS METHODS
      ***/

@@ -57,7 +57,6 @@ export async function saveEmailPassword(req: Request, res: Response) {
             const payload = { email: false, authenticator: false, authenticatorConfirmed: false, needConfirmation: true };
 
             const nonce = 1;
-
             userId = (await User.create({ email, phonenumber, payload, nonce, eth_address }, { transaction })).getDataValue('id');
 
             // Create a new recovery method.
@@ -119,25 +118,6 @@ export async function getUserPhoneNumber(req: Request, res: Response) {
     }
 }
 
-export async function fetchAllTransactions(req: Request, res: Response) {
-    try {
-        const email = req.body.email;
-        const data = await Transactions.findAll({ where: { user_email: email } });
-        Logger.info({
-            method: arguments.callee.name,
-            type: 'getPhoneNumber',
-            headers: req.headers,
-            body: req.body,
-            message: `fetchAllTransactions: User-Transactions[${data}]`
-        });
-
-        successResponse(res, { data });
-    } catch (error) {
-        Logger.error({ source: 'fetchingPhoneNumber', data: req.body, message: error.message || error.toString() });
-        return errorResponse(res, 'INTERNAL_SERVER_ERROR', 500);
-    }
-}
-
 export async function getRecoveryMethods(req: Request, res: Response) {
     try {
         const key = req.header('key');
@@ -159,7 +139,6 @@ export async function addRecoveryMethod(req: Request, res: Response) {
         const key = req.header('key');
         const keyForSaving = req.body.key;
         const recoveryTypeId = req.body.recoveryTypeId;
-
         const emailRecovery = await Recovery.findOne({ where: { key, recovery_type_id: 1 } });
 
         const recovery = await Recovery.findOne({ where: { user_id: emailRecovery.user_id, recovery_type_id: recoveryTypeId } });

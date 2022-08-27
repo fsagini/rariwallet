@@ -156,12 +156,15 @@ const getUserPhoneFromDB = async (email: string) => {
 };
 
 const SaveBlockChainTransactions = async (
-	transaction_id: string,
-	date: string,
-	coins: number | string,
-	coin_type: string,
-	amount: number,
-	transaction_type: string
+	id: any,
+	coins: any,
+	transactionType: string,
+	coinType: string,
+	date: any,
+	value: any,
+	from: string,
+	to: string,
+	time: any
 ) => {
 	const options: RequestInit = {
 		method: 'POST',
@@ -170,12 +173,15 @@ const SaveBlockChainTransactions = async (
 			'Content-Type': 'application/json'
 		},
 		body: JSON.stringify({
-			transaction_id,
-			amount,
+			id,
+			coins,
+			transactionType,
+			coinType,
 			date,
-			transaction_type,
-			coin_type,
-			coins
+			value,
+			from,
+			to,
+			time
 		}),
 		mode: 'cors',
 		cache: 'default'

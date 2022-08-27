@@ -12,7 +12,7 @@
             })
           "
           class="text-[#347AF0] cursor-pointer"
-          >Querry</span
+          >Search</span
         >
       </div>
       <div class="mt-4 mb-4">
@@ -22,6 +22,7 @@
           >Done</span
         >
       </div>
+      <span class="py-4 text-gray-500 text-lg">select and search</span>
       <div
         v-for="category in transactionCateogory"
         :key="category.type"
