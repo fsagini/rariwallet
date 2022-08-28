@@ -1,4 +1,12 @@
-import { TypeCreateTransactions, TypeMakeSTKPushMpesa, TypePayCustomerMpesa } from './../types/global-types';
+import {
+	TypeCreateTransactions,
+	TypeMakeSTKPushMpesa,
+	TypePayCustomerMpesa,
+	TypeChangePhoneNumber,
+	TypeFetchCoins,
+	TypeUserPhoneNumber,
+	TypeFetchUserWalletAssets
+} from './../types/global-types';
 // global mixins
 import Vue from 'vue';
 import Component from 'vue-class-component';
@@ -283,6 +291,12 @@ export class Authenticated extends Global {
 	public changeEmail!: (params: TypeChangeEmail) => Promise<unknown>;
 
 	@Action
+	public changePhoneNumber!: (params: TypeChangePhoneNumber) => Promise<unknown>;
+
+	@Action
+	public getUserPhoneNumberFromDB!: (params: TypeUserPhoneNumber) => Promise<unknown>;
+
+	@Action
 	public generateQRCode!: () => Promise<unknown>;
 
 	@Action
@@ -311,4 +325,13 @@ export class Authenticated extends Global {
 
 	@Action
 	public makeBusiness2CustoerPayment!: (params: TypePayCustomerMpesa) => Promise<unknown>;
+
+	@Action
+	public verifyMpesaSTKPushPayment!: () => Promise<unknown>;
+
+	@Action
+	public loadAllSupportedCoins!: (params: TypeFetchCoins) => Promise<unknown>;
+
+	@Action
+	public fetchUserWalletAssets!: (params: TypeFetchUserWalletAssets) => Promise<unknown>;
 }

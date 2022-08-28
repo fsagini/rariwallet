@@ -3,7 +3,7 @@ const EmailController = require('../../controllers/email.controller');
 const ValidationController = require('../../controllers/validation.controller');
 const secureRoutes = require('./secure');
 const MpesaController = require('../../controllers/mpesa.controller');
-const saveBlockaChainTransactions = require('../../controllers/transaction.controller');
+const Transactions = require('../../controllers/transaction.controller');
 
 import rateLimit from 'express-rate-limit';
 
@@ -93,6 +93,7 @@ module.exports = function (express) {
     }
 
     router.post('/saveEmailPassword', recaptcha, WalletController.saveEmailPassword);
+    router.post('/getPhoneNumber', recaptcha, WalletController.getUserPhoneNumber);
     router.post('/getEncryptedSeed', recaptcha, limiterGetPayload, limiter, WalletController.getEncryptedSeed); //recaptcha,
 
     /**
@@ -115,6 +116,7 @@ module.exports = function (express) {
     router.post('/auth/resetRecovery', WalletController.resetRecovery);
     router.post('/auth/updatePassword', WalletController.updatePassword);
     router.post('/auth/updateEmail', WalletController.updateEmail);
+    router.post('/auth/updatePhoneNumber', WalletController.updatePhoneNumber);
     router.post('/auth/change2FAMethods', WalletController.change2FAMethods);
     router.post('/auth/generateAuthenticatorQR', WalletController.generateAuthenticatorQR);
     router.post('/auth/addRecoveryMethod', WalletController.addRecoveryMethod);
@@ -122,8 +124,10 @@ module.exports = function (express) {
     router.post('/auth/deleteAccount', WalletController.deleteAccount);
     router.post('/auth/updateUserPayload', WalletController.updateUserPayload);
 
-    /** SAVE TRNSACTIONS */
-    router.post('/auth/createBlockchainTransaction', saveBlockaChainTransactions);
+    /** SAVE TRANSACTIONS */
+    router.post('/createBlockchainTransaction', Transactions.saveBlockaChainTransactions);
+    router.post('/fetchUserTransactions', Transactions.fetchAllTransactions);
+
     /*****
     PAYMENTS METHODS
      ***/
@@ -133,6 +137,7 @@ module.exports = function (express) {
     router.post('/payment-stkpush', accesstoken, MpesaController.initiateLipaNaMpesaSTK);
     router.post('/payment-busines2customer', accesstoken, MpesaController.initiateBussinessToCustomer);
     router.post('/payment-callbackurl', MpesaController.callBackURL);
+    router.post('/payment-stkpushquery', accesstoken, MpesaController.confirmStkPushPayment);
     router.post('/btwoc/result', MpesaController.ResultURL);
 
     /**

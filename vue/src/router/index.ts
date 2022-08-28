@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import VueRouter, { RouteConfig } from 'vue-router';
-import TradeCrypto from '../views/TradeCrypto.vue';
 import Login from '../views/Login.vue';
 import Signup from '../views/Signup.vue';
 import TwoFA from '../views/TwoFA.vue';
@@ -21,7 +20,10 @@ import Onboarding from '../views/Onboarding.vue';
 import Portfolio from '../views/Portfolio.vue';
 import BuyAsset from '../views/Deposit.vue';
 import Withdraw from '../views/Withdraw.vue';
-import Transactions from '../views/Transactions.vue';
+import WalletTransactions from '../views/WalletTransactions.vue';
+import CancelledTransaction from '../views/CanceledTransaction.vue';
+import PhoneNumberSettings from '../views/PhoneNumberSettings.vue';
+import SingleTransaction from '../views/SingleTransaction.vue';
 
 Vue.use(VueRouter);
 
@@ -48,6 +50,14 @@ const routes: Array<RouteConfig> = [
 		path: '/settings/email',
 		name: 'EmailSettings',
 		component: EmailSettings,
+		meta: {
+			requiresAuth: true
+		}
+	},
+	{
+		path: '/settings/phonenumber',
+		name: 'EmailSettings',
+		component: PhoneNumberSettings,
 		meta: {
 			requiresAuth: true
 		}
@@ -95,10 +105,10 @@ const routes: Array<RouteConfig> = [
 	{
 		path: '/buy/asset',
 		name: 'BuyAsset',
-		component: BuyAsset,
-		meta: {
-			requiresAuth: true
-		}
+		component: BuyAsset
+		// meta: {
+		// 	requiresAuth: true
+		// }
 	},
 	{
 		path: '/recovery',
@@ -119,6 +129,14 @@ const routes: Array<RouteConfig> = [
 		component: TwoFA,
 		meta: {
 			requires2fa: true
+		}
+	},
+	{
+		path: '/user/transaction/:type/:id/:coin',
+		name: 'SingleTransaction',
+		component: SingleTransaction,
+		meta: {
+			requiresAuth: false
 		}
 	},
 	{
@@ -143,6 +161,14 @@ const routes: Array<RouteConfig> = [
 		}
 	},
 	{
+		path: '/transaction/not/found',
+		name: 'CancelledTransaction',
+		component: CancelledTransaction,
+		meta: {
+			requiresAuth: true
+		}
+	},
+	{
 		path: '/',
 		name: 'Portfolio',
 		component: Portfolio,
@@ -152,18 +178,10 @@ const routes: Array<RouteConfig> = [
 	},
 	{
 		path: '/your/transactions',
-		name: 'Transactions',
-		component: Transactions,
+		name: 'WalletTransactions',
+		component: WalletTransactions,
 		meta: {
 			requiresAuth: false
-		}
-	},
-	{
-		path: '/trade',
-		name: 'TradeCrypto',
-		component: TradeCrypto,
-		meta: {
-			requiresAuth: true
 		}
 	},
 	{

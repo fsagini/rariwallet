@@ -1,9 +1,18 @@
-import { TypeCreateTransactions, TypeMakeSTKPushMpesa, TypePayCustomerMpesa } from './../types/global-types';
+import {
+	TypeCreateTransactions,
+	TypeMakeSTKPushMpesa,
+	TypePayCustomerMpesa,
+	TypeChangePhoneNumber,
+	TypeFetchCoins,
+	TypeUserPhoneNumber,
+	TypeFetchUserWalletAssets
+} from './../types/global-types';
 import Vue from 'vue';
 import * as zksync from 'zksync';
 import Vuex, { Store } from 'vuex';
 import { ethers } from 'ethers';
 import { cryptoDecrypt, sha256 } from '../utils/cryptoFunctions';
+
 import {
 	getEncryptedSeedFromMail,
 	verifyAuthenticatorCode,
@@ -19,7 +28,9 @@ import {
 	verifyEmailConfirmationCode,
 	SaveBlockChainTransactions,
 	sendSTKPushPaymentRequest,
-	makeBusinesstoCustomerPayment
+	makeBusinesstoCustomerPayment,
+	verifyMpesaSTKPushPayment,
+	getUserPhoneFromDB
 } from '../utils/backupRestore';
 import { downloadEncryptedKeystore, sortObject } from '../utils/utils';
 import { getKeystore } from '../utils/keystore';
@@ -63,7 +74,8 @@ import download from 'downloadjs';
 
 import { i18n } from '../plugins/i18n';
 import Cookie from 'js-cookie';
-
+import { fetchCryptoList } from '@/utils/cryptoListFetching';
+import { userAssetsFetching } from '@/utils/userAssetsFetching';
 Vue.use(Vuex);
 
 /*
@@ -72,6 +84,9 @@ Vue.use(Vuex);
 export interface RootState {
 	loading: boolean;
 	isNetworkError: boolean;
+	checkoutRequestID: string;
+	TransactionCodeId: string;
+	TransactionDesc: string;
 	status: string;
 	spinnerStatusText: string;
 	message: string;
@@ -83,6 +98,9 @@ export interface RootState {
 	encryptedWallet: string;
 	keystore: WalletBase | null;
 	accounts: Array<string>;
+	walletCoins: any;
+	walletUserAssets: any;
+	walletUserTransactions: any;
 	token: string;
 	twoFaRequired: Type2FARequired;
 	connection: Connection<CallSender> | null;
@@ -109,9 +127,13 @@ export interface RootState {
 /**
  * initialize the store
  */
+
 function initialState(): RootState {
 	const email = localStorage.getItem('email') || '';
-	const phonenumber = localStorage.getItem('phonenumber') || '';
+	const phonenumber = window.localStorage.getItem('phonenumber') || '';
+	const walletCoins = localStorage.getItem('storeCoins') || [];
+	const walletUserTransactions = localStorage.getItem('walletUserTransactions') || [];
+	const walletUserAssets = localStorage.getItem('userAssets') || [];
 	const iconSeed = parseInt(localStorage.getItem('iconSeed') || '') || null;
 	const hashedPassword = '';
 
@@ -122,6 +144,9 @@ function initialState(): RootState {
 	return {
 		loading: false,
 		isNetworkError: false,
+		checkoutRequestID: '',
+		TransactionCodeId: '',
+		TransactionDesc: '',
 		status: '',
 		spinnerStatusText: '',
 		message: '',
@@ -146,6 +171,9 @@ function initialState(): RootState {
 		openPage: '',
 		loginComplete: false,
 		recoveryMethods: [],
+		walletCoins,
+		walletUserTransactions,
+		walletUserAssets,
 		seedExported: false,
 		keystoreExported: false,
 		seedPhrase: '',
@@ -194,7 +222,7 @@ const store: Store<RootState> = new Vuex.Store({
 			state.spinnerStatusText = statusMessage;
 			setTimeout(() => {
 				state.loading = false;
-			}, 2000);
+			}, 10000);
 		},
 		seedFound(state: RootState, seedFoundData: TypeSeedFoundData) {
 			state.status = 'success';
@@ -230,8 +258,8 @@ const store: Store<RootState> = new Vuex.Store({
 					phonenumber: state.phonenumber
 				});
 			});
+			window.console.log(userData.email);
 			window.localStorage.setItem('email', userData.email);
-			window.localStorage.setItem('phonenumber', userData.phonenumber);
 			saveSessionStore('password', userData.hashedPassword);
 		},
 		seedCreated(state: RootState, seedCreatedData: TypeSeedCreatedData) {
@@ -266,6 +294,8 @@ const store: Store<RootState> = new Vuex.Store({
 			localStorage.removeItem('login');
 			const email = localStorage.getItem('email');
 			if (email) localStorage.setItem('lastEmail', email);
+			const phonenumber = localStorage.getItem('phonenumber');
+			if (phonenumber) localStorage.setItem('lastPhoneNumber', phonenumber);
 			localStorage.removeItem('email');
 			localStorage.removeItem('phonenumber');
 			localStorage.removeItem('iconSeed');
@@ -288,7 +318,7 @@ const store: Store<RootState> = new Vuex.Store({
 			const email = localStorage.getItem('email');
 			if (email) localStorage.setItem('lastEmail', email);
 			const phonenumber = localStorage.getItem('phonenumber');
-			if (phonenumber) localStorage.setItem('lastphonenumber', phonenumber);
+			if (phonenumber) localStorage.setItem('lastPhoneNumber', phonenumber);
 			localStorage.removeItem('email');
 			localStorage.removeItem('phonenumber');
 			localStorage.removeItem('iconSeed');
@@ -296,12 +326,15 @@ const store: Store<RootState> = new Vuex.Store({
 			removeSessionStore('password');
 			sessionStorage.removeItem('encryptedSeed');
 			localStorage.removeItem('login');
+			localStorage.removeItem('storeCoins');
+			localStorage.removeItem('userAssets');
 			Sentry.configureScope((scope) => {
 				scope.setUser({ id: '', email: '', phonenumber: '' });
 			});
 		},
 		clearUser(state: RootState) {
 			state.email = '';
+			state.phonenumber = '';
 			state.hashedPassword = '';
 			state.encryptedSeed = {};
 			state.keystore = null;
@@ -367,7 +400,7 @@ const store: Store<RootState> = new Vuex.Store({
 				try {
 					encryptedSeed = JSON.parse(String(sessionEncryptedSeed));
 					if (encryptedSeed && encryptedSeed.ciphertext) {
-						await commit('seedFound', { encryptedSeed });
+						commit('seedFound', { encryptedSeed });
 					}
 				} catch (ex) {
 					encryptedSeed = {};
@@ -376,8 +409,11 @@ const store: Store<RootState> = new Vuex.Store({
 		},
 		/**
 		 * Fetch the user data from the database and attempt to unlock the wallet using the mail encrypted seed
-		 */
-		async fetchUser({ commit, rootState }, params: TypeFetchUser) {
+		 ***/
+
+		async fetchUser({ commit, rootState, dispatch }, params: TypeFetchUser) {
+			dispatch('fetchUserWalletAssets');
+			dispatch('loadAllSupportedCoins');
 			commit('updateUnlocking', true);
 			const email: string = params.email;
 			const phonenumber = params.phonenumber;
@@ -394,7 +430,7 @@ const store: Store<RootState> = new Vuex.Store({
 								commit('ipCountry', payload.ip_country);
 								commit('userFound', { email, phonenumber, hashedPassword });
 								commit('updatePayload', payload);
-
+								dispatch('getUserPhoneNumberFromDB', { email });
 								if (payload.email || payload.needConfirmation) {
 									send2FAEmail(email)
 										.then(() => {
@@ -433,6 +469,27 @@ const store: Store<RootState> = new Vuex.Store({
 						commit('updateUnlocking', false);
 						reject(new Error('error'));
 					});
+			});
+		},
+		async getUserPhoneNumberFromDB({ state }, params: TypeUserPhoneNumber) {
+			getUserPhoneFromDB(params.email).then((value) => {
+				const { phonenumber } = value;
+				window.localStorage.setItem('phonenumber', phonenumber);
+				state.phonenumber = phonenumber;
+			});
+		},
+		async loadAllSupportedCoins({ commit, state }, params: TypeFetchCoins) {
+			await fetchCryptoList(params, commit).then((value) => {
+				window.localStorage.setItem('storeCoins', JSON.stringify(value));
+				state.walletCoins = JSON.stringify(value);
+				window.console.log(state.walletCoins);
+			});
+		},
+		async fetchUserWalletAssets({ commit, state }, params: TypeFetchUserWalletAssets) {
+			await userAssetsFetching(params, commit).then((value) => {
+				window.localStorage.setItem('userAssets', JSON.stringify(value));
+				state.walletUserAssets = JSON.stringify(value);
+				window.console.log(state.walletUserAssets);
 			});
 		},
 		fetchWalletFromRecovery({ state, commit }, params: TypeRecoveryParams) {
@@ -557,33 +614,65 @@ const store: Store<RootState> = new Vuex.Store({
 				});
 			});
 		},
-		// Payment Actions
-
-		sendMpesaStkPush({ commit }, params: TypeMakeSTKPushMpesa) {
+		async sendMpesaStkPush({ commit }, params: TypeMakeSTKPushMpesa) {
 			sendSTKPushPaymentRequest(params.phonenumber, params.amount)
 				.then(async (response) => {
-					await commit('delayedSpinnerMessage', response.CustomerMessage);
+					const { CustomerMessage, CheckoutRequestID } = response;
+					window.console.log(response);
+					commit('delayedSpinnerMessage', CustomerMessage);
+					commit('loading', 'verifying payment...');
+					setTimeout(() => {
+						verifyMpesaSTKPushPayment(CheckoutRequestID)
+							.then((result) => {
+								const { ResultCode, ResultDesc } = result;
+								if (ResultCode === '0') {
+									commit('delayedSpinnerMessage', ResultDesc);
+									commit('loading', 'initiating blockchain transaction...');
+									// After a Series research here would be the best place to dispatch blockchain action.
+									// Dispatch Blockchain Transactions
+								} else if (ResultCode === '1032') {
+									commit('delayedSpinnerMessage', ResultDesc);
+									router.push('/transaction/not/found');
+								} else if (ResultCode === '2001') {
+									commit('delayedSpinnerMessage', ResultDesc);
+									router.push('/transaction/not/found');
+								} else {
+									commit('delayedSpinnerMessage', ResultDesc);
+									router.push('/transaction/not/found');
+								}
+							})
+							.catch((err) => {
+								commit('delayedSpinnerMessage', err.message);
+							});
+					}, 40000);
 				})
 				.catch((error) => {
 					commit('delayedSpinnerMessage', error.message);
 				});
 		},
-
 		async makeBusiness2CustoerPayment({ commit }, params: TypePayCustomerMpesa) {
 			await makeBusinesstoCustomerPayment(params.phonenumber, params.amount)
 				.then((response) => {
-					// commit succss message
+					// commit success message
 				})
 				.catch((error) => {
 					commit('delayedSpinnerMessage', error.message);
 				});
 		},
-
 		//** Save Transactions */
-		createTransaction({ commit, state }, params: TypeCreateTransactions) {
-			const encryptedSeed = state.encryptedSeed;
-			commit('loading', 'saving your transactions to the database');
-			SaveBlockChainTransactions(params.email, encryptedSeed, params.date, params.amount, params.transaction_type)
+		async createTransaction({ commit }, params: TypeCreateTransactions) {
+			commit('loading', 'saving your transaction');
+			await SaveBlockChainTransactions(
+				params.transaction_id,
+				params.coins,
+				params.transaction_type,
+				params.coin_type,
+				params.date,
+				params.value,
+				params.from,
+				params.to,
+				params.time
+			)
 				.then(() => {
 					commit('loading', 'record save successfully');
 				})
@@ -595,6 +684,7 @@ const store: Store<RootState> = new Vuex.Store({
 		async loginWallet({ state, dispatch }, recaptchaToken) {
 			if (!state.email && !state.hashedPassword) {
 				const email = localStorage.getItem('email') || '';
+				const phonenumber = localStorage.getItem('phonenumber') || '';
 				const iconSeed = parseInt(localStorage.getItem('iconSeed') || '') || 0;
 				const hashedPassword = await getSessionStore('password');
 				let encryptedSeed: TypeEncryptedSeed = {};
@@ -607,6 +697,7 @@ const store: Store<RootState> = new Vuex.Store({
 					}
 				}
 				state.email = email;
+				state.phonenumber = phonenumber;
 				state.iconSeed = iconSeed;
 				state.hashedPassword = hashedPassword;
 				state.encryptedSeed = encryptedSeed;
@@ -918,6 +1009,58 @@ const store: Store<RootState> = new Vuex.Store({
 				}
 			});
 		},
+		changePhoneNumber({ commit, state, dispatch }, params: TypeChangePhoneNumber) {
+			return new Promise(async (resolve, reject) => {
+				try {
+					if (state.keystore !== undefined && state.keystore !== null) {
+						if (params.password == state.hashedPassword) {
+							if (params.twoFa != undefined && params.twoFa > 0) {
+								//twoFA was sent
+								const resultEmail2fa = await verifyEmailCode(state.email, params.twoFa.toString());
+								if (resultEmail2fa.success) {
+									const body = {
+										newEmail: state.email,
+										newPhoneNumber: params.newPhone,
+										email2faVerification: params.twoFa
+									};
+									dispatch('sendSignedRequest', {
+										body,
+										method: 'POST',
+										url: getBackendEndpoint() + '/v1/auth/updatePhoneNumber'
+									})
+										.then(() => {
+											dispatch('getUserPhoneNumberFromDB', { email: state.email });
+											commit('userFound', { email: state.email, phonenumber: params.newPhone, hashedPassword: state.hashedPassword });
+											resolve(true);
+										})
+										.catch(reject);
+								} else {
+									reject('Two FA Code is incorrect!');
+								}
+							} else {
+								//twoFA wasn't sent yet, send it with the first request to the new email address
+								const body = {
+									oldEmail: state.email,
+									newPhoneNumber: params.newPhone
+								};
+								dispatch('sendSignedRequest', {
+									body,
+									method: 'POST',
+									url: getBackendEndpoint() + '/v1/auth/updatePhoneNumber'
+								})
+									.then(resolve)
+									.catch(reject);
+							}
+						} else {
+							reject('Phone Number is not correct!');
+						}
+					}
+				} catch (e) {
+					//console.error(e);
+					reject(e);
+				}
+			});
+		},
 		generateQRCode({ dispatch }) {
 			return new Promise((resolve, reject) => {
 				dispatch('sendSignedRequest', {
@@ -1187,6 +1330,9 @@ const store: Store<RootState> = new Vuex.Store({
 		authStatus: (state) => state.status,
 		walletEmail: (state) => state.email,
 		walletPhoneNumber: (state) => state.phonenumber,
+		cryptoWalletAssets: (state) => state.walletCoins,
+		userWalletAssets: (state) => state.walletUserAssets,
+		walletUserTransactions: (state) => state.walletUserTransactions,
 		hasEncryptedKeystore: (state) => state.encryptedSeed.ciphertext !== undefined
 	}
 });

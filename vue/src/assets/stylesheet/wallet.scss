@@ -119,13 +119,11 @@ body {
 	scrollbar-width: none
 	
 }
-.main_iframe::-webkit-scrollbar {
-	display: none;
-}
+
 
 .main {
 	@extend %centered_block;
-	max-width: 400px;
+	max-width: 380px;
 	width: 90%;
 	margin-top: 80px;
 	border: 1px solid $col_grey;
@@ -139,6 +137,27 @@ body {
 	&.dev-border {
 		border: 3px solid $col_green_light;
 	}
+}
+.rari_buttons{
+	padding: 20px 80px;
+	background: $col_blue;
+	border-radius: 24px;
+	font-weight: 600;
+	color: #fff;
+}
+.rari_buy_asset_button{
+	padding: 10px 70px;
+	border: 2px solid #fff;
+	color: #fff;
+	border-radius: 20px;
+}
+.rari_outlined_button{
+    padding: 10px 90px;
+	border: 2px dotted #fff;
+	border-radius: 14px;
+	color: #000;
+	font-size: 20px;
+	cursor: pointer;
 }
 
 .header {

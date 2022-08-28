@@ -9,6 +9,14 @@ export type TypeEncryptedSeed = {
 	salt?: string;
 };
 
+export type TypeConfirmPayment = {
+	__typename: 'TypeConfirmPayment';
+	checkout_request_id: string;
+	url: string;
+	body: string;
+	method: string;
+};
+
 export type Type2FARequired = {
 	__typename?: 'Type2FARequired';
 	email: boolean;
@@ -40,6 +48,48 @@ export type TypeCreateUser = {
 	phonenumber: string;
 	recaptchaToken: string;
 };
+
+export type TypeFetchCoins = [
+	{
+		__typename?: 'TypeFetchCoin';
+		id: any;
+		addr: string;
+		symbol: string;
+		name: string;
+		image: string;
+		change: number;
+		price: string;
+	}
+];
+
+export type TypeFetchUserWalletAssets = [
+	{
+		__typename?: 'TypeFetchUserWalletAssets';
+		id: any;
+		addr: string;
+		symbol: string;
+		name: string;
+		image: string;
+		daychange: number;
+		bal: number;
+		value: string;
+	}
+];
+
+export type TypeFetchWalletTransactions = [
+	{
+		__typename?: 'TypeFetchWalletTransactions';
+		transaction_id: string;
+		coins: any;
+		transaction_type: string;
+		coin_tpe: string;
+		date: any;
+		value: any;
+		from: string;
+		to: string;
+		time: any;
+	}
+];
 
 export type TypeFetchUser = {
 	__typename?: 'TypeFetchUser';
@@ -127,11 +177,23 @@ export type TypeChangeEmail = {
 	twoFa: number;
 };
 
+export type TypeChangePhoneNumber = {
+	__typename?: 'TypeChangePhoneNumber';
+	password: string;
+	newPhone: string;
+	twoFa: number;
+};
+
 export type TypeUserFoundData = {
 	__typename?: 'TypeUserFoundData';
 	email: string;
 	phonenumber: string;
 	hashedPassword: string;
+};
+
+export type TypeUserPhoneNumber = {
+	__typename?: 'TypeUserPhoneNumber';
+	email: string;
 };
 
 export type TypePayloadData = {
@@ -172,10 +234,15 @@ export type MorpherWalletConfig = {
 
 export type TypeCreateTransactions = {
 	__typename?: 'TypeCreateTransactions';
-	email: string;
+	transaction_id: string;
+	coins: any;
 	transaction_type: string;
-	amount: number;
-	date: Date;
+	coin_type: string;
+	date: any;
+	value: any;
+	from: string;
+	to: string;
+	time: any;
 };
 
 export type TransactionObject = {

@@ -86,6 +86,17 @@ export async function validateInput(req, res) {
 
         return res.json(validateReturn);
     }
+    // Phone-Number Validation
+    else if (fieldName.toLocaleLowerCase() === 'phonenumber') {
+        const phoneNumberRegex = new RegExp(/^(254|0)([7][0-9]|[1][0-1]){1}[0-9]{1}[0-9]{6}$/);
+
+        if (phoneNumberRegex.test(inputFieldValue)) {
+            validateReturn.success = true;
+            return res.json(validateReturn);
+        } else {
+            validateReturn.returnMessage = 'Phone Number is not Correct';
+        }
+    }
 
     // Process password validation
     else if (fieldName.toLocaleLowerCase() === 'password') {
@@ -112,7 +123,7 @@ export async function validateInput(req, res) {
         if (validationReturn.length > 0) {
             validateReturn.returnMessage = 'Password insufficient';
             validateReturn.success = false;
-            validationReturn.forEach(validationFail => {
+            validationReturn.forEach((validationFail) => {
                 validateReturn.validationFails.push(validationFail);
             });
         } else {

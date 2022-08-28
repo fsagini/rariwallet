@@ -9,12 +9,12 @@
             <div class="field">
               <div class="border-b-2 border-y-black">
                 <input
-                  data-cy="newEmail"
+                  data-cy="newPhone"
                   class="bg-none outline-none border-none p-2 text-lg"
-                  name="newEmail"
-                  type="email"
-                  v-model="newEmail"
-                  :placeholder="$t('common.NEW_EMAIL')"
+                  name="newPhone"
+                  type="string"
+                  v-model="newPhone"
+                  :placeholder="$t('common.NEW_PHONE')"
                 />
               </div>
             </div>
@@ -33,23 +33,23 @@
           </div>
         </div>
 
-        <div class="error mt-3" v-if="logonError">
+        <div class="error ml-4 text-black" v-if="logonError">
           <p>⚠️ <span v-html="logonError"></span></p>
         </div>
 
         <div class="mt-5">
           <button
-            class="button__update"
+            class="rari_buttons"
             data-cy="updateEmailButton"
-            :disabled="!newEmail || !password"
+            :disabled="!newPhone || !password"
             @click="
               setNewData({
-                email: newEmail,
+                phone: newPhone,
                 password: password,
               })
             "
           >
-            <span class="text confirm-button">{{ $t("common.UPDATE_EMAIL") }}</span>
+            <span class="text confirm-button">{{ $t("phone.UPDATE_PHONENUMBER") }}</span>
           </button>
           <button
             v-on:click="
@@ -69,14 +69,13 @@
 <script lang="ts">
 import { validateInput } from "../utils/backupRestore";
 import { sha256 } from "../utils/cryptoFunctions";
-
 import Component, { mixins } from "vue-class-component";
 import { Authenticated, Global } from "../mixins/mixins";
 import { Emit, Prop, Watch } from "vue-property-decorator";
 
 @Component({})
-export default class ChangeEmail extends mixins(Global, Authenticated) {
-  newEmail = "";
+export default class ChangePhoneNumber extends mixins(Global, Authenticated) {
+  newPhone = "";
   password = "";
   logonError = "";
 
@@ -92,30 +91,33 @@ export default class ChangeEmail extends mixins(Global, Authenticated) {
   async setNewData(data: any) {
     this.logonError = "";
 
-    if (!data.email) {
-      return { email: null, password: null };
+    if (!data.phone) {
+      return { phone: null, password: null };
     }
 
-    const emailMessage = await validateInput("email", data.email);
+    const phonenumberMessage = await validateInput("phonenumber", data.phone);
+    if (phonenumberMessage) {
+      this.logonError = phonenumberMessage;
 
-    if (emailMessage) {
-      this.logonError = emailMessage;
-      return { email: null, password: null };
+      return { phone: null, password: null };
     }
-
     const newPassword = await sha256(data.password);
 
     if (this.store.hashedPassword !== newPassword) {
       this.logonError = this.$t("errors.WRONG_PASSWORD").toString();
-      return { email: null, password: null };
+      return { phone: null, password: null };
+    }
+    if (data.phone.length !== 10) {
+      this.logonError = "check your phone number characters";
+      return { phone: null, password: null };
     }
 
-    if (this.store.email === this.newEmail) {
-      this.logonError = this.$t("errors.SAME_EMAIL").toString();
-      return { email: null, password: null };
+    if (this.store.phonenumber === this.newPhone) {
+      this.logonError = this.$t("errors.SAME_PHONENUMBER").toString();
+      return { phone: null, password: null };
     }
 
-    return { email: data.email, password: newPassword };
+    return { phone: data.phone, password: newPassword };
   }
 }
 </script>

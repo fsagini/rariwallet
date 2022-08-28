@@ -1,0 +1,12 @@
+// const myHeaders = new Headers();
+	// myHeaders.append('apikey', 'xXHV07ckmqDKWbX2rbe3B42hZIerttDS');
+	// await fetch('https://api.apilayer.com/fixer/latest?symbols=KES&base=USD', {
+	// 	method: 'GET',
+	// 	redirect: 'follow',
+	// 	headers: myHeaders
+	// })
+	// 	.then((response) => response.text())
+	// 	.then((result) => {
+	// 		const kerate: any = JSON.parse(result);
+	// 		rate = kerate.rates?.KES.toFixed(2);
+	// 	});

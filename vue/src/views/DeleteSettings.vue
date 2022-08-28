@@ -34,7 +34,9 @@
 					<p class="has-text-weight-medium">{{ $t('delete.WHAT_DELETE_TITLE') }}</p>
 					<p>{{ $t('delete.WHAT_DELETE_DESCRIPTION') }}</p>
 
-					<p class="has-text-weight-medium mt-2">{{ $t('delete.DOES_DELETE_WALLET_TITLE') }}</p>
+					<p class="has-text-weight-medium mt-2">
+						{{ $t('delete.DOES_DELETE_WALLET_TITLE') }}
+					</p>
 					<p>{{ $t('delete.DOES_DELETE_WALLET_DESCRIPTION') }}</p>
 
 					<p class="has-text-weight-medium mt-2">{{ $t('delete.WHAT_FUNDS_TITLE') }}</p>
@@ -172,6 +174,6 @@ export default class RecoverySettings extends mixins(Authenticated, Global) {
 .white__container {
 	background: #fff;
 	border-radius: 14px 14px 0 0;
-	height: 53.7vh;
+	height: 63s.7vh;
 }
 </style>
