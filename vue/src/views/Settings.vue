@@ -7,7 +7,7 @@
       </button>
     </div>
     <div class="container">
-      <img class="settings__img" src="../assets/img/change_details.svg" alt="" />
+      <img class="settings__img" src="" alt="" />
     </div>
     <h2 v-if="!isEmailPasswordPage" class="title">{{ $t("settings.SETTINGS_TITLE") }}</h2>
     <div class="container settings">

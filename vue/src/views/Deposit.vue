@@ -44,13 +44,6 @@
     </div>
     <div class="figma">
       <div>
-        <span v-if="rate" class="py-6 text-lg text-blue-500 font-semibold"
-          >Exchange Rate 1$ = {{ rate }}Ksh</span
-        >
-
-        <span v-else class="text-blue-500 font-semibold"
-          >currency-exchange loading...</span
-        >
         <div class="pt-2 font-medium text-gray-500">Choose Crypto to Buy</div>
         <div class="flex overflow-x-scroll scrollbar-hide">
           <div v-for="asset in transformedAssets" :key="asset.addr" class="px-2 py-3">
