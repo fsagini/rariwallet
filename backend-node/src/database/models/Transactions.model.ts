@@ -46,7 +46,7 @@ export class Transactions extends Model {
     date: any;
 
     @Column({
-        type: DataType.NUMBER
+        type: DataType.FLOAT
     })
     value: any;
 
