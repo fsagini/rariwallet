@@ -66,12 +66,12 @@ export default class Withdraw extends mixins(Global, Authenticated) {
   totalAmountKsh = 0;
   transactionAmount = 0;
   withdrawalAmount: number;
-  coinAddress = "";
+
   walletAssets = JSON.parse(this.$store.getters.userWalletAssets);
 
   coinBallance = this.walletAssets[0].bal;
   coinType = this.walletAssets[0].symbol;
-
+  coinAddress = this.walletAssets[0].addr;
   @Watch("coinBallance")
   onCoinBallanceChange(newValue: number) {
     if (newValue) {
@@ -91,6 +91,7 @@ export default class Withdraw extends mixins(Global, Authenticated) {
     this.coinAddress = addr;
     window.console.log(this.coinBallance);
     window.console.log(this.coinType);
+    window.console.log(this.coinAddress);
   }
   NavigateBack() {
     this.$router.push("/").catch(() => undefined);

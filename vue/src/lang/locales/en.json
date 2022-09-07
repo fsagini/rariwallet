@@ -70,7 +70,7 @@
 		"ALREADY_HAVE_WALLET": "Already have your wallet?",
 		"UNLOCK_TITLE": "Welcome Back",
 		"UNLOCK_DESCRIPTION": "Unlock your crypto wallet.",
-		"SWITCH_ACCOUNT": "Switch account",
+		"SWITCH_ACCOUNT": "Switch Account",
 		"CANNOT_DECRYPT_PASSWORD": "The Password you provided can't be used to de-crypt your wallet.",
 		"RESTORE_ACCOUNT": "Do you want to restore your Account?"
 	},

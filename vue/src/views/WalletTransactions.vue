@@ -78,7 +78,8 @@ import NoUserTransactions from "../components/NoUserTransactions.vue";
 export default class WalletTransactions extends mixins(Authenticated, Global) {
   currentPage = 0;
   isModalOpen = false;
-  walletTransactions = this.$store.getters.walletUserTransactions;
+  walletTransactions = "max";
+  // this.$store.getters.walletUserTransactions
 
   redirectUser() {
     this.$router.push("/").catch(() => undefined);
