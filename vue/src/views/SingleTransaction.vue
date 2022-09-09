@@ -17,22 +17,22 @@
         <div class="flex py-4 justify-between px-5">
           <div>
             <p class="flex text-gray-400">Date</p>
-            <p class="text-lg">{{ transaction_date }}</p>
+            <p class="text-lg text-[#0D1F3C]">{{ transaction_date }}</p>
           </div>
           <div>
             <p class="flex text-gray-400">Time</p>
-            <p class="text-lg">{{ time }}</p>
+            <p class="text-lg text-[#0D1F3C]">{{ time }}</p>
           </div>
         </div>
         <div class="border-gray-400 border-[1px] w-full mt-3" />
         <div class="inline-block">
           <div class="">
             <p class="text-gray-400">Total Amount</p>
-            <p class="text-lg">{{ coins_amount }} {{ coin_type }}</p>
+            <p class="text-lg text-[#0D1F3C]">{{ coins_amount }} {{ coin_type }}</p>
           </div>
           <div class="">
             <p class="text-gray-400">Total Amount ($)</p>
-            <p class="text-lg">${{ dollars_amount }}</p>
+            <p class="text-lg text-[#0D1F3C]">${{ dollars_amount }}</p>
           </div>
           <div class="">
             <p class="text-gray-400">Status</p>
@@ -45,17 +45,17 @@
         <div class="inline-block">
           <div class="">
             <p class="text-gray-400">Transaction ID</p>
-            <p class="text-lg">{{ trasansaction_id }}</p>
+            <p class="text-lg text-[#0D1F3C]">{{ trasansaction_id }}</p>
           </div>
           <div class="">
             <p class="text-gray-400">From</p>
-            <p class="text-lg">
+            <p class="text-lg text-[#0D1F3C]">
               {{ formatEthAddress(unformated_from_user) }}
             </p>
           </div>
           <div class="">
             <p class="text-gray-400">To</p>
-            <p class="text-lg text-gray-700">
+            <p class="text-lg text-[#0D1F3C]">
               {{ formatEthAddress(unformated_to_user) }}
             </p>
           </div>
