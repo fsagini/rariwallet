@@ -1,6 +1,5 @@
 import * as zksync from 'zksync';
 import { ethers } from 'ethers';
-import { WalletBase } from '@/types/global-types';
 
 const changePubKey = async (syncWallet: zksync.Wallet) => {
 	// IMPORTANT: Franck there is a type mismatch here

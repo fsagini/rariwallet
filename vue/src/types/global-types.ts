@@ -1,4 +1,4 @@
-import * as zksync from 'zksync';
+import * as zksync from "zksync-web3";
 
 export type Maybe<T> = T | null;
 
@@ -118,16 +118,6 @@ export type TypeUnlock2fa = {
 	recaptchaToken: string;
 };
 
-export type WalletBase = {
-	__typename?: 'WalletBase';
-	address: string;
-	privateKey: string;
-	accountId: number | undefined;
-	sign: (msg: string) => Promise<string>;
-	transfer: (txObject: TransactionObject) => Promise<TransactionReceipt>;
-	encrypt: (password: string) => Promise<string>;
-};
-
 export type TypeState = {
 	__typename?: 'TypeState';
 	loading: boolean;
@@ -137,7 +127,7 @@ export type TypeState = {
 	hashedPassword: string;
 	encryptedSeed: string;
 	encryptedWallet: string;
-	keystore: WalletBase;
+	keystore: zksync.Wallet;
 	token: string;
 	twoFaRequired: Type2FARequired;
 };
@@ -216,7 +206,7 @@ export type Type2FAUpdateParams = {
 export type TypeCreatedKeystore = {
 	__typename?: 'TypeCreatedKeystore';
 	encryptedSeed: TypeEncryptedSeed;
-	keystore: WalletBase;
+	keystore: zksync.Wallet;
 };
 
 export type WalletSign = {
@@ -269,7 +259,7 @@ export type TransactionReceipt = {
 export type TypeKeystoreUnlocked = {
 	__typename?: 'TypeKeystoreUnlocked';
 	accounts: [string];
-	keystore: WalletBase;
+	keystore: zksync.Wallet;
 	hashedPassword: string;
 };
 

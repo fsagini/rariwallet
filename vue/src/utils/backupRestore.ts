@@ -1,9 +1,9 @@
 const { getKeystore } = require('./keystore');
 const { cryptoEncrypt, cryptoDecrypt, sha256 } = require('./cryptoFunctions');
 
-import { TypeEncryptedSeed, TypePayloadData, TypeCreatedKeystore, WalletBase } from '../types/global-types';
-// import { WalletBase } from 'web3-core';
+import { TypeEncryptedSeed, TypePayloadData, TypeCreatedKeystore } from '../types/global-types';
 import { i18n } from '../plugins/i18n';
+import * as zksync from "zksync-web3";
 import { Commit } from 'vuex';
 
 const getBackendEndpoint = () => {
@@ -15,7 +15,7 @@ const changePasswordEncryptedSeed = async (encryptedSeed: TypeEncryptedSeed, old
 	return await cryptoEncrypt(newPassword, seed);
 };
 
-const getKeystoreFromEncryptedSeed = async (encryptedWalletObject: TypeEncryptedSeed, password: string): Promise<WalletBase> =>
+const getKeystoreFromEncryptedSeed = async (encryptedWalletObject: TypeEncryptedSeed, password: string): Promise<zksync.Wallet> =>
 	new Promise((resolve, reject) => {
 		getKeystore(password, encryptedWalletObject)
 			.then((returnObj: TypeCreatedKeystore) => {
