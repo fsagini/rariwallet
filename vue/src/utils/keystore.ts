@@ -46,48 +46,6 @@ export function getKeystore(password: string, encryptedSeedObject: TypeEncrypted
 			const privateKey = getPrivateKeyFromMnemonic(mnemonic, accountIndex);
 			const ethWallet = new ethers.Wallet(privateKey);
 			const syncWallet = new zksync.Wallet(privateKey, syncProvider, ethProvider);
-
-			// const extendedWallet = {
-			// 	address: syncWallet.address,
-			// 	privateKey: privateKey,
-			// 	accountId: id,
-			// 	sign: async (msg: string): Promise<string> => {
-			// 		return await ethWallet.signMessage(msg);
-			// 	},
-			// 	transfer: async (txObject: TransactionObject): Promise<TransactionReceipt> => {
-			// 		// const signingKeySet = await syncWallet.isSigningKeySet();
-			// 		// if (!signingKeySet) {
-			// 		// 	await changePubKey(syncWallet);
-			// 		// }
-
-			// 		const signedTransferTx = await syncWallet.transfer({
-			// 			to: txObject.to,
-			// 			token: txObject.token,
-			// 			amount: txObject.amount,
-			// 			// fee: txObject.fee,
-			// 			// nonce: txObject.nonce
-			// 		});
-			// 		await signedTransferTx.waitFinalize();
-
-
-
-			// 		const transactionReceipt = {
-			// 			// txId: signedTransferTx.txHash.split(':')[1],
-			// 			date: +new Date(),
-			// 			amount: txObject.amount,
-			// 			token: txObject.token,
-			// 			fee: txObject.fee,
-			// 			type: txObject.type,
-			// 			txUrl: 'hh'
-			// 		};
-			// 		//transactionReceipt.txUrl = `https://zkscan.io/explorer/transactions/${transactionReceipt.txId}`;
-			// 		return transactionReceipt;
-			// 	},
-			// 	encrypt: async (password: string): Promise<string> => {
-			// 		const encryptedJson = await ethWallet.encrypt(password);
-			// 		return encryptedJson;
-			// 	}
-			// };
 			resolve({ encryptedSeed: encryptedSeedObject, keystore: syncWallet });
 		} catch (err) {
 			reject(err);
