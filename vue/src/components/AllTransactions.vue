@@ -120,29 +120,17 @@ export default class AllTransactions extends mixins(Authenticated) {
   cursor: pointer;
   box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
 }
-.sent {
-  padding: 5px 5px;
-  border: 2px solid blue;
-  border-radius: 50%;
-}
+
 .sent .fa-arrow-down {
   transform: rotate(250deg);
   color: blue;
 }
-.withdraw {
-  padding: 5px 5px;
-  border: 2px solid red;
-  border-radius: 50%;
-}
+
 .withdraw .fa-arrow-down {
   transform: rotate(110deg);
   color: red;
 }
-.deposited {
-  padding: 5px 5px;
-  border: 2px solid green;
-  border-radius: 50%;
-}
+
 .deposited .fa-arrow-down {
   transform: rotate(300deg);
   color: green;

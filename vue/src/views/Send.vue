@@ -13,11 +13,12 @@
         class="flex px-4 py-4 space-x-4 justify-between overflow-x-scroll scrollbar-hide"
       >
         <div v-for="assets in walletAssets" :key="assets.id">
-          <span
+          <div
             @click="UpdateUserCryptoBal(assets.bal, assets.symbol)"
-            class="row__asset shadow-sm rounded-xl text-lg"
-            >{{ assets.symbol }}</span
+            class="row__asset shadow-sm rounded-xl text-lg cursor-pointer"
           >
+            {{ assets.symbol }}
+          </div>
         </div>
       </div>
       <p class="mt-5 text-md font-light text-grey-400">
@@ -65,17 +66,19 @@ import { Authenticated, Global } from "../mixins/mixins";
 import WAValidator from "multicoin-address-validator";
 
 export default class Withdraw extends mixins(Global, Authenticated) {
+  walletAssets = JSON.parse(this.$store.getters.userWalletAssets);
+  coinBallance = this.walletAssets[0].bal;
+  coinType = this.walletAssets[0].symbol;
   coinsAmount: number;
   walletAddress: string;
   transactionFee = 0.0;
-  walletAssets = JSON.parse(this.$store.getters.userWalletAssets);
-  coinBallance = this.walletAssets[1].bal;
-  coinType = this.walletAssets[1].symbol;
 
   UpdateUserCryptoBal(ballance: any, coinType: any) {
     this.coinBallance = ballance;
     this.coinType = coinType;
+    console.log(this.coinType, this.coinBallance);
   }
+
   redirectUser() {
     this.$router.push("/").catch(() => undefined);
   }

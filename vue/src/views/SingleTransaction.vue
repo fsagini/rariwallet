@@ -2,7 +2,7 @@
 <template>
   <div>
     <div class="text-white text-xl font-semibold">Transaction Details</div>
-    <div class="bg-white h-[100%] rounded-tl-2xl rounded-br-2xl ml-10">
+    <div class="bg-white h-[100%] rounded-tl-2xl ml-2">
       <div class="py-5">
         <div v-if="transaction_type === 'Deposited'">
           <span class="font-bold text-lg text-green-500">Deposited</span>
@@ -17,45 +17,45 @@
         <div class="flex py-4 justify-between px-5">
           <div>
             <p class="flex text-gray-400">Date</p>
-            <p class="text-lg">{{ transaction_date }}</p>
+            <p class="text-lg text-[#0D1F3C]">{{ transaction_date }}</p>
           </div>
           <div>
             <p class="flex text-gray-400">Time</p>
-            <p class="text-lg">{{ time }}</p>
+            <p class="text-lg text-[#0D1F3C]">{{ time }}</p>
           </div>
         </div>
-        <div class="border-gray-400 border-[1px] w-full mt-3 ml-5" />
-        <div class="ml-0">
+        <div class="border-gray-400 border-[1px] w-full mt-3" />
+        <div class="inline-block">
           <div class="">
             <p class="text-gray-400">Total Amount</p>
-            <p class="text-lg font-semibold">{{ coins_amount }} {{ coin_type }}</p>
+            <p class="text-lg text-[#0D1F3C]">{{ coins_amount }} {{ coin_type }}</p>
           </div>
           <div class="">
             <p class="text-gray-400">Total Amount ($)</p>
-            <p class="text-lg font-semibold">${{ dollars_amount }}</p>
+            <p class="text-lg text-[#0D1F3C]">${{ dollars_amount }}</p>
           </div>
           <div class="">
             <p class="text-gray-400">Status</p>
-            <p class="text-lg text-blue-400 font-semibold">
+            <p class="text-lg text-blue-400">
               Transaction confirmed <i class="fa-solid fa-up-right-from-square"></i>
             </p>
           </div>
         </div>
-        <div class="border-gray-400 border-[1px] w-full mt-3 ml-5" />
-        <div>
+        <div class="border-gray-400 border-[1px] w-full mt-3" />
+        <div class="inline-block">
           <div class="">
             <p class="text-gray-400">Transaction ID</p>
-            <p class="text-lg font-semibold">{{ trasansaction_id }}</p>
+            <p class="text-lg text-[#0D1F3C]">{{ trasansaction_id }}</p>
           </div>
           <div class="">
             <p class="text-gray-400">From</p>
-            <p class="text-lg font-semibold">
+            <p class="text-lg text-[#0D1F3C]">
               {{ formatEthAddress(unformated_from_user) }}
             </p>
           </div>
           <div class="">
             <p class="text-gray-400">To</p>
-            <p class="text-lg font-bold text-gray-700">
+            <p class="text-lg text-[#0D1F3C]">
               {{ formatEthAddress(unformated_to_user) }}
             </p>
           </div>
@@ -75,15 +75,18 @@ import Component, { mixins } from "vue-class-component";
 import { Authenticated, Global } from "../mixins/mixins";
 @Component({})
 export default class SingleTransaction extends mixins(Global, Authenticated) {
-  transaction_type = localStorage.getItem("transaction_type");
-  coin_type = localStorage.getItem("coin_type");
-  transaction_date = localStorage.getItem("transaction_date");
-  trasansaction_id = localStorage.getItem("trasansaction_id");
-  coins_amount = localStorage.getItem("coins_amount");
-  dollars_amount = localStorage.getItem("dollars_amount");
-  unformated_from_user = localStorage.getItem("unformated_from_user");
-  unformated_to_user = localStorage.getItem("unformated_to_user");
-  time = localStorage.getItem("time");
+  transaction_type = this.$route.params.type || localStorage.getItem("transaction_type");
+  coin_type = this.$route.params.coin || localStorage.getItem("coin_type");
+  transaction_date = this.$route.params.date || localStorage.getItem("transaction_date");
+  trasansaction_id = this.$route.params.id || localStorage.getItem("trasansaction_id");
+  coins_amount = this.$route.params.amount || localStorage.getItem("coins_amount");
+  dollars_amount =
+    this.$route.params.dollarsAmount || localStorage.getItem("dollars_amount");
+  unformated_from_user =
+    this.$route.params.from || localStorage.getItem("unformated_from_user");
+  unformated_to_user =
+    this.$route.params.to || localStorage.getItem("unformated_to_user");
+  time = this.$route.params.time || localStorage.getItem("time");
 
   redirectUser() {
     this.router.push("/your/transactions").catch(() => undefined);
