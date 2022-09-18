@@ -8,7 +8,7 @@ import {
 	TypeFetchUserWalletAssets
 } from './../types/global-types';
 import Vue from 'vue';
-import * as zksync from 'zksync';
+import * as zksync from "zksync-web3";
 import Vuex, { Store } from 'vuex';
 import { ethers } from 'ethers';
 import { cryptoDecrypt, sha256 } from '../utils/cryptoFunctions';
@@ -38,8 +38,8 @@ import { getSessionStore, saveSessionStore, removeSessionStore } from '../utils/
 import * as Sentry from '@sentry/vue';
 
 import {
-	WalletBase,
 	TransactionReceipt,
+	TransactionObject,
 	Type2FARequired,
 	TypeSeedFoundData,
 	TypeSeedCreatedData,
@@ -96,7 +96,7 @@ export interface RootState {
 	hashedPassword: string;
 	encryptedSeed: TypeEncryptedSeed;
 	encryptedWallet: string;
-	keystore: WalletBase | null;
+	keystore: zksync.Wallet | null;
 	accounts: Array<string>;
 	walletCoins: any;
 	walletUserAssets: any;
@@ -499,7 +499,7 @@ const store: Store<RootState> = new Vuex.Store({
 					.then((encryptedSeed) => {
 						commit('seedFound', { encryptedSeed });
 						getKeystoreFromEncryptedSeed(state.encryptedSeed, params.password)
-							.then(async (keystore: WalletBase) => {
+							.then(async (keystore: zksync.Wallet) => {
 								state.loginRetryCount = 0;
 								//not setting any password here, this is simply for the password change mechanism
 								commit('keystoreUnlocked', { keystore, accounts: [keystore.address], hashedPassword: '' });
@@ -625,7 +625,7 @@ const store: Store<RootState> = new Vuex.Store({
 						verifyMpesaSTKPushPayment(CheckoutRequestID)
 							.then((result) => {
 								const { ResultCode, ResultDesc } = result;
-								if (ResultCode === '0') {
+								if (ResultCode == '0') {
 									commit('delayedSpinnerMessage', ResultDesc);
 									commit('loading', 'initiating blockchain transaction...');
 									// After a Series research here would be the best place to dispatch blockchain action.
@@ -856,7 +856,7 @@ const store: Store<RootState> = new Vuex.Store({
 			commit('updateUnlocking', true);
 			return new Promise((resolve, reject) => {
 				getKeystoreFromEncryptedSeed(state.encryptedSeed, params.password)
-					.then(async (keystore: WalletBase) => {
+					.then(async (keystore: zksync.Wallet) => {
 						state.loginRetryCount = 0;
 						commit('keystoreUnlocked', { keystore, accounts: [keystore.address], hashedPassword: params.password });
 						getPayload(state.email, params.recaptchaToken)
@@ -1108,7 +1108,7 @@ const store: Store<RootState> = new Vuex.Store({
 					body.nonce = (await getNonce(key)).nonce;
 					const signMessage = JSON.stringify(sortObject(body));
 					if (state.keystore != null) {
-						const flatSig = await state.keystore.sign(signMessage);
+						const flatSig = await state.keystore.signMessage(signMessage);
 						const signature = ethers.utils.splitSignature(flatSig);
 						const options: RequestInit = {
 							method: params.method,
@@ -1314,7 +1314,43 @@ const store: Store<RootState> = new Vuex.Store({
 		},
 		setUsersEmail({ commit }, email: string) {
 			commit('updateEmail', email);
-		}
+		},
+		async signTransaction({ dispatch, state }, txObj: TransactionObject) {
+			const signedTx = await new Promise((resolve, reject) => {
+				//see if we are logged in?!
+				try {
+					if (store.state.keystore !== null) {
+						store.state.transactionDetails = txObj;
+						store.state.signResponse = null;
+						router.push('/signtx').catch(() => undefined);
+						const interval = setInterval(() => {
+							if (store.state.signResponse) {
+								clearInterval(interval);
+								if (store.state.signResponse === 'confirm') {
+									store.state.signResponse = null;
+									if (store.state.keystore !== null) {
+										store.state.keystore
+											.transfer(txObj)
+											.then((txReceipt: any) => {
+												resolve(txReceipt);
+											})
+											.catch(reject);
+									} else {
+										resolve(null);
+									}
+								} else {
+									store.state.signResponse = null;
+									resolve(null);
+								}
+							}
+						}, 500);
+					}
+				} catch (e) {
+					reject(e);
+				}
+			});
+			return signedTx;
+		},
 	},
 
 	getters: {
@@ -1383,7 +1419,7 @@ if (isIframe()) {
 											if (store.state.keystore !== null) {
 												store.state.keystore
 													.transfer(txObj)
-													.then((txReceipt: TransactionReceipt) => {
+													.then((txReceipt: any) => {
 														resolve(txReceipt);
 													})
 													.catch(reject);
@@ -1399,7 +1435,7 @@ if (isIframe()) {
 							} else {
 								store.state.keystore
 									.transfer(txObj)
-									.then((txReceipt: TransactionReceipt) => {
+									.then((txReceipt: any) => {
 										resolve(txReceipt);
 									})
 									.catch(reject);
@@ -1428,7 +1464,7 @@ if (isIframe()) {
 										if (store.state.signResponse === 'confirm') {
 											store.state.signResponse = null;
 											if (store.state.keystore !== null) {
-												const signature = await store.state.keystore.sign(txObj.data);
+												const signature = await store.state.keystore.signMessage(txObj.data);
 												resolve(signature);
 											} else {
 												resolve(null);
@@ -1440,7 +1476,7 @@ if (isIframe()) {
 									}
 								}, 500);
 							} else {
-								const signature = await store.state.keystore.sign(txObj.data);
+								const signature = await store.state.keystore.signMessage(txObj.data);
 								resolve(signature);
 							}
 						}

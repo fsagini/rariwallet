@@ -26,7 +26,8 @@ import {
 	TypeUpdateUserPayload,
 	TypeResetRecovery,
 	TypeExportPhraseKeyVariables,
-	TypeShowPhraseKeyVariables
+	TypeShowPhraseKeyVariables,
+	TransactionObject
 } from '../types/global-types';
 import { mapState } from 'vuex';
 import { RootState } from '../store';
@@ -83,6 +84,9 @@ export class Global extends Vue {
 
 	@Action
 	public createWallet!: (params: TypeCreateUser) => Promise<unknown>;
+
+	@Action
+	public signTransaction!: (params: TransactionObject) => Promise<unknown>;
 
 	@Action
 	public unlockWithPassword!: (params: TypeUnlockWithPassword) => Promise<unknown>;
