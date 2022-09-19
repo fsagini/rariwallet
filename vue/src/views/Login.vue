@@ -292,12 +292,12 @@ export default class Login extends mixins(Global, Recaptcha) {
   width: 30px;
   height: 30px;
   cursor: pointer;
-  margin-left: 290px;
+  margin-left: 270px;
   position: absolute;
   top: 120px;
 }
 .fa-eye-slash {
-  margin-left: 290px;
+  margin-left: 270px;
   position: absolute;
   top: 120px;
   cursor: pointer;
